@@ -10,21 +10,29 @@ class HomeController extends GetxController {
     {"name": "Food", "icon": "🍔"},
   ].obs;
 
-  var products = [
-    {
-      "name": "Tomato",
-      "price": 40,
-      "image": "https://via.placeholder.com/150"
-    },
-    {
-      "name": "Apple",
-      "price": 120,
-      "image": "https://via.placeholder.com/150"
-    },
-    {
-      "name": "Milk",
-      "price": 55,
-      "image": "https://via.placeholder.com/150"
-    },
-  ].obs;
+ var products = [
+  {
+    "name": "Fresh Banana",
+    "price": 40,
+    "discount": 20,
+    "qty": 0.obs,
+  },
+  {
+    "name": "Apple Red",
+    "price": 120,
+    "discount": 15,
+    "qty": 0.obs,
+  },
+].obs;
+
+// void addItem(int i) {
+//   products[i]["qty"].value++;
+// }
+
+// void removeItem(int i) {
+//   if (products[i]["qty"].value > 0) {
+//     products[i]["qty"].value--;
+//   }
+// }
+
 }
