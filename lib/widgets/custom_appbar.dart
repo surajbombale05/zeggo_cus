@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:zeggo_cus/features/cart_section/cart_view.dart';
+import 'package:zeggo_cus/features/notification/notification_view.dart';
 
 class ZeptoStyleAppBar extends StatelessWidget implements PreferredSizeWidget {
   const ZeptoStyleAppBar({super.key});
@@ -13,7 +15,6 @@ class ZeptoStyleAppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: 2,
       shadowColor: Colors.black12,
       automaticallyImplyLeading: false,
-      
 
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,10 +72,19 @@ class ZeptoStyleAppBar extends StatelessWidget implements PreferredSizeWidget {
             Icons.notifications_none_rounded,
             color: Colors.black87,
           ),
-          onPressed: () {},
+          onPressed: () {
+            // Handle notification tap
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return const NotificationView();
+                },
+              ),
+            );
+          },
         ),
 
-        // 🛒 Cart with badge
         Padding(
           padding: const EdgeInsets.only(right: 12),
           child: Stack(
@@ -85,7 +95,16 @@ class ZeptoStyleAppBar extends StatelessWidget implements PreferredSizeWidget {
                   Icons.shopping_cart_outlined,
                   color: Colors.black87,
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return const CartView();
+                      },
+                    ),
+                  );
+                },
               ),
               Container(
                 padding: const EdgeInsets.all(4),
