@@ -11,6 +11,7 @@ class ZeptoStyleAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      toolbarHeight: 150,
       backgroundColor: Colors.white,
       elevation: 2,
       shadowColor: Colors.black12,
@@ -40,10 +41,7 @@ class ZeptoStyleAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             ],
           ),
-
           const SizedBox(height: 2),
-
-          // 📍 Location row
           Row(
             children: const [
               Icon(Icons.location_on, size: 16, color: Colors.green),

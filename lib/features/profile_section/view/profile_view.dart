@@ -86,7 +86,6 @@ class ProfileView extends StatelessWidget {
 
               const SizedBox(height: 30),
 
-              // ⚙️ Profile Options
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
@@ -147,7 +146,6 @@ class ProfileView extends StatelessWidget {
   }
 }
 
-// 🔢 Stats Widget
 class _ProfileStat extends StatelessWidget {
   final String title;
   final String value;
@@ -189,7 +187,7 @@ class _ProfileStat extends StatelessWidget {
           ],
         ),
       ),
-    );
+    );  
   }
 }
 
