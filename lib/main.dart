@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:zeggo_cus/constants/app_init.dart';
-import 'package:zeggo_cus/features/home_screen/screen/home_screen.dart';
+import 'package:zeggo_cus/features/splash_screen/splash_screen_view.dart';
 import 'package:zeggo_cus/firebase_options.dart';
 
 String? firebasetoken;
@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Zeggo',
       theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.green), useMaterial3: true),
-      home: HomeScreen(),
+      home: SplashView(),
     );
   }
 }

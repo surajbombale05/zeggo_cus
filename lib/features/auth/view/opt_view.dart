@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:zeggo_cus/constants/app_colors.dart';
+import 'package:zeggo_cus/features/home_screen/screen/home_screen.dart';
 
 class OtpView extends StatelessWidget {
   const OtpView({super.key});
@@ -73,7 +74,7 @@ class OtpView extends StatelessWidget {
                         height: 54,
                         child: ElevatedButton(
                           onPressed: () {
-                            // TODO: Verify OTP
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen(),));
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.accentPurple,
