@@ -87,11 +87,11 @@ class NotificationView extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isUnread ? Colors.green.withOpacity(0.08) : Colors.white,
+        color: isUnread ? Colors.green.withValues(alpha:0.08) : Colors.white,
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha:0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -104,7 +104,7 @@ class NotificationView extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: iconColor.withOpacity(0.15),
+              color: iconColor.withValues(alpha:0.15),
               shape: BoxShape.circle,
             ),
             child: Icon(icon, color: iconColor, size: 22),

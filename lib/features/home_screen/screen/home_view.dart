@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:zeggo_cus/features/home_screen/controller/home_controller.dart';
+import 'package:zeggo_cus/features/home_screen/screen/product_detail_screen.dart';
 
 class HomeView extends StatelessWidget {
   HomeView({super.key});
@@ -15,12 +16,7 @@ class HomeView extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _searchBar(),
-            _offerBanner(),
-            _categorySection(),
-            _productSection(),
-          ],
+          children: [_searchBar(), _offerBanner(), _categorySection(), _productSection(context)],
         ),
       ),
     );
@@ -35,10 +31,7 @@ class HomeView extends StatelessWidget {
           prefixIcon: const Icon(Icons.search),
           filled: true,
           fillColor: Colors.white,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide.none,
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
         ),
       ),
     );
@@ -54,10 +47,7 @@ class HomeView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "Categories",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
+          const Text("Categories", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 10),
           SizedBox(
             height: 90,
@@ -70,22 +60,13 @@ class HomeView extends StatelessWidget {
                   final item = controller.categories[i];
                   return Container(
                     width: 80,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          item["icon"]!,
-                          style: const TextStyle(fontSize: 26),
-                        ),
+                        Text(item["icon"]!, style: const TextStyle(fontSize: 26)),
                         const SizedBox(height: 6),
-                        Text(
-                          item["name"]!,
-                          style: const TextStyle(fontSize: 12),
-                        ),
+                        Text(item["name"]!, style: const TextStyle(fontSize: 12)),
                       ],
                     ),
                   );
@@ -98,22 +79,19 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  Widget _productSection() {
+  Widget _productSection(context) {
     return Padding(
       padding: const EdgeInsets.all(12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "Popular Items",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-          ),
+          const Text("Popular Items", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
           const SizedBox(height: 12),
 
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: 6, // static count for UI
+            itemCount: 6,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               mainAxisSpacing: 14,
@@ -121,112 +99,115 @@ class HomeView extends StatelessWidget {
               childAspectRatio: 0.72,
             ),
             itemBuilder: (_, i) {
-              return Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 12,
-                      offset: const Offset(0, 6),
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ProductDetailScreen(
+                        name: "Fresh Banana",
+                        image: "assets/images/banana.png",
+                        price: "₹40",
+                        description:
+                            "Fresh bananas directly sourced from farms. Rich in nutrients and perfect for snacks, smoothies, and desserts.",
+                      ),
                     ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    /// 🖼 IMAGE + OFFER
-                    Expanded(
-                      child: Stack(
-                        children: [
-                          Center(
-                            child: Image.asset(
-                              "assets/images/banana.png",
-                              height: 110,
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-
-                          Positioned(
-                            top: 8,
-                            left: 8,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.green,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: const Text(
-                                "20% OFF",
-                                style: TextStyle(
+                  );
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 12,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Stack(
+                          children: [
+                            Center(child: Image.asset("assets/images/banana.png", height: 110, fit: BoxFit.contain)),
+                            Positioned(
+                              top: 8,
+                              right: 8,
+                              child: Container(
+                                height: 30,
+                                width: 30,
+                                decoration: BoxDecoration(
                                   color: Colors.white,
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.bold,
+                                  shape: BoxShape.circle,
+                                  boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 6)],
+                                ),
+                                child: IconButton(
+                                  padding: EdgeInsets.zero,
+                                  icon: const Icon(Icons.favorite_border, size: 22),
+                                  onPressed: () {},
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+
+                            Positioned(
+                              top: 8,
+                              left: 8,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(color: Colors.green, borderRadius: BorderRadius.circular(8)),
+                                child: const Text(
+                                  "20% OFF",
+                                  style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
 
-                    /// 📦 DETAILS
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Fresh Banana",
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
+                      /// 📦 DETAILS
+                      Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Fresh Banana",
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
                             ),
-                          ),
 
-                          const SizedBox(height: 4),
+                            const SizedBox(height: 4),
 
-                          const Text(
-                            "₹40",
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                            const Text("₹40", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
 
-                          const SizedBox(height: 10),
+                            const SizedBox(height: 10),
 
-                          /// ➕ ADD BUTTON (STATIC UI)
-                          SizedBox(
-                            width: double.infinity,
-                            height: 36,
-                            child: OutlinedButton(
-                              style: OutlinedButton.styleFrom(
-                                side: const BorderSide(color: Colors.green),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                            /// ➕ ADD BUTTON (STATIC UI)
+                            SizedBox(
+                              width: double.infinity,
+                              height: 36,
+                              child: OutlinedButton(
+                                style: OutlinedButton.styleFrom(
+                                  side: const BorderSide(color: Colors.green),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                 ),
-                              ),
-                              onPressed: () {},
-                              child: const Text(
-                                "ADD",
-                                style: TextStyle(
-                                  color: Colors.green,
-                                  fontWeight: FontWeight.bold,
+                                onPressed: () {},
+                                child: const Text(
+                                  "ADD",
+                                  style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               );
             },
@@ -251,17 +232,12 @@ class _OfferCarouselState extends State<_OfferCarousel> {
   final List<Map<String, dynamic>> banners = [
     {"text": "⚡ Flat 30% OFF on first order", "color": Colors.green},
     {"text": "🔥 Free Delivery on orders above ₹199", "color": Colors.orange},
-    {
-      "text": "💥 Up to 50% OFF on daily essentials",
-      "color": Colors.deepPurple,
-    },
+    {"text": "💥 Up to 50% OFF on daily essentials", "color": Colors.deepPurple},
   ];
 
   @override
   void initState() {
     super.initState();
-
-    // ⏱ Auto scroll every 3 seconds
     Future.delayed(const Duration(seconds: 3), _autoScroll);
   }
 
@@ -270,11 +246,7 @@ class _OfferCarouselState extends State<_OfferCarousel> {
 
     _currentIndex = (_currentIndex + 1) % banners.length;
 
-    _pageController.animateToPage(
-      _currentIndex,
-      duration: const Duration(milliseconds: 500),
-      curve: Curves.easeInOut,
-    );
+    _pageController.animateToPage(_currentIndex, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
 
     Future.delayed(const Duration(seconds: 3), _autoScroll);
   }
@@ -294,19 +266,12 @@ class _OfferCarouselState extends State<_OfferCarousel> {
             itemBuilder: (context, index) {
               return Container(
                 margin: const EdgeInsets.symmetric(horizontal: 12),
-                decoration: BoxDecoration(
-                  color: banners[index]["color"],
-                  borderRadius: BorderRadius.circular(16),
-                ),
+                decoration: BoxDecoration(color: banners[index]["color"], borderRadius: BorderRadius.circular(16)),
                 child: Center(
                   child: Text(
                     banners[index]["text"],
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
               );

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:badges/badges.dart' as badges;
+import 'package:zeggo_cus/constants/app_colors.dart';
+
 import 'package:zeggo_cus/features/cart_section/cart_view.dart';
 import 'package:zeggo_cus/features/notification/notification_view.dart';
 
@@ -11,7 +14,7 @@ class ZeptoStyleAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      toolbarHeight: 150,
+      toolbarHeight: 100,
       backgroundColor: Colors.white,
       elevation: 2,
       shadowColor: Colors.black12,
@@ -25,19 +28,11 @@ class ZeptoStyleAppBar extends StatelessWidget implements PreferredSizeWidget {
             children: const [
               Text(
                 "Deliver in ",
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.black87,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: TextStyle(fontSize: 14, color: Colors.black87, fontWeight: FontWeight.w500),
               ),
               Text(
                 "10 mins ⚡",
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.green,
-                  fontWeight: FontWeight.w700,
-                ),
+                style: TextStyle(fontSize: 14, color: Colors.green, fontWeight: FontWeight.w700),
               ),
             ],
           ),
@@ -49,11 +44,7 @@ class ZeptoStyleAppBar extends StatelessWidget implements PreferredSizeWidget {
               Expanded(
                 child: Text(
                   "Sangamner, Maharashtra",
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.black54,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: TextStyle(fontSize: 13, color: Colors.black54, fontWeight: FontWeight.w500),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -64,14 +55,9 @@ class ZeptoStyleAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
 
       actions: [
-        // 🔔 Notification
         IconButton(
-          icon: const Icon(
-            Icons.notifications_none_rounded,
-            color: Colors.black87,
-          ),
+          icon: const Icon(Icons.notifications_none_rounded, color: Colors.black87),
           onPressed: () {
-            // Handle notification tap
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -85,41 +71,22 @@ class ZeptoStyleAppBar extends StatelessWidget implements PreferredSizeWidget {
 
         Padding(
           padding: const EdgeInsets.only(right: 12),
-          child: Stack(
-            alignment: Alignment.topRight,
-            children: [
-              IconButton(
-                icon: const Icon(
-                  Icons.shopping_cart_outlined,
-                  color: Colors.black87,
-                ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return const CartView();
-                      },
-                    ),
-                  );
-                },
-              ),
-              Container(
-                padding: const EdgeInsets.all(4),
-                decoration: const BoxDecoration(
-                  color: Colors.red,
-                  shape: BoxShape.circle,
-                ),
-                child: const Text(
-                  "2",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
+          child: badges.Badge(
+            position: badges.BadgePosition.custom(end: 0,),
+            badgeContent: Text("0", style: TextStyle(color: AppColors.white)),
+            child: IconButton(
+              icon: const Icon(Icons.shopping_cart_outlined, color: Colors.black87, size: 30),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return const CartView();
+                    },
                   ),
-                ),
-              ),
-            ],
+                );
+              },
+            ),
           ),
         ),
       ],

@@ -13,7 +13,6 @@ class TrendingView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 🔥 Advertisement Banner
               Container(
                 height: 160,
                 width: double.infinity,
@@ -50,8 +49,6 @@ class TrendingView extends StatelessWidget {
               ),
 
               const SizedBox(height: 24),
-
-              // 🔥 Trending Title
               const Text(
                 "Trending Products",
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -59,7 +56,6 @@ class TrendingView extends StatelessWidget {
 
               const SizedBox(height: 16),
 
-              // 🥕 Products Grid
               GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -83,7 +79,6 @@ class TrendingView extends StatelessWidget {
   }
 }
 
-// 🧩 Product Card
 class _TrendingProductCard extends StatelessWidget {
   final TrendingProduct product;
 
@@ -97,7 +92,7 @@ class _TrendingProductCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha:0.06),
             blurRadius: 12,
             offset: const Offset(0, 8),
           ),
@@ -115,7 +110,7 @@ class _TrendingProductCard extends StatelessWidget {
                     borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(20),
                     ),
-                    color: product.bgColor.withOpacity(0.15),
+                    color: product.bgColor.withValues(alpha:0.15),
                   ),
                   child: Center(
                     child: Icon(product.icon, size: 60, color: product.bgColor),

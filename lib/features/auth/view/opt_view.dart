@@ -21,7 +21,7 @@ class OtpView extends StatelessWidget {
                 height: 260,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppColors.accentPurple.withOpacity(0.25),
+                  color: AppColors.accentPurple.withValues(alpha: 0.25),
                 ),
               ),
             ),
@@ -31,14 +31,10 @@ class OtpView extends StatelessWidget {
               child: Container(
                 width: 300,
                 height: 300,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.accentCyan.withOpacity(0.18),
-                ),
+                decoration: BoxDecoration(shape: BoxShape.circle, color: AppColors.accentCyan.withValues(alpha: 0.18)),
               ),
             ),
 
-            // ================= CENTER OTP CONTENT =================
             SafeArea(
               child: Center(
                 child: SingleChildScrollView(
@@ -49,21 +45,14 @@ class OtpView extends StatelessWidget {
                     children: [
                       const Text(
                         "Verify OTP",
-                        style: TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.white,
-                        ),
+                        style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: AppColors.white),
                       ),
 
                       const SizedBox(height: 8),
 
                       Text(
                         "Enter the 4-digit OTP sent to your number",
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: AppColors.white75,
-                        ),
+                        style: TextStyle(fontSize: 14, color: AppColors.white75),
                       ),
 
                       const SizedBox(height: 30),
@@ -88,39 +77,26 @@ class OtpView extends StatelessWidget {
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.accentPurple,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                             elevation: 12,
-                            shadowColor: AppColors.accentPurple.withOpacity(
-                              0.6,
-                            ),
+                            shadowColor: AppColors.accentPurple.withValues(alpha: 0.6),
                           ),
                           child: const Text(
                             "Verify & Continue",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.white,
-                            ),
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.white),
                           ),
                         ),
                       ),
 
                       const SizedBox(height: 16),
 
-                      // ================= RESEND OTP =================
                       Center(
                         child: TextButton(
                           onPressed: () {
-                            // TODO: Resend OTP
                           },
                           child: const Text(
                             "Resend OTP",
-                            style: TextStyle(
-                              color: AppColors.white,
-                              fontWeight: FontWeight.w600,
-                            ),
+                            style: TextStyle(color: AppColors.white, fontWeight: FontWeight.w600),
                           ),
                         ),
                       ),
@@ -129,8 +105,6 @@ class OtpView extends StatelessWidget {
                 ),
               ),
             ),
-
-            // ================= BOTTOM FOOTER =================
             Positioned(
               left: 24,
               right: 24,
@@ -156,24 +130,17 @@ class OtpView extends StatelessWidget {
       width: 64,
       height: 64,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.08),
+        color: Colors.white.withValues(alpha:0.08),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withOpacity(0.25)),
+        border: Border.all(color: Colors.white.withValues(alpha:0.25)),
       ),
       child: TextField(
         keyboardType: TextInputType.number,
         textAlign: TextAlign.center,
         maxLength: 1,
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-        style: const TextStyle(
-          fontSize: 22,
-          fontWeight: FontWeight.bold,
-          color: AppColors.white,
-        ),
-        decoration: const InputDecoration(
-          counterText: "",
-          border: InputBorder.none,
-        ),
+        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppColors.white),
+        decoration: const InputDecoration(counterText: "", border: InputBorder.none),
       ),
     );
   }

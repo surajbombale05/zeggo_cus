@@ -65,7 +65,6 @@ class _SplashViewState extends State<SplashView>
         decoration: const BoxDecoration(gradient: AppColors.splashGradient),
         child: Stack(
           children: [
-            // Background Glow
             Positioned(
               top: -100,
               right: -100,
@@ -74,7 +73,7 @@ class _SplashViewState extends State<SplashView>
                 height: 260,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppColors.accentPurple.withOpacity(0.25),
+                  color: AppColors.accentPurple.withValues(alpha:0.25),
                 ),
               ),
             ),
@@ -86,7 +85,7 @@ class _SplashViewState extends State<SplashView>
                 height: 300,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppColors.accentCyan.withOpacity(0.18),
+                  color: AppColors.accentCyan.withValues(alpha:0.18),
                 ),
               ),
             ),
@@ -110,7 +109,7 @@ class _SplashViewState extends State<SplashView>
                               shape: BoxShape.circle,
                               gradient: RadialGradient(
                                 colors: [
-                                  AppColors.accentPurple.withOpacity(0.35),
+                                  AppColors.accentPurple.withValues(alpha:0.35),
                                   Colors.transparent,
                                 ],
                               ),
