@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:zeggo_cus/features/profile_section/screen/address/address.dart';
+import 'package:zeggo_cus/features/profile_section/screen/order/my_order.dart';
+import 'package:zeggo_cus/features/profile_section/screen/wallet/wallet.dart';
+import 'package:zeggo_cus/features/profile_section/screen/wishlist_screen.dart';
+import 'package:zeggo_cus/widgets/info_screen.dart';
 
 class ProfileView extends StatelessWidget {
   const ProfileView({super.key});
@@ -71,13 +76,83 @@ class ProfileView extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
                   children: [
-                    _ProfileTile(icon: Icons.shopping_bag_outlined, title: "My Orders", onTap: () {}),
-                    _ProfileTile(icon: Icons.location_on_outlined, title: "Delivery Address", onTap: () {}),
-                    _ProfileTile(icon: Icons.account_balance_wallet_outlined, title: "Wallet", onTap: () {}),
+                    _ProfileTile(
+                      icon: Icons.favorite_border,
+                      title: "Wishlist",
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => WishlistScreen()));
+                      },
+                    ),
+                    _ProfileTile(
+                      icon: Icons.shopping_bag_outlined,
+                      title: "My Orders",
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => MyOrders()));
+                      },
+                    ),
+                    _ProfileTile(
+                      icon: Icons.location_on_outlined,
+                      title: "Delivery Address",
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => AddressScreen()));
+                      },
+                    ),
+                    _ProfileTile(
+                      icon: Icons.account_balance_wallet_outlined,
+                      title: "Wallet",
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => WalletScreen()));
+                      },
+                    ),
                     _ProfileTile(icon: Icons.settings_outlined, title: "Settings", onTap: () {}),
-                    _ProfileTile(icon: Icons.help_outline, title: "Help & Support", onTap: () {}),
-                    _ProfileTile(icon: Icons.receipt_outlined, title: "Terms & Conditions", onTap: () {}),
-                    _ProfileTile(icon: Icons.privacy_tip_outlined, title: "Privacy Policy", onTap: () {}),
+                    _ProfileTile(
+                      icon: Icons.help_outline,
+                      title: "Help & Support",
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const InfoScreen(
+                              title: "Help & Support",
+                              content:
+                                  "If you need help with orders, payments, delivery, or account issues, please contact our support team.\n\nEmail: support@example.com\nPhone: +91 98765 43210\n\nWe are available 9 AM — 9 PM.",
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    _ProfileTile(
+                      icon: Icons.receipt_outlined,
+                      title: "Terms & Conditions",
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const InfoScreen(
+                              title: "Terms & Conditions",
+                              content:
+                                  "By using this app you agree to our terms...\n\n1. Orders once placed cannot be edited.\n2. Refunds depend on product eligibility.\n3. Misuse of wallet or offers may lead to suspension.\n\nPlease read carefully before continuing.",
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    _ProfileTile(
+                      icon: Icons.privacy_tip_outlined,
+                      title: "Privacy Policy",
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const InfoScreen(
+                              title: "Privacy Policy",
+                              content:
+                                  "We respect your privacy.\n\nWe collect data only to improve experience — such as orders, contact info, and preferences. We never sell your data to third parties.\n\nYou can request data deletion anytime.",
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                   ],
                 ),
               ),

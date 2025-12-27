@@ -189,7 +189,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         ),
       ),
 
-      /// BOTTOM BUTTONS
       bottomNavigationBar: Container(
         padding: const EdgeInsets.all(14),
         decoration: const BoxDecoration(
@@ -212,21 +211,21 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 ),
               ),
             ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  minimumSize: const Size(0, 48),
-                ),
-                onPressed: () {},
-                child: const Text(
-                  "Buy Now",
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
+         //   const SizedBox(width: 10),
+            // Expanded(
+            //   child: ElevatedButton(
+            //     style: ElevatedButton.styleFrom(
+            //       backgroundColor: Colors.green,
+            //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            //       minimumSize: const Size(0, 48),
+            //     ),
+            //     onPressed: () {},
+            //     child: const Text(
+            //       "Buy Now",
+            //       style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),
