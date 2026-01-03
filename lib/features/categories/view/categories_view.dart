@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:zeggo_cus/constants/app_colors.dart';
+import 'package:zeggo_cus/features/categories/view/category_product_screen.dart';
+import 'package:zeggo_cus/widgets/custom_cached.dart';
 
 class CategoriesView extends StatelessWidget {
   const CategoriesView({super.key});
@@ -6,38 +9,59 @@ class CategoriesView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffF6F7FB),
+      backgroundColor: AppColors.white,
+
+      appBar: AppBar(
+        backgroundColor: AppColors.white,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        surfaceTintColor: AppColors.white,
+        title: const Text("All Categories", style: TextStyle(fontWeight: FontWeight.w700)),
+        actions: const [
+          Icon(Icons.search, color: AppColors.primaryDark),
+          SizedBox(width: 10),
+          Icon(Icons.favorite_border, color: AppColors.primaryDark),
+          SizedBox(width: 12),
+        ],
+      ),
+
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(14),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _sectionTitle("🔥 Trending"),
-            _categoryGrid([
-              CategoryModel("Fresh Fruits", Icons.apple, Colors.redAccent),
-              CategoryModel("Green Veggies", Icons.eco, Colors.green),
-              CategoryModel("Organic", Icons.spa, Colors.teal),
+            sectionTitle("Grocery & Kitchen"),
+            SizedBox(height: 10),
+            gridSection([
+              catItem("Fruits & Vegetables", "https://picsum.photos/120/101", context),
+              catItem("Dairy, Bread & Eggs", "https://picsum.photos/120/102", context),
+              catItem("Atta, Rice, Oil & Dals", "https://picsum.photos/120/103", context),
+              catItem("Meat, Fish & Eggs", "https://picsum.photos/120/104", context),
+              catItem("Masala & Dry Fruits", "https://picsum.photos/120/105", context),
+              catItem("Breakfast & Sauces", "https://picsum.photos/120/106", context),
+              catItem("Packaged Food", "https://picsum.photos/120/107", context),
             ]),
 
-            const SizedBox(height: 24),
-
-            _sectionTitle("⭐ Most Popular"),
-            _categoryGrid([
-              CategoryModel(
-                "Daily Vegetables",
-                Icons.local_florist,
-                Colors.lightGreen,
-              ),
-              CategoryModel("Seasonal Fruits", Icons.sunny, Colors.orange),
-              CategoryModel("Leafy Greens", Icons.grass, Colors.greenAccent),
+            sectionTitle("Snacks & Drinks"),
+            SizedBox(height: 10),
+            gridSection([
+              catItem("Zepto Cafe", "https://picsum.photos/120/108", context),
+              catItem("Tea, Coffee & More", "https://picsum.photos/120/109", context),
+              catItem("Ice Creams & More", "https://picsum.photos/120/110", context),
+              catItem("Frozen Food", "https://picsum.photos/120/111", context),
+              catItem("Sweet Cravings", "https://picsum.photos/120/112", context),
+              catItem("Cold Drinks & Juices", "https://picsum.photos/120/113", context),
+              catItem("Munchies", "https://picsum.photos/120/114", context),
+              catItem("Biscuits & Cookies", "https://picsum.photos/120/115", context),
             ]),
 
-            const SizedBox(height: 24),
-
-            _sectionTitle("🆕 New Arrivals"),
-            _categoryGrid([
-              CategoryModel("Exotic Fruits", Icons.star, Colors.purple),
-              CategoryModel("Fresh Herbs", Icons.local_dining, Colors.brown),
+            sectionTitle("Fashion & Lifestyle"),
+            SizedBox(height: 10),
+            gridSection([
+              catItem("Mens Wear", "https://picsum.photos/120/116", context),
+              catItem("Women Fashion", "https://picsum.photos/120/117", context),
+              catItem("Kids Wear", "https://picsum.photos/120/118", context),
             ]),
           ],
         ),
@@ -45,77 +69,50 @@ class CategoriesView extends StatelessWidget {
     );
   }
 
-  Widget _sectionTitle(String title) {
+  Widget sectionTitle(String title) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Text(
-        title,
-        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-      ),
+      padding: const EdgeInsets.only(top: 12, bottom: 6),
+      child: Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
     );
   }
 
-  Widget _categoryGrid(List<CategoryModel> categories) {
-    return GridView.builder(
+  Widget gridSection(List<Widget> children) {
+    return GridView.count(
+      crossAxisCount: 4,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: categories.length,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 14,
-        crossAxisSpacing: 14,
-        childAspectRatio: 1.1,
-      ),
-      itemBuilder: (context, index) {
-        final item = categories[index];
-        return GestureDetector(
-          onTap: () {
-            // Navigate to category products
-          },
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(18),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha:0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 6),
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: item.color.withValues(alpha:0.15),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(item.icon, size: 32, color: item.color),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  item.title,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
+      childAspectRatio: .70,
+      children: children,
+    );
+  }
+
+  Widget catItem(String label, String imageUrl, context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CategoryProductScreen(imageUrl: imageUrl, name: label),
           ),
         );
       },
+      child: Column(
+        children: [
+          Container(
+            height: 80,
+            width: 80,
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.grey.shade200),
+            clipBehavior: Clip.antiAlias,
+            child: CustomCachedCard(imageUrl: imageUrl, fit: BoxFit.cover),
+          ),
+          const SizedBox(height: 5),
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+          ),
+        ],
+      ),
     );
   }
-}
-
-class CategoryModel {
-  final String title;
-  final IconData icon;
-  final Color color;
-
-  CategoryModel(this.title, this.icon, this.color);
 }

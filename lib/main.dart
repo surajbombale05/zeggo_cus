@@ -1,10 +1,10 @@
 import 'dart:developer';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:zeggo_cus/constants/app_init.dart';
+import 'package:zeggo_cus/constants/app_theme.dart';
 import 'package:zeggo_cus/features/splash_screen/splash_screen_view.dart';
 import 'package:zeggo_cus/firebase_options.dart';
 
@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Zeggo',
-      theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.green), useMaterial3: true),
+      theme: AppTheme().theme,
       home: SplashView(),
     );
   }

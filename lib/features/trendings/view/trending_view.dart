@@ -1,8 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:zeggo_cus/features/home_screen/screen/product_detail_screen.dart';
+import 'package:zeggo_cus/widgets/custom_product_card.dart';
 
-class TrendingView extends StatelessWidget {
+class TrendingView extends StatefulWidget {
   const TrendingView({super.key});
 
+  @override
+  State<TrendingView> createState() => _TrendingViewState();
+}
+
+class _TrendingViewState extends State<TrendingView> {
+  final List<Map<String, dynamic>> products = [
+    {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
+    {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
+    {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,189 +44,62 @@ class TrendingView extends StatelessWidget {
                     children: const [
                       Text(
                         "Fresh & Healthy 🍎",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
                       ),
                       SizedBox(height: 8),
-                      Text(
-                        "Up to 30% OFF on Trending Items",
-                        style: TextStyle(color: Colors.white70, fontSize: 14),
-                      ),
+                      Text("Up to 30% OFF on Trending Items", style: TextStyle(color: Colors.white70, fontSize: 14)),
                     ],
                   ),
                 ),
               ),
 
-              const SizedBox(height: 24),
-              const Text(
-                "Trending Products",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-
-              const SizedBox(height: 16),
-
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: trendingProducts.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                  childAspectRatio: 0.72,
-                ),
-                itemBuilder: (context, index) {
-                  final product = trendingProducts[index];
-                  return _TrendingProductCard(product: product);
-                },
-              ),
+              _productSection(context),
             ],
           ),
         ),
       ),
     );
   }
-}
 
-class _TrendingProductCard extends StatelessWidget {
-  final TrendingProduct product;
-
-  const _TrendingProductCard({required this.product});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha:0.06),
-            blurRadius: 12,
-            offset: const Offset(0, 8),
+  Widget _productSection(context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text("Trending Product", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+        const SizedBox(height: 12),
+    
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: products.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            mainAxisSpacing: 14,
+            crossAxisSpacing: 14,
+            childAspectRatio: .80,
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Product Image
-          Expanded(
-            child: Stack(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(20),
+          itemBuilder: (_, i) {
+            final p = products[i];
+            return GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ProductDetailScreen(
+                      name: "Fresh Banana",
+                      image: "assets/images/banana.png",
+                      price: "₹40",
+                      description:
+                          "Fresh bananas directly sourced from farms. Rich in nutrients and perfect for snacks, smoothies, and desserts.",
                     ),
-                    color: product.bgColor.withValues(alpha:0.15),
                   ),
-                  child: Center(
-                    child: Icon(product.icon, size: 60, color: product.bgColor),
-                  ),
-                ),
-                Positioned(
-                  top: 10,
-                  right: 10,
-                  child: Icon(
-                    Icons.favorite_border,
-                    color: Colors.grey.shade600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // Product Info
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  product.name,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Row(
-                  children: [
-                    const Icon(Icons.star, color: Colors.orange, size: 14),
-                    const SizedBox(width: 4),
-                    Text(
-                      product.rating.toString(),
-                      style: const TextStyle(fontSize: 12),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  "₹${product.price}",
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xff3BB77E),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+                );
+              },
+              child: CustomProductCard(p: p, index: i),
+            );
+          },
+        ),
+      ],
     );
   }
 }
-
-// 📦 Product Model
-class TrendingProduct {
-  final String name;
-  final double price;
-  final double rating;
-  final IconData icon;
-  final Color bgColor;
-
-  TrendingProduct({
-    required this.name,
-    required this.price,
-    required this.rating,
-    required this.icon,
-    required this.bgColor,
-  });
-}
-
-// 🔥 Dummy Data
-final List<TrendingProduct> trendingProducts = [
-  TrendingProduct(
-    name: "Fresh Apples",
-    price: 120,
-    rating: 4.6,
-    icon: Icons.apple,
-    bgColor: Colors.red,
-  ),
-  TrendingProduct(
-    name: "Green Broccoli",
-    price: 80,
-    rating: 4.4,
-    icon: Icons.eco,
-    bgColor: Colors.green,
-  ),
-  TrendingProduct(
-    name: "Bananas",
-    price: 60,
-    rating: 4.5,
-    icon: Icons.rice_bowl,
-    bgColor: Colors.yellow.shade700,
-  ),
-  TrendingProduct(
-    name: "Carrots",
-    price: 70,
-    rating: 4.3,
-    icon: Icons.local_florist,
-    bgColor: Colors.orange,
-  ),
-];

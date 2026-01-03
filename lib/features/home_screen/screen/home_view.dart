@@ -2,17 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:zeggo_cus/features/home_screen/controller/home_controller.dart';
 import 'package:zeggo_cus/features/home_screen/screen/product_detail_screen.dart';
+import 'package:zeggo_cus/widgets/custom_appbar.dart';
+import 'package:zeggo_cus/widgets/custom_product_card.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
   HomeView({super.key});
 
+  @override
+  State<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
   final HomeController controller = Get.put(HomeController());
+  final List<Map<String, dynamic>> products = [
+    {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
+    {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
+    {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
-
+      appBar: ZeptoStyleAppBar(),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -91,14 +103,15 @@ class HomeView extends StatelessWidget {
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: 6,
+            itemCount: products.length,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               mainAxisSpacing: 14,
               crossAxisSpacing: 14,
-              childAspectRatio: 0.72,
+              childAspectRatio: .83,
             ),
             itemBuilder: (_, i) {
+              final p = products[i];
               return GestureDetector(
                 onTap: () {
                   Navigator.push(
@@ -114,101 +127,7 @@ class HomeView extends StatelessWidget {
                     ),
                   );
                 },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 12,
-                        offset: const Offset(0, 6),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Stack(
-                          children: [
-                            Center(child: Image.asset("assets/images/banana.png", height: 110, fit: BoxFit.contain)),
-                            Positioned(
-                              top: 8,
-                              right: 8,
-                              child: Container(
-                                height: 30,
-                                width: 30,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  shape: BoxShape.circle,
-                                  boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 6)],
-                                ),
-                                child: IconButton(
-                                  padding: EdgeInsets.zero,
-                                  icon: const Icon(Icons.favorite_border, size: 22),
-                                  onPressed: () {},
-                                ),
-                              ),
-                            ),
-
-                            Positioned(
-                              top: 8,
-                              left: 8,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(color: Colors.green, borderRadius: BorderRadius.circular(8)),
-                                child: const Text(
-                                  "20% OFF",
-                                  style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      /// 📦 DETAILS
-                      Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Fresh Banana",
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-                            ),
-
-                            const SizedBox(height: 4),
-
-                            const Text("₹40", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-
-                            const SizedBox(height: 10),
-
-                            /// ➕ ADD BUTTON (STATIC UI)
-                            SizedBox(
-                              width: double.infinity,
-                              height: 36,
-                              child: OutlinedButton(
-                                style: OutlinedButton.styleFrom(
-                                  side: const BorderSide(color: Colors.green),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                ),
-                                onPressed: () {},
-                                child: const Text(
-                                  "ADD",
-                                  style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                child: CustomProductCard(p: p, index: i),
               );
             },
           ),

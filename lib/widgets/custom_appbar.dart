@@ -23,32 +23,31 @@ class ZeptoStyleAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 🚀 Delivery text
           Row(
-            children: const [
+            children: [
               Text(
                 "Deliver in ",
                 style: TextStyle(fontSize: 14, color: Colors.black87, fontWeight: FontWeight.w500),
               ),
               Text(
                 "10 mins ⚡",
-                style: TextStyle(fontSize: 14, color: Colors.green, fontWeight: FontWeight.w700),
+                style: TextStyle(fontSize: 14, color: Theme.of(context).primaryColor, fontWeight: FontWeight.w700),
               ),
             ],
           ),
           const SizedBox(height: 2),
           Row(
-            children: const [
-              Icon(Icons.location_on, size: 16, color: Colors.green),
+            children: [
+              Icon(Icons.location_on, size: 16, color: Theme.of(context).primaryColor),
               SizedBox(width: 4),
               Expanded(
                 child: Text(
                   "Sangamner, Maharashtra",
-                  style: TextStyle(fontSize: 13, color: Colors.black54, fontWeight: FontWeight.w500),
+                  style: TextStyle(fontSize: 13, color: AppColors.primaryDark, fontWeight: FontWeight.w500),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              Icon(Icons.keyboard_arrow_down_rounded, color: Colors.black54),
+              Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.primaryDark),
             ],
           ),
         ],
@@ -72,7 +71,8 @@ class ZeptoStyleAppBar extends StatelessWidget implements PreferredSizeWidget {
         Padding(
           padding: const EdgeInsets.only(right: 12),
           child: badges.Badge(
-            position: badges.BadgePosition.custom(end: 0,),
+            badgeStyle: badges.BadgeStyle(badgeColor: Theme.of(context).primaryColor),
+            position: badges.BadgePosition.custom(end: 0),
             badgeContent: Text("0", style: TextStyle(color: AppColors.white)),
             child: IconButton(
               icon: const Icon(Icons.shopping_cart_outlined, color: Colors.black87, size: 30),
