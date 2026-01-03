@@ -18,26 +18,23 @@ class CartView extends StatelessWidget {
 
       body: Column(
         children: [
-          /// 🛍 Cart Items
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.all(12),
               itemCount: 3,
               itemBuilder: (context, index) {
-                return _cartItemCard();
+                return _cartItemCard(context);
               },
             ),
           ),
 
-          /// 💳 PRICE SUMMARY
           _priceSummary(context),
         ],
       ),
     );
   }
 
-  /// 🧾 Cart Item Card
-  Widget _cartItemCard() {
+  Widget _cartItemCard(context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
@@ -48,7 +45,6 @@ class CartView extends StatelessWidget {
       ),
       child: Row(
         children: [
-          /// IMAGE
           Container(
             height: 70,
             width: 70,
@@ -59,7 +55,6 @@ class CartView extends StatelessWidget {
 
           const SizedBox(width: 12),
 
-          /// DETAILS
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,11 +66,10 @@ class CartView extends StatelessWidget {
             ),
           ),
 
-          /// QUANTITY CONTROLLER (UI only)
           Container(
             height: 34,
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.green),
+              border: Border.all(color: Theme.of(context).primaryColor),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Row(
@@ -104,23 +98,22 @@ class CartView extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _priceRow("Item Total", "₹120"),
-          _priceRow("Delivery Fee", "₹20"),
-          _priceRow("Discount", "-₹30", isDiscount: true),
+          _priceRow("Item Total", "₹120", context),
+          _priceRow("Delivery Fee", "₹20", context),
+          _priceRow("Discount", "-₹30", context, isDiscount: true),
 
           const Divider(height: 24),
 
-          _priceRow("Grand Total", "₹110", isTotal: true),
+          _priceRow("Grand Total", "₹110", context, isTotal: true),
 
           const SizedBox(height: 14),
 
-          /// 🚀 CHECKOUT BUTTON
           SizedBox(
             width: double.infinity,
             height: 48,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
+                backgroundColor: Theme.of(context).primaryColor,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
               ),
               onPressed: () {
@@ -137,7 +130,7 @@ class CartView extends StatelessWidget {
     );
   }
 
-  Widget _priceRow(String title, String value, {bool isTotal = false, bool isDiscount = false}) {
+  Widget _priceRow(String title, String value, context, {bool isTotal = false, bool isDiscount = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -152,7 +145,7 @@ class CartView extends StatelessWidget {
             style: TextStyle(
               fontSize: isTotal ? 16 : 14,
               fontWeight: isTotal ? FontWeight.bold : FontWeight.w500,
-              color: isDiscount ? Colors.green : Colors.black,
+              color: isDiscount ? Theme.of(context).primaryColor : Colors.black,
             ),
           ),
         ],

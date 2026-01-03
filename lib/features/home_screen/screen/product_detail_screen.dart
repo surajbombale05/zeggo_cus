@@ -87,7 +87,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   /// PRICE
                   Text(
                     widget.price,
-                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.green),
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor),
                   ),
 
                   const SizedBox(height: 14),
@@ -155,7 +155,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
                               Text(
                                 item["price"]!,
-                                style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
+                                style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor),
                               ),
 
                               const SizedBox(height: 6),
@@ -165,13 +165,17 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 height: 30,
                                 child: OutlinedButton(
                                   style: OutlinedButton.styleFrom(
-                                    side: const BorderSide(color: Colors.green),
+                                    side: BorderSide(color: Theme.of(context).primaryColor),
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                                   ),
                                   onPressed: () {},
-                                  child: const Text(
+                                  child: Text(
                                     "ADD",
-                                    style: TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.bold),
+                                    style: TextStyle(
+                                      color: Theme.of(context).primaryColor,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -200,22 +204,22 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             Expanded(
               child: OutlinedButton(
                 style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: Colors.green),
+                  side: BorderSide(color: Theme.of(context).primaryColor),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   minimumSize: const Size(0, 48),
                 ),
                 onPressed: () {},
-                child: const Text(
+                child: Text(
                   "Add to Cart",
-                  style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+                  style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
-         //   const SizedBox(width: 10),
+            //   const SizedBox(width: 10),
             // Expanded(
             //   child: ElevatedButton(
             //     style: ElevatedButton.styleFrom(
-            //       backgroundColor: Colors.green,
+            //       backgroundColor: Theme.of(context).primaryColor,
             //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             //       minimumSize: const Size(0, 48),
             //     ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:zeggo_cus/constants/app_colors.dart';
+import 'package:zeggo_cus/features/home_screen/screen/product_detail_screen.dart';
 import 'package:zeggo_cus/widgets/custom_product_card.dart';
 
 class CafeView extends StatefulWidget {
@@ -41,7 +42,23 @@ class _CafeViewState extends State<CafeView> {
           itemBuilder: (_, index) {
             final p = products[index];
 
-            return CustomProductCard(p: p, index: index);
+            return GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ProductDetailScreen(
+                      name: "Fresh Banana",
+                      image: "assets/images/banana.png",
+                      price: "₹40",
+                      description:
+                          "Fresh bananas directly sourced from farms. Rich in nutrients and perfect for snacks, smoothies, and desserts.",
+                    ),
+                  ),
+                );
+              },
+              child: CustomProductCard(p: p, index: index),
+            );
           },
         ),
       ),

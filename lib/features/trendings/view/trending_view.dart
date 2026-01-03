@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zeggo_cus/constants/app_colors.dart';
 import 'package:zeggo_cus/features/home_screen/screen/product_detail_screen.dart';
 import 'package:zeggo_cus/widgets/custom_product_card.dart';
 
@@ -19,6 +20,20 @@ class _TrendingViewState extends State<TrendingView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xffF6F7FB),
+      appBar: AppBar(
+        backgroundColor: AppColors.white,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        surfaceTintColor: AppColors.white,
+        title: const Text("Trending", style: TextStyle(fontWeight: FontWeight.w700)),
+        actions: const [
+          Icon(Icons.search, color: AppColors.primaryDark),
+          SizedBox(width: 10),
+          Icon(Icons.favorite_border, color: AppColors.primaryDark),
+          SizedBox(width: 12),
+        ],
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
@@ -67,7 +82,7 @@ class _TrendingViewState extends State<TrendingView> {
       children: [
         const Text("Trending Product", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
         const SizedBox(height: 12),
-    
+
         GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
