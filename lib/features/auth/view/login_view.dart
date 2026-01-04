@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:zeggo_cus/constants/app_colors.dart';
+import 'package:zeggo_cus/constants/app_toast.dart';
 import 'package:zeggo_cus/features/auth/view/opt_view.dart';
+import 'package:zeggo_cus/features/home_screen/screen/home_screen.dart';
 
-class LoginView extends StatelessWidget {
+class LoginView extends StatefulWidget {
   const LoginView({super.key});
 
+  @override
+  State<LoginView> createState() => _LoginViewState();
+}
+
+class _LoginViewState extends State<LoginView> {
+  final numberController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,6 +44,35 @@ class LoginView extends StatelessWidget {
                 decoration: BoxDecoration(shape: BoxShape.circle, color: AppColors.accentCyan.withValues(alpha: 0.18)),
               ),
             ),
+            Positioned(
+              top: 12,
+              right: 12,
+              child: SafeArea(
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColors.kGreyColor.withValues(alpha: 0.3),
+                      border: Border.all(color: AppColors.kGreyColor),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        Text(
+                          "Skip",
+                          style: TextStyle(color: AppColors.white, fontWeight: FontWeight.w600),
+                        ),
+                        SizedBox(width: 2),
+                        Icon(Icons.navigate_next_outlined, color: AppColors.white),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
             SafeArea(
               child: Center(
                 child: SingleChildScrollView(
@@ -43,25 +81,30 @@ class LoginView extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        "Login",
-                        style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: AppColors.white),
+                      Text(
+                        "Zeggo",
+                        style: GoogleFonts.podkova(fontSize: 50, fontWeight: FontWeight.bold, color: AppColors.white),
                       ),
 
                       const SizedBox(height: 8),
+                      Text(
+                        "Groceries at your door \nfast & fresh",
+                        style: TextStyle(fontSize: 19, color: AppColors.white),
+                      ),
+                      const SizedBox(height: 50),
 
                       Text(
                         "Enter your mobile number to continue",
                         style: TextStyle(fontSize: 14, color: AppColors.white75),
                       ),
 
-                      const SizedBox(height: 30),
+                      const SizedBox(height: 15),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.08),
+                          color: AppColors.white.withValues(alpha: 0.08),
                           borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+                          border: Border.all(color: AppColors.white.withValues(alpha: 0.2)),
                         ),
                         child: Row(
                           children: [
@@ -72,6 +115,7 @@ class LoginView extends StatelessWidget {
                             const SizedBox(width: 10),
                             Expanded(
                               child: TextField(
+                                controller: numberController,
                                 keyboardType: TextInputType.phone,
                                 maxLength: 10,
                                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -94,13 +138,20 @@ class LoginView extends StatelessWidget {
                         height: 54,
                         child: ElevatedButton(
                           onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (_) => const OtpView()));
+                            if (numberController.text.isEmpty) {
+                              AppToast.showError(context, "Error !", "Please enter mobile number");
+                              return;
+                            }
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => OtpView(mobileNumber: numberController.text.trim())),
+                            );
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.accentPurple,
+                            backgroundColor: AppColors.primaryColor,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                             elevation: 12,
-                            shadowColor: AppColors.accentPurple.withValues(alpha: 0.6),
+                            shadowColor: AppColors.primaryColor.withValues(alpha: 0.6),
                           ),
                           child: const Text(
                             "Continue",

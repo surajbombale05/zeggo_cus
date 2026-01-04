@@ -1,10 +1,63 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:zeggo_cus/constants/app_colors.dart';
 import 'package:zeggo_cus/features/home_screen/screen/home_screen.dart';
 
-class OtpView extends StatelessWidget {
-  const OtpView({super.key});
+class OtpView extends StatefulWidget {
+  final String mobileNumber;
+  const OtpView({super.key, required this.mobileNumber});
+
+  @override
+  State<OtpView> createState() => _OtpViewState();
+}
+
+class _OtpViewState extends State<OtpView> {
+  int _seconds = 30;
+  bool _canResend = false;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _startTimer();
+  }
+
+  void _startTimer() {
+    _seconds = 30;
+    _canResend = false;
+
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_seconds == 0) {
+        setState(() => _canResend = true);
+        timer.cancel();
+      } else {
+        setState(() => _seconds--);
+      }
+    });
+  }
+
+  final List<TextEditingController> _controllers = List.generate(4, (_) => TextEditingController());
+
+  final List<FocusNode> _focusNodes = List.generate(4, (_) => FocusNode());
+
+  void _resendOtp() {
+    _startTimer();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    for (final c in _controllers) {
+      c.dispose();
+    }
+
+    for (final f in _focusNodes) {
+      f.dispose();
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,35 +105,61 @@ class OtpView extends StatelessWidget {
                       const SizedBox(height: 8),
 
                       Text(
-                        "Enter the 4-digit OTP sent to your number",
+                        "Enter the 4-digit OTP sent to your number +91${widget.mobileNumber}",
                         style: TextStyle(fontSize: 14, color: AppColors.white75),
                       ),
 
                       const SizedBox(height: 30),
 
-                      // ================= OTP INPUT =================
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: List.generate(4, (index) {
-                          return _otpBox();
+                          return SizedBox(
+                            width: 60,
+                            child: TextField(
+                              controller: _controllers[index],
+                              focusNode: _focusNodes[index],
+                              cursorColor: AppColors.primaryColor,
+                              keyboardType: TextInputType.number,
+                              textAlign: TextAlign.center,
+                              maxLength: 1,
+                              style: const TextStyle(fontSize: 20, color: AppColors.white, fontWeight: FontWeight.bold),
+                              decoration: const InputDecoration(
+                                counterText: "",
+                                filled: true,
+                                fillColor: Colors.white24,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(Radius.circular(12)),
+                                  borderSide: BorderSide.none,
+                                ),
+                              ),
+                              onChanged: (value) {
+                                if (value.isNotEmpty && index < 3) {
+                                  _focusNodes[index + 1].requestFocus();
+                                }
+                                if (value.isEmpty && index > 0) {
+                                  _focusNodes[index - 1].requestFocus();
+                                }
+                              },
+                            ),
+                          );
                         }),
                       ),
 
                       const SizedBox(height: 30),
 
-                      // ================= VERIFY BUTTON =================
                       SizedBox(
                         width: double.infinity,
                         height: 54,
                         child: ElevatedButton(
                           onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen(),));
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.accentPurple,
+                            backgroundColor: AppColors.primaryColor,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                             elevation: 12,
-                            shadowColor: AppColors.accentPurple.withValues(alpha: 0.6),
+                            shadowColor: AppColors.primaryColor.withValues(alpha: 0.6),
                           ),
                           child: const Text(
                             "Verify & Continue",
@@ -90,16 +169,19 @@ class OtpView extends StatelessWidget {
                       ),
 
                       const SizedBox(height: 16),
-
                       Center(
-                        child: TextButton(
-                          onPressed: () {
-                          },
-                          child: const Text(
-                            "Resend OTP",
-                            style: TextStyle(color: AppColors.white, fontWeight: FontWeight.w600),
-                          ),
-                        ),
+                        child: _canResend
+                            ? TextButton(
+                                onPressed: _resendOtp,
+                                child: const Text(
+                                  "Resend OTP",
+                                  style: TextStyle(color: AppColors.white, fontWeight: FontWeight.w600),
+                                ),
+                              )
+                            : Text(
+                                "Resend in ${_seconds}s",
+                                style: TextStyle(color: AppColors.white75, fontWeight: FontWeight.w600),
+                              ),
                       ),
                     ],
                   ),
@@ -121,27 +203,6 @@ class OtpView extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  // ================= OTP BOX =================
-  Widget _otpBox() {
-    return Container(
-      width: 64,
-      height: 64,
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha:0.08),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withValues(alpha:0.25)),
-      ),
-      child: TextField(
-        keyboardType: TextInputType.number,
-        textAlign: TextAlign.center,
-        maxLength: 1,
-        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppColors.white),
-        decoration: const InputDecoration(counterText: "", border: InputBorder.none),
       ),
     );
   }
