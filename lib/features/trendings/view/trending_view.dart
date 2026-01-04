@@ -15,6 +15,18 @@ class _TrendingViewState extends State<TrendingView> {
     {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
     {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
     {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
+    {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
+    {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
+    {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
+    {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
+    {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
+    {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
+    {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
+    {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
+    {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
+    {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
+    {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
+    {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
   ];
   @override
   Widget build(BuildContext context) {
@@ -88,10 +100,10 @@ class _TrendingViewState extends State<TrendingView> {
           physics: const NeverScrollableScrollPhysics(),
           itemCount: products.length,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 14,
-            crossAxisSpacing: 14,
-            childAspectRatio: .80,
+            crossAxisCount: 3,
+            mainAxisSpacing: 5,
+            crossAxisSpacing: 5,
+            childAspectRatio: .47,
           ),
           itemBuilder: (_, i) {
             final p = products[i];

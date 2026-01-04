@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zeggo_cus/widgets/custom_product_card.dart';
 
 class WishlistScreen extends StatefulWidget {
   const WishlistScreen({super.key});
@@ -8,131 +9,43 @@ class WishlistScreen extends StatefulWidget {
 }
 
 class _WishlistScreenState extends State<WishlistScreen> {
-  final List<Map<String, String>> wishlist = [
-    {
-      "name": "Fresh Banana",
-      "image": "assets/images/banana.png",
-      "price": "₹40"
-    },
-    {
-      "name": "Red Apple",
-      "image": "assets/images/banana.png",
-      "price": "₹60"
-    },
+  final List<Map<String, dynamic>> products = [
+    {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
+    {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
+    {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
+    {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
+    {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
+    {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
+    {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
+    {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
+    {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
+    {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
+    {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
+    {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
+    {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
+    {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
+    {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
-      appBar: AppBar(
-        title: const Text("My Wishlist"),
-        backgroundColor: Colors.white,
-        elevation: 1,
-      ),
+      appBar: AppBar(title: const Text("My Wishlist"), backgroundColor: Colors.white, elevation: 1),
 
-      body: wishlist.isEmpty
+      body: products.isEmpty
           ? _emptyView()
-          : ListView.builder(
-              padding: const EdgeInsets.all(14),
-              itemCount: wishlist.length,
-              itemBuilder: (context, index) {
-                final item = wishlist[index];
-
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(14),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      )
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      /// IMAGE
-                      Container(
-                        height: 70,
-                        width: 70,
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade100,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Image.asset(item["image"]!, fit: BoxFit.contain),
-                      ),
-
-                      const SizedBox(width: 12),
-
-                      /// DETAILS
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              item["name"]!,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14,
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              item["price"]!,
-                              style: const TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.green,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(width: 10),
-
-                      /// ACTION BUTTONS
-                      Column(
-                        children: [
-                          IconButton(
-                            onPressed: () {
-                              setState(() => wishlist.removeAt(index));
-                            },
-                            icon: const Icon(Icons.delete_outline),
-                          ),
-
-                          SizedBox(
-                            height: 32,
-                            child: OutlinedButton(
-                              style: OutlinedButton.styleFrom(
-                                side: const BorderSide(color: Colors.green),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                              onPressed: () {
-                                // TODO: move to cart
-                              },
-                              child: const Text(
-                                "Add",
-                                style: TextStyle(
-                                  color: Colors.green,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                );
+          : GridView.builder(
+              itemCount: products.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                mainAxisSpacing: 5,
+                crossAxisSpacing: 5,
+                childAspectRatio: .49,
+              ),
+              itemBuilder: (_, i) {
+                final p = products[i];
+                return CustomProductCard(p: p, index: i, isLike: true);
               },
             ),
     );
@@ -145,21 +58,11 @@ class _WishlistScreenState extends State<WishlistScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: const [
-            Icon(Icons.favorite_border,
-                size: 70, color: Colors.grey),
+            Icon(Icons.favorite_border, size: 70, color: Colors.grey),
             SizedBox(height: 14),
-            Text(
-              "Your wishlist is empty",
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 16,
-              ),
-            ),
+            Text("Your wishlist is empty", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
             SizedBox(height: 6),
-            Text(
-              "Add products to save them for later.",
-              style: TextStyle(color: Colors.black54),
-            ),
+            Text("Add products to save them for later.", style: TextStyle(color: Colors.black54)),
           ],
         ),
       ),

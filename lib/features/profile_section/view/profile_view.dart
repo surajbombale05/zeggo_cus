@@ -20,21 +20,22 @@ class ProfileView extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 32),
                 width: double.infinity,
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Color(0xFF1FA96E), Color(0xFF47D991), Color(0xFF2FB67B)],
-                    stops: [0.0, 0.45, 1.0],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor,
+                  // gradient: LinearGradient(
+                  //   colors: [Color(0xFF1FA96E), Color(0xFF47D991), Color(0xFF2FB67B)],
+                  //   stops: [0.0, 0.45, 1.0],
+                  //   begin: Alignment.topLeft,
+                  //   end: Alignment.bottomRight,
+                  // ),
                   borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
                 ),
                 child: Column(
                   children: [
-                    const CircleAvatar(
+                    CircleAvatar(
                       radius: 45,
                       backgroundColor: Colors.white,
-                      child: Icon(Icons.person, size: 50, color: Color(0xff3BB77E)),
+                      child: Icon(Icons.person, size: 50, color: Theme.of(context).primaryColor),
                     ),
                     const SizedBox(height: 12),
                     const Text(
@@ -272,7 +273,7 @@ class _ProfileStat extends StatelessWidget {
           children: [
             Text(
               value,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xff3BB77E)),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor),
             ),
             const SizedBox(height: 6),
             Text(title, style: const TextStyle(fontSize: 12, color: Colors.grey)),
@@ -307,7 +308,7 @@ class _ProfileTile extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(icon, color: const Color(0xff3BB77E)),
+            Icon(icon, color: Theme.of(context).primaryColor),
             const SizedBox(width: 14),
             Expanded(
               child: Text(title, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),

@@ -3,7 +3,7 @@ import 'package:badges/badges.dart' as badges;
 import 'package:zeggo_cus/constants/app_colors.dart';
 
 import 'package:zeggo_cus/features/cart_section/cart_view.dart';
-import 'package:zeggo_cus/features/notification/notification_view.dart';
+import 'package:zeggo_cus/features/profile_section/view/profile_view.dart';
 
 class ZeptoStyleAppBar extends StatelessWidget implements PreferredSizeWidget {
   const ZeptoStyleAppBar({super.key});
@@ -54,18 +54,18 @@ class ZeptoStyleAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
 
       actions: [
-        IconButton(
-          icon: const Icon(Icons.notifications_none_rounded, color: Colors.black87),
-          onPressed: () {
+        GestureDetector(
+          onTap: () {
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) {
-                  return const NotificationView();
+                  return const ProfileView();
                 },
               ),
             );
           },
+          child: Icon(Icons.account_circle_outlined, color: Colors.black87, size: 35),
         ),
 
         Padding(

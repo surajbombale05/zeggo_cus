@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:zeggo_cus/features/home_screen/screen/product_detail_screen.dart';
-import 'package:zeggo_cus/widgets/custom_cached.dart';
 import 'package:zeggo_cus/widgets/custom_product_card.dart';
 
 class CategoryProductScreen extends StatefulWidget {
@@ -17,6 +16,15 @@ class _CategoryProductScreenState extends State<CategoryProductScreen> {
     {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
     {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
     {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
+    {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
+    {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
+    {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
+    {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
+    {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
+    {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
+    {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
+    {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
+    {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
   ];
   @override
   Widget build(BuildContext context) {
@@ -27,20 +35,15 @@ class _CategoryProductScreenState extends State<CategoryProductScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              ClipRRect(
-                borderRadius: BorderRadiusGeometry.circular(12),
-                child: CustomCachedCard(imageUrl: widget.imageUrl, height: MediaQuery.of(context).size.height * 0.4),
-              ),
-              SizedBox(height: 12),
               GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: products.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 14,
-                  crossAxisSpacing: 14,
-                  childAspectRatio: .83,
+                  crossAxisCount: 3,
+                  mainAxisSpacing: 8,
+                  crossAxisSpacing: 8,
+                  childAspectRatio: .49,
                 ),
                 itemBuilder: (_, i) {
                   final p = products[i];

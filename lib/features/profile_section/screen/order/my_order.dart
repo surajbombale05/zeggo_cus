@@ -13,7 +13,7 @@ class MyOrders extends StatelessWidget {
         "time": "10:45 AM",
         "status": "Delivered",
         "items": "Banana, Apple, Milk",
-        "total": "₹240"
+        "total": "₹240",
       },
       {
         "orderId": "#ORD12346",
@@ -21,7 +21,7 @@ class MyOrders extends StatelessWidget {
         "time": "08:10 PM",
         "status": "On The Way",
         "items": "Bread, Butter",
-        "total": "₹120"
+        "total": "₹120",
       },
       {
         "orderId": "#ORD12347",
@@ -29,7 +29,7 @@ class MyOrders extends StatelessWidget {
         "time": "02:30 PM",
         "status": "Cancelled",
         "items": "Mango, Grapes",
-        "total": "₹180"
+        "total": "₹180",
       },
     ];
 
@@ -48,11 +48,7 @@ class MyOrders extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
-      appBar: AppBar(
-        title: const Text("My Orders"),
-        backgroundColor: Colors.white,
-        elevation: 1,
-      ),
+      appBar: AppBar(title: const Text("My Orders"), backgroundColor: Colors.white, elevation: 1),
       body: ListView.builder(
         padding: const EdgeInsets.all(14),
         itemCount: orders.length,
@@ -66,11 +62,7 @@ class MyOrders extends StatelessWidget {
               color: Colors.white,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha:0.06),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                )
+                BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 10, offset: const Offset(0, 4)),
               ],
             ),
             child: Column(
@@ -80,20 +72,11 @@ class MyOrders extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      order["orderId"]!,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                      ),
-                    ),
+                    Text(order["orderId"]!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 4,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
-                        color: statusColor(order["status"]!).withValues(alpha:0.12),
+                        color: statusColor(order["status"]!).withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
@@ -112,23 +95,13 @@ class MyOrders extends StatelessWidget {
 
                 Row(
                   children: [
-                    const Icon(Icons.calendar_month,
-                        size: 16, color: Colors.grey),
+                    const Icon(Icons.calendar_month, size: 16, color: Colors.grey),
                     const SizedBox(width: 6),
-                    Text(
-                      order["date"]!,
-                      style:
-                          const TextStyle(color: Colors.black54, fontSize: 13),
-                    ),
+                    Text(order["date"]!, style: const TextStyle(color: Colors.black54, fontSize: 13)),
                     const SizedBox(width: 12),
-                    const Icon(Icons.access_time,
-                        size: 16, color: Colors.grey),
+                    const Icon(Icons.access_time, size: 16, color: Colors.grey),
                     const SizedBox(width: 6),
-                    Text(
-                      order["time"]!,
-                      style:
-                          const TextStyle(color: Colors.black54, fontSize: 13),
-                    ),
+                    Text(order["time"]!, style: const TextStyle(color: Colors.black54, fontSize: 13)),
                   ],
                 ),
 
@@ -138,10 +111,7 @@ class MyOrders extends StatelessWidget {
                   order["items"]!,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: Colors.black87,
-                  ),
+                  style: const TextStyle(fontSize: 13, color: Colors.black87),
                 ),
 
                 const SizedBox(height: 10),
@@ -149,35 +119,24 @@ class MyOrders extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      "Total: ${order["total"]}",
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                      ),
-                    ),
+                    Text("Total: ${order["total"]}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
                     OutlinedButton(
                       style: OutlinedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        side: const BorderSide(color: Colors.green),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        side: BorderSide(color: Theme.of(context).primaryColor),
                       ),
                       onPressed: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => OrderDetailScreen(orderId: order['orderId'].toString(),),
+                            builder: (context) => OrderDetailScreen(orderId: order['orderId'].toString()),
                           ),
                         );
                       },
-                      child: const Text(
-                        "View Details",
-                        style: TextStyle(color: Colors.green),
-                      ),
+                      child: Text("View Details", style: TextStyle(color: Theme.of(context).primaryColor)),
                     ),
                   ],
-                )
+                ),
               ],
             ),
           );

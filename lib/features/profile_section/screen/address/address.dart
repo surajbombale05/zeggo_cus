@@ -48,18 +48,9 @@ class _AddressScreenState extends State<AddressScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                /// top row
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Radio(
-                      value: index,
-                      groupValue: selectedAddress,
-                      onChanged: (value) {
-                        setState(() => selectedAddress = value!);
-                      },
-                      activeColor: Colors.green,
-                    ),
                     Text(item["type"]!, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
 
                     IconButton(
@@ -97,7 +88,7 @@ class _AddressScreenState extends State<AddressScreen> {
           height: 48,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
+              backgroundColor:Theme.of(context).primaryColor,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
             onPressed: () {

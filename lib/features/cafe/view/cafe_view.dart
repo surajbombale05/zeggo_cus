@@ -15,6 +15,24 @@ class _CafeViewState extends State<CafeView> {
     {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
     {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
     {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
+      {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
+    {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
+    {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
+      {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
+    {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
+    {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
+      {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
+    {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
+    {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
+      {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
+    {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
+    {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
+      {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
+    {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
+    {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
+      {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
+    {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
+    {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
   ];
 
   @override
@@ -34,10 +52,10 @@ class _CafeViewState extends State<CafeView> {
         child: GridView.builder(
           itemCount: products.length,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 14,
-            crossAxisSpacing: 14,
-            childAspectRatio: .83,
+            crossAxisCount: 3,
+              mainAxisSpacing: 5,
+              crossAxisSpacing: 5,
+              childAspectRatio: .49,
           ),
           itemBuilder: (_, index) {
             final p = products[index];

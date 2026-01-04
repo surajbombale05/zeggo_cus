@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:zeggo_cus/features/home_screen/controller/home_controller.dart';
-import 'package:zeggo_cus/features/home_screen/screen/product_detail_screen.dart';
 import 'package:zeggo_cus/widgets/custom_appbar.dart';
 import 'package:zeggo_cus/widgets/custom_product_card.dart';
 
@@ -18,6 +17,18 @@ class _HomeViewState extends State<HomeView> {
     {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
     {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
     {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
+    {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
+    {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
+    {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
+    {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
+    {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
+    {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
+    {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
+    {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
+    {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
+    {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
+    {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
+    {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
   ];
 
   @override
@@ -28,7 +39,13 @@ class _HomeViewState extends State<HomeView> {
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [_searchBar(), _offerBanner(), _categorySection(), _productSection(context)],
+          children: [
+            _searchBar(),
+            _offerBanner(),
+            _categorySection(),
+            _popularSection(context),
+            _productSection(context),
+          ],
         ),
       ),
     );
@@ -97,7 +114,7 @@ class _HomeViewState extends State<HomeView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("Popular Items", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+          const Text("Recommeded Items", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
           const SizedBox(height: 12),
 
           GridView.builder(
@@ -105,31 +122,45 @@ class _HomeViewState extends State<HomeView> {
             physics: const NeverScrollableScrollPhysics(),
             itemCount: products.length,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 14,
-              crossAxisSpacing: 14,
-              childAspectRatio: .83,
+              crossAxisCount: 3,
+              mainAxisSpacing: 5,
+              crossAxisSpacing: 5,
+              childAspectRatio: .49,
             ),
             itemBuilder: (_, i) {
               final p = products[i];
-              return GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => ProductDetailScreen(
-                        name: "Fresh Banana",
-                        image: "assets/images/banana.png",
-                        price: "₹40",
-                        description:
-                            "Fresh bananas directly sourced from farms. Rich in nutrients and perfect for snacks, smoothies, and desserts.",
-                      ),
-                    ),
-                  );
-                },
-                child: CustomProductCard(p: p, index: i),
-              );
+              return CustomProductCard(p: p, index: i);
             },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _popularSection(context) {
+    return Padding(
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text("Popular Items", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+          const SizedBox(height: 12),
+          SizedBox(
+            height: 240,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: products.length,
+              itemBuilder: (context, i) {
+                final p = products[i];
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: SizedBox(
+                    width: 130,
+                    child: CustomProductCard(p: p, index: i),
+                  ),
+                );
+              },
+            ),
           ),
         ],
       ),
