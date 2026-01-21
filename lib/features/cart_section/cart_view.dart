@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:zeggo_cus/constants/app_colors.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:zeggo_cus/constants/app_url.dart';
 import 'package:zeggo_cus/features/cart_section/paymnet_screen.dart';
+import 'package:zeggo_cus/utils/service/cart_service.dart';
+import 'package:zeggo_cus/utils/storage/cart_item.dart';
+import 'package:zeggo_cus/widgets/custom_cached.dart';
 
 class CartView extends StatelessWidget {
   const CartView({super.key});
@@ -16,32 +20,43 @@ class CartView extends StatelessWidget {
         elevation: 1,
       ),
 
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(12),
-              itemCount: 3,
-              itemBuilder: (context, index) {
-                return _cartItemCard(context);
-              },
-            ),
-          ),
+      body: ValueListenableBuilder(
+        valueListenable: CartService.box.listenable(),
+        builder: (context, Box<CartItem> box, _) {
+          final items = CartService.getItems();
 
-          _priceSummary(context),
-        ],
+          if (items.isEmpty) {
+            return const Center(child: Text("Your cart is empty 🛒", style: TextStyle(fontSize: 16)));
+          }
+
+          return Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(12),
+                  itemCount: items.length,
+                  itemBuilder: (context, index) {
+                    return _cartItemCard(context, items[index]);
+                  },
+                ),
+              ),
+
+              _priceSummary(context, items),
+            ],
+          );
+        },
       ),
     );
   }
 
-  Widget _cartItemCard(context) {
+  Widget _cartItemCard(BuildContext context, CartItem item) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 12, offset: const Offset(0, 6))],
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 12, offset: const Offset(0, 6))],
       ),
       child: Row(
         children: [
@@ -50,7 +65,7 @@ class CartView extends StatelessWidget {
             width: 70,
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
-            child: Image.asset("assets/images/banana.png", fit: BoxFit.contain),
+            child: CustomCachedCard(imageUrl: "${AppString.baseUrl}/${item.image}", fit: BoxFit.contain),
           ),
 
           const SizedBox(width: 12),
@@ -58,10 +73,12 @@ class CartView extends StatelessWidget {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text("Fresh Banana", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-                SizedBox(height: 4),
-                Text("₹40", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+              children: [
+                Text(item.name, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                const SizedBox(height: 4),
+                Text("₹${item.price}", style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 4),
+                Text("₹${item.unit}", style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
               ],
             ),
           ),
@@ -73,10 +90,18 @@ class CartView extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Row(
-              children: const [
-                Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Icon(Icons.remove, size: 18)),
-                Text("1", style: TextStyle(fontWeight: FontWeight.bold)),
-                Padding(padding: EdgeInsets.symmetric(horizontal: 8), child: Icon(Icons.add, size: 18)),
+              children: [
+                IconButton(
+                  padding: EdgeInsets.zero,
+                  icon: const Icon(Icons.remove, size: 18),
+                  onPressed: () => CartService.decrement(item.productId),
+                ),
+                Text(item.quantity.toString(), style: const TextStyle(fontWeight: FontWeight.bold)),
+                IconButton(
+                  padding: EdgeInsets.zero,
+                  icon: const Icon(Icons.add, size: 18),
+                  onPressed: () => CartService.increment(item.productId),
+                ),
               ],
             ),
           ),
@@ -85,26 +110,31 @@ class CartView extends StatelessWidget {
     );
   }
 
-  Widget _priceSummary(context) {
+  Widget _priceSummary(BuildContext context, List<CartItem> items) {
+    final itemTotal = CartService.getTotalPrice();
+
+    const double deliveryFee = 0.0;
+    const double discount = 0.0;
+
+    final grandTotal = itemTotal;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 20, offset: const Offset(0, -6)),
-        ],
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 20, offset: const Offset(0, -6))],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _priceRow("Item Total", "₹120", context),
-          _priceRow("Delivery Fee", "₹20", context),
-          _priceRow("Discount", "-₹30", context, isDiscount: true),
+          _priceRow("Item Total", "₹${itemTotal.toStringAsFixed(0)}", context),
+          _priceRow("Delivery Fee", "₹${deliveryFee.toStringAsFixed(0)}", context),
+          _priceRow("Discount", "-₹${discount.toStringAsFixed(0)}", context, isDiscount: true),
 
           const Divider(height: 24),
 
-          _priceRow("Grand Total", "₹110", context, isTotal: true),
+          _priceRow("Grand Total", "₹${grandTotal.toStringAsFixed(0)}", context, isTotal: true),
 
           const SizedBox(height: 14),
 
@@ -117,11 +147,11 @@ class CartView extends StatelessWidget {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
               ),
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const CheckoutScreen()));
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const CheckoutScreen()));
               },
-              child: Text(
+              child: const Text(
                 "Proceed to Checkout",
-                style: TextStyle(color: AppColors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
           ),

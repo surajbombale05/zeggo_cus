@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:badges/badges.dart' as badges;
-import 'package:zeggo_cus/constants/app_colors.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:zeggo_cus/features/cart_section/cart_view.dart';
+import 'package:zeggo_cus/features/profile_section/bloc/address/get_all_address/get_all_address_cubit.dart';
+import 'package:zeggo_cus/features/profile_section/screen/address/add_update_address.dart';
 import 'package:zeggo_cus/features/profile_section/view/profile_view.dart';
+import 'package:zeggo_cus/utils/service/cart_service.dart';
+import 'package:zeggo_cus/utils/storage/auth_guard.dart';
+import 'package:zeggo_cus/utils/storage/cart_item.dart';
 
 class ZeptoStyleAppBar extends StatelessWidget implements PreferredSizeWidget {
   const ZeptoStyleAppBar({super.key});
@@ -36,19 +41,41 @@ class ZeptoStyleAppBar extends StatelessWidget implements PreferredSizeWidget {
             ],
           ),
           const SizedBox(height: 2),
-          Row(
-            children: [
-              Icon(Icons.location_on, size: 16, color: Theme.of(context).primaryColor),
-              SizedBox(width: 4),
-              Expanded(
-                child: Text(
-                  "Sangamner, Maharashtra",
-                  style: TextStyle(fontSize: 13, color: AppColors.primaryDark, fontWeight: FontWeight.w500),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.primaryDark),
-            ],
+          BlocBuilder<GetAllAddressCubit, GetAllAddressState>(
+            builder: (context, state) {
+              if (state is GetAllAddressLoadedState) {
+                final addresses = state.model.data ?? [];
+
+                if (addresses.isEmpty) {
+                  return _emptyAddress(context);
+                }
+
+                final primaryAddress = addresses.firstWhere((e) => e.isPrimary == true, orElse: () => addresses.first);
+
+                final addressText = "${primaryAddress.city ?? ""}, ${primaryAddress.zipCode ?? ""}";
+
+                return Row(
+                  children: [
+                    Icon(Icons.location_on, size: 16, color: Theme.of(context).primaryColor),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        addressText,
+                        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const Icon(Icons.keyboard_arrow_down_rounded),
+                  ],
+                );
+              }
+
+              if (state is GetAllAddressLoadingState) {
+                return const SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2));
+              }
+
+              return _emptyAddress(context);
+            },
           ),
         ],
       ),
@@ -56,13 +83,18 @@ class ZeptoStyleAppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: [
         GestureDetector(
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) {
-                  return const ProfileView();
-                },
-              ),
+            AuthGuard.checkLogin(
+              context: context,
+              onLoggedIn: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return const ProfileView();
+                    },
+                  ),
+                );
+              },
             );
           },
           child: Icon(Icons.account_circle_outlined, color: Colors.black87, size: 35),
@@ -70,26 +102,61 @@ class ZeptoStyleAppBar extends StatelessWidget implements PreferredSizeWidget {
 
         Padding(
           padding: const EdgeInsets.only(right: 12),
-          child: badges.Badge(
-            badgeStyle: badges.BadgeStyle(badgeColor: Theme.of(context).primaryColor),
-            position: badges.BadgePosition.custom(end: 0),
-            badgeContent: Text("0", style: TextStyle(color: AppColors.white)),
-            child: IconButton(
-              icon: const Icon(Icons.shopping_cart_outlined, color: Colors.black87, size: 30),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return const CartView();
+          child: Builder(
+            builder: (context) {
+              if (!Hive.isBoxOpen('cartBox')) {
+                return IconButton(icon: const Icon(Icons.shopping_cart_outlined, size: 30), onPressed: () {});
+              }
+
+              return ValueListenableBuilder(
+                valueListenable: CartService.box.listenable(),
+                builder: (context, Box<CartItem> box, _) {
+                  final totalCount = CartService.getItems().length;
+
+                  final cartIcon = IconButton(
+                    icon: const Icon(Icons.shopping_cart_outlined, color: Colors.black87, size: 30),
+                    onPressed: () {
+                      AuthGuard.checkLogin(
+                        context: context,
+                        onLoggedIn: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (_) => const CartView()));
+                        },
+                      );
                     },
-                  ),
-                );
-              },
-            ),
+                  );
+                  if (totalCount == 0) {
+                    return cartIcon;
+                  }
+                  return badges.Badge(
+                    badgeStyle: badges.BadgeStyle(badgeColor: Theme.of(context).primaryColor),
+                    position: badges.BadgePosition.topEnd(top: -4, end: -4),
+                    badgeContent: Text(
+                      totalCount.toString(),
+                      style: const TextStyle(color: Colors.white, fontSize: 12),
+                    ),
+                    child: cartIcon,
+                  );
+                },
+              );
+            },
           ),
         ),
       ],
+    );
+  }
+
+  Widget _emptyAddress(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => AddUpdateAddressScreen()));
+      },
+      child: Row(
+        children: const [
+          Icon(Icons.location_on_outlined, size: 16),
+          SizedBox(width: 4),
+          Text("Select Address", style: TextStyle(fontSize: 13)),
+        ],
+      ),
     );
   }
 }

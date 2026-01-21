@@ -68,7 +68,6 @@ class MyOrders extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                /// ORDER ID + STATUS
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [

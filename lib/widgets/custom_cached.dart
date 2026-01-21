@@ -16,9 +16,12 @@ class CustomCachedCard extends StatelessWidget {
       height: height,
       width: width,
       fit: fit ?? BoxFit.cover,
-      placeholder: (context, url) => const Center(child:CircularProgressIndicator()),
+      placeholder: (context, url) => const Center(child: SizedBox(
+        height: 20,
+        width: 20,
+        child: CircularProgressIndicator())),
       errorWidget: (context, url, error) => Center(
-        child: Text("No Img Found 😒",),
+        child: Text("No Img Found 😒", style: TextStyle(fontSize: 12), textAlign: TextAlign.center),
       ),
     );
   }

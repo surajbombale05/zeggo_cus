@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zeggo_cus/constants/app_colors.dart';
+import 'package:zeggo_cus/features/home_screen/bloc/get_all_cafe/get_all_cafe_cubit.dart';
+import 'package:zeggo_cus/features/home_screen/bloc/get_all_products/get_all_products_model.dart';
 import 'package:zeggo_cus/features/home_screen/screen/product_detail_screen.dart';
 import 'package:zeggo_cus/widgets/custom_product_card.dart';
 
@@ -11,30 +14,6 @@ class CafeView extends StatefulWidget {
 }
 
 class _CafeViewState extends State<CafeView> {
-  final List<Map<String, dynamic>> products = [
-    {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
-    {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
-    {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
-      {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
-    {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
-    {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
-      {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
-    {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
-    {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
-      {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
-    {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
-    {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
-      {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
-    {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
-    {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
-      {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
-    {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
-    {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
-      {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
-    {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
-    {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,34 +28,33 @@ class _CafeViewState extends State<CafeView> {
 
       body: Padding(
         padding: const EdgeInsets.all(12),
-        child: GridView.builder(
-          itemCount: products.length,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-              mainAxisSpacing: 5,
-              crossAxisSpacing: 5,
-              childAspectRatio: .49,
-          ),
-          itemBuilder: (_, index) {
-            final p = products[index];
+        child: BlocBuilder<GetAllCafeCubit, GetAllCafeState>(
+          builder: (context, state) {
+            if (state is GetAllCafeLoadingState) {
+              return Center(child: CircularProgressIndicator());
+            }
+            if (state is GetAllCafeLoadedState) {
+              return GridView.builder(
+                itemCount: state.model.data?.length ?? 0,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  mainAxisSpacing: 5,
+                  crossAxisSpacing: 5,
+                  childAspectRatio: .49,
+                ),
+                itemBuilder: (_, index) {
+                  final p = state.model.data?[index];
 
-            return GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => ProductDetailScreen(
-                      name: "Fresh Banana",
-                      image: "assets/images/banana.png",
-                      price: "₹40",
-                      description:
-                          "Fresh bananas directly sourced from farms. Rich in nutrients and perfect for snacks, smoothies, and desserts.",
-                    ),
-                  ),
-                );
-              },
-              child: CustomProductCard(p: p, index: index),
-            );
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => ProductDetailScreen(id: p?.id ?? "")));
+                    },
+                    child: CustomProductCard(data: p ?? Datum()),
+                  );
+                },
+              );
+            }
+            return SizedBox();
           },
         ),
       ),

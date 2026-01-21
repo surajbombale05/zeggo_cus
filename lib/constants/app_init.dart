@@ -8,7 +8,7 @@ class AppInit {
   static Future<void> init() async {
     if (!kIsWeb) {
       AppMessaging.init();
-
+      final messaging = FirebaseMessaging.instance;
       NotificationSettings settings = await FirebaseMessaging.instance.requestPermission(
         alert: true,
         announcement: true,
@@ -30,6 +30,12 @@ class AppInit {
       await FirebaseMessaging.instance.subscribeToTopic(
         RegExp(r'^[a-zA-Z0-9-_.~%]{1,900}$').hasMatch("$firebasetoken").toString(),
       );
+      firebasetoken = await messaging.getToken();
+      log("FCM Token: $firebasetoken");
+
+      if (firebasetoken != null && firebasetoken!.isNotEmpty) {
+        await messaging.subscribeToTopic('all');
+      }
       FirebaseMessaging.instance.setAutoInitEnabled(true);
 
       FirebaseMessaging.onBackgroundMessage(AppMessaging.backgroundHandler);
@@ -43,7 +49,6 @@ class AppInit {
           );
         }
       });
-      firebasetoken = await FirebaseMessaging.instance.getToken();
       log("Token $firebasetoken");
     }
   }

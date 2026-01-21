@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:zeggo_cus/constants/app_colors.dart';
+import 'package:zeggo_cus/features/profile_section/screen/order/tracking_screen.dart';
 
 class OrderDetailScreen extends StatelessWidget {
   final String orderId;
@@ -23,7 +25,20 @@ class OrderDetailScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
-      appBar: AppBar(title: const Text("Order Details"), elevation: 1, backgroundColor: Colors.white),
+      appBar: AppBar(
+        title: const Text("Order Details"),
+        elevation: 1,
+        backgroundColor: Colors.white,
+        actions: [
+          InkWell(
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => TrackingScreen()));
+            },
+            child: Text("Track Order", style: TextStyle(color: AppColors.primaryColor)),
+          ),
+          SizedBox(width: 10),
+        ],
+      ),
 
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(14),

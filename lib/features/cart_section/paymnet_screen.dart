@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zeggo_cus/constants/app_colors.dart';
+import 'package:zeggo_cus/features/profile_section/bloc/address/get_all_address/get_all_address_cubit.dart';
+import 'package:zeggo_cus/features/profile_section/bloc/address/get_all_address/get_all_address_model.dart';
+import 'package:zeggo_cus/features/profile_section/screen/address/add_update_address.dart';
 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
@@ -10,6 +14,7 @@ class CheckoutScreen extends StatefulWidget {
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
   String paymentMethod = "cod";
+  Datum? selectedAddress;
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +63,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               ],
             ),
           ),
-
+          _addressCard(context),
           const Spacer(),
 
           Container(
@@ -99,12 +104,57 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         ).showSnackBar(const SnackBar(content: Text("Redirecting to online payment...")));
                       }
                     },
-                    child:  Text(
+                    child: Text(
                       "Place Order",
                       style: TextStyle(color: AppColors.white, fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  BoxDecoration _cardDecoration() {
+    return BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(18),
+      boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 10, offset: const Offset(0, 4))],
+    );
+  }
+
+  Widget _addressCard(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 14),
+      padding: const EdgeInsets.all(14),
+      decoration: _cardDecoration(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text("Delivery Address", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          const SizedBox(height: 10),
+
+          InkWell(
+            onTap: _openAddressBottomSheet,
+            child: Row(
+              children: [
+                const Icon(Icons.location_on),
+                const SizedBox(width: 8),
+
+                Expanded(
+                  child: Text(
+                    selectedAddress == null
+                        ? "Select Address"
+                        : "${selectedAddress!.fullAddress} ,${selectedAddress!.city}, ${selectedAddress!.phoneNo}",
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+
+                const Icon(Icons.keyboard_arrow_down),
               ],
             ),
           ),
@@ -128,11 +178,103 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             style: TextStyle(
               fontSize: isTotal ? 16 : 14,
               fontWeight: isTotal ? FontWeight.bold : FontWeight.w500,
-              color: isDiscount ?  Theme.of(context).primaryColor : AppColors.primaryDark,
+              color: isDiscount ? Theme.of(context).primaryColor : AppColors.primaryDark,
             ),
           ),
         ],
       ),
+    );
+  }
+
+  void _openAddressBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (_) {
+        return BlocBuilder<GetAllAddressCubit, GetAllAddressState>(
+          builder: (context, state) {
+            if (state is GetAllAddressLoadingState) {
+              return const Padding(
+                padding: EdgeInsets.all(20),
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            if (state is GetAllAddressLoadedState) {
+              if (state.model.data!.isEmpty) {
+                return const Center(child: Text("No Address Found"));
+              }
+
+              return SafeArea(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        padding: const EdgeInsets.all(14),
+                        itemCount: state.model.data!.length,
+                        itemBuilder: (context, index) {
+                          final item = state.model.data![index];
+
+                          return InkWell(
+                            onTap: () {
+                              setState(() => selectedAddress = item);
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.only(bottom: 12),
+                              padding: const EdgeInsets.all(14),
+                              decoration: _cardDecoration(),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(item.addType ?? "", style: const TextStyle(fontWeight: FontWeight.bold)),
+                                  const SizedBox(height: 6),
+                                  Text("${item.fullAddress ?? ""} ,${item.city}, ${item.phoneNo}"),
+                                  const SizedBox(height: 6),
+                                  Text("Phone: ${item.phoneNo ?? ""}"),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      SizedBox(height: 12),
+                      Padding(
+                        padding: EdgeInsetsGeometry.all(12),
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: 48,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Theme.of(context).primaryColor,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => AddUpdateAddressScreen()),
+                              );
+                            },
+                            child: Text(
+                              "Add New Address",
+                              style: TextStyle(color: AppColors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
+
+            return const SizedBox();
+          },
+        );
+      },
     );
   }
 }

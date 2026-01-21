@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:zeggo_cus/constants/app_colors.dart';
 import 'package:zeggo_cus/constants/app_consts.dart';
 import 'package:zeggo_cus/features/auth/view/login_view.dart';
+import 'package:zeggo_cus/features/home_screen/screen/home_screen.dart';
+import 'package:zeggo_cus/utils/storage/storage.dart';
 
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
@@ -11,8 +14,7 @@ class SplashView extends StatefulWidget {
   State<SplashView> createState() => _SplashViewState();
 }
 
-class _SplashViewState extends State<SplashView>
-    with SingleTickerProviderStateMixin {
+class _SplashViewState extends State<SplashView> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
@@ -20,36 +22,34 @@ class _SplashViewState extends State<SplashView>
   @override
   void initState() {
     super.initState();
-
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: AppConsts.animationDuration),
     );
 
-    _fadeAnimation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
+    _fadeAnimation = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
+
+    _scaleAnimation = Tween<double>(begin: 0.85, end: 1.0).animate(_fadeAnimation);
+
+    _startSplashFlow();
+  }
+
+  Future<void> _startSplashFlow() async {
+    await _controller.forward();
+    await Future.delayed(Duration(milliseconds: (AppConsts.splashDuration * 1000) - AppConsts.animationDuration));
+    if (!mounted) return;
+    final userId = LocalStorageUtils.getUserId();
+    log("--------->>>>>>>> $userId");
+    final nextPage = userId != null && userId.isNotEmpty ? const HomeScreen() : const LoginView();
+    Navigator.of(context).pushReplacement(
+      PageRouteBuilder(
+        pageBuilder: (_, __, ___) => nextPage,
+        transitionDuration: const Duration(milliseconds: 800),
+        transitionsBuilder: (_, animation, __, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+      ),
     );
-
-    _scaleAnimation = Tween<double>(
-      begin: 0.85,
-      end: 1.0,
-    ).animate(_fadeAnimation);
-
-    _controller.forward();
-
-    Timer(const Duration(seconds: AppConsts.splashDuration), () {
-      // Navigate next
-      Navigator.of(context).pushReplacement(
-        PageRouteBuilder(
-          pageBuilder: (_, __, ___) => const LoginView(),
-          transitionDuration: const Duration(milliseconds: 800),
-          transitionsBuilder: (_, animation, __, child) {
-            return FadeTransition(opacity: animation, child: child);
-          },
-        ),
-      );
-    });
   }
 
   @override
@@ -73,7 +73,7 @@ class _SplashViewState extends State<SplashView>
                 height: 260,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppColors.accentPurple.withValues(alpha:0.25),
+                  color: AppColors.accentPurple.withValues(alpha: 0.25),
                 ),
               ),
             ),
@@ -83,10 +83,7 @@ class _SplashViewState extends State<SplashView>
               child: Container(
                 width: 300,
                 height: 300,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.accentCyan.withValues(alpha:0.18),
-                ),
+                decoration: BoxDecoration(shape: BoxShape.circle, color: AppColors.accentCyan.withValues(alpha: 0.18)),
               ),
             ),
 
@@ -108,18 +105,11 @@ class _SplashViewState extends State<SplashView>
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               gradient: RadialGradient(
-                                colors: [
-                                  AppColors.accentPurple.withValues(alpha:0.35),
-                                  Colors.transparent,
-                                ],
+                                colors: [AppColors.accentPurple.withValues(alpha: 0.35), Colors.transparent],
                               ),
                             ),
                           ),
-                          Image.asset(
-                            AppConsts.logoWhite,
-                            width: 160,
-                            height: 160,
-                          ),
+                          Image.asset(AppConsts.logoWhite, width: 160, height: 160),
                         ],
                       ),
                       const Text(
@@ -134,11 +124,7 @@ class _SplashViewState extends State<SplashView>
                       const SizedBox(height: 10),
                       Text(
                         AppConsts.appTagline,
-                        style: TextStyle(
-                          fontSize: 14,
-                          letterSpacing: 1.2,
-                          color: AppColors.white75,
-                        ),
+                        style: TextStyle(fontSize: 14, letterSpacing: 1.2, color: AppColors.white75),
                       ),
                     ],
                   ),

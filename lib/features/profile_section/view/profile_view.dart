@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:zeggo_cus/constants/app_toast.dart';
+import 'package:zeggo_cus/constants/app_url.dart';
+import 'package:zeggo_cus/features/auth/view/login_view.dart';
+import 'package:zeggo_cus/features/profile_section/bloc/delete_profile/delete_profile_cubit.dart';
+import 'package:zeggo_cus/features/profile_section/bloc/get_profile/get_profile_cubit.dart';
 import 'package:zeggo_cus/features/profile_section/screen/address/address.dart';
 import 'package:zeggo_cus/features/profile_section/screen/order/my_order.dart';
 import 'package:zeggo_cus/features/profile_section/screen/wallet/wallet.dart';
 import 'package:zeggo_cus/features/profile_section/screen/wishlist_screen.dart';
+import 'package:zeggo_cus/features/profile_section/view/edit_profile.dart';
+import 'package:zeggo_cus/utils/storage/storage.dart';
+import 'package:zeggo_cus/widgets/custom_cached.dart';
 import 'package:zeggo_cus/widgets/info_screen.dart';
 
 class ProfileView extends StatelessWidget {
@@ -16,44 +25,49 @@ class ProfileView extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              // 🔝 Profile Header
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 32),
                 width: double.infinity,
                 decoration: BoxDecoration(
                   color: Theme.of(context).primaryColor,
-                  // gradient: LinearGradient(
-                  //   colors: [Color(0xFF1FA96E), Color(0xFF47D991), Color(0xFF2FB67B)],
-                  //   stops: [0.0, 0.45, 1.0],
-                  //   begin: Alignment.topLeft,
-                  //   end: Alignment.bottomRight,
-                  // ),
+
                   borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
                 ),
-                child: Column(
-                  children: [
-                    CircleAvatar(
-                      radius: 45,
-                      backgroundColor: Colors.white,
-                      child: Icon(Icons.person, size: 50, color: Theme.of(context).primaryColor),
-                    ),
-                    const SizedBox(height: 12),
-                    const Text(
-                      "Suraj Bombale",
-                      style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 4),
-                    const Text("suraj@email.com", style: TextStyle(color: Colors.white70)),
-                    const SizedBox(height: 12),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: const Text("🌟 Premium Member", style: TextStyle(color: Colors.white, fontSize: 12)),
-                    ),
-                  ],
+                child: BlocBuilder<GetProfileCubit, GetProfileState>(
+                  builder: (context, state) {
+                    if (state is GetProfileLoadedState) {
+                      var data = state.model.data;
+                      return Column(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadiusGeometry.circular(50),
+                            child: CustomCachedCard(
+                              imageUrl: "${AppString.baseUrl}/${data?.profilePicture}",
+                              height: 100,
+                              width: 100,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            "${data?.name}",
+                            style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 4),
+                          Text("${data?.email}", style: TextStyle(color: Colors.white70)),
+                          const SizedBox(height: 12),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: const Text("🌟 Premium Member", style: TextStyle(color: Colors.white, fontSize: 12)),
+                          ),
+                        ],
+                      );
+                    }
+                    return SizedBox();
+                  },
                 ),
               ),
 
@@ -77,6 +91,16 @@ class ProfileView extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
                   children: [
+                    _ProfileTile(
+                      icon: Icons.edit,
+                      title: "Edit Profile",
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => EditProfileScreen(isFirstTimeUser: false)),
+                        );
+                      },
+                    ),
                     _ProfileTile(
                       icon: Icons.favorite_border,
                       title: "Wishlist",
@@ -105,7 +129,7 @@ class ProfileView extends StatelessWidget {
                         Navigator.push(context, MaterialPageRoute(builder: (context) => WalletScreen()));
                       },
                     ),
-                    _ProfileTile(icon: Icons.settings_outlined, title: "Settings", onTap: () {}),
+                    // _ProfileTile(icon: Icons.settings_outlined, title: "Settings", onTap: () {}),
                     _ProfileTile(
                       icon: Icons.help_outline,
                       title: "Help & Support",
@@ -165,23 +189,44 @@ class ProfileView extends StatelessWidget {
                   showDialog(
                     context: context,
                     builder: (context) {
-                      return AlertDialog(
-                        title: const Text("Delete Account"),
-                        content: const Text("Are you sure you want to delete account?"),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: const Text("Cancel"),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text("Delete Account"),
-                          ),
-                        ],
+                      return BlocListener<DeleteProfileCubit, DeleteProfileState>(
+                        listener: (context, state) {
+                          if (state is DeleteProfileErrorState) {
+                            AppToast.showError(context, "", state.error);
+                            return;
+                          }
+                          if (state is DeleteProfileLoadedState) {
+                            AppToast.showSuccess(context, "", "Delete Successfully");
+                            LocalStorageUtils.clear().then(
+                              (e) => {
+                                Navigator.pop(context),
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => LoginView()),
+                                  (route) => false,
+                                ),
+                              },
+                            );
+                          }
+                        },
+                        child: AlertDialog(
+                          title: const Text("Delete Account"),
+                          content: const Text("Are you sure you want to delete account?"),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text("Cancel"),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                context.read<DeleteProfileCubit>().deleteProfile();
+                              },
+                              child: const Text("Delete Account"),
+                            ),
+                          ],
+                        ),
                       );
                     },
                   );
@@ -218,7 +263,16 @@ class ProfileView extends StatelessWidget {
                           ),
                           TextButton(
                             onPressed: () {
-                              Navigator.of(context).pop();
+                              LocalStorageUtils.clear().then(
+                                (e) => {
+                                  Navigator.pop(context),
+                                  Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => LoginView()),
+                                    (route) => false,
+                                  ),
+                                },
+                              );
                             },
                             child: const Text("Logout"),
                           ),

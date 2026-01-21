@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zeggo_cus/constants/app_colors.dart';
+import 'package:zeggo_cus/features/home_screen/bloc/get_all_products/get_all_products_model.dart';
+import 'package:zeggo_cus/features/home_screen/bloc/get_all_trending/get_all_trending_cubit.dart';
 import 'package:zeggo_cus/features/home_screen/screen/product_detail_screen.dart';
 import 'package:zeggo_cus/widgets/custom_product_card.dart';
 
@@ -11,23 +14,6 @@ class TrendingView extends StatefulWidget {
 }
 
 class _TrendingViewState extends State<TrendingView> {
-  final List<Map<String, dynamic>> products = [
-    {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
-    {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
-    {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
-    {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
-    {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
-    {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
-    {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
-    {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
-    {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
-    {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
-    {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
-    {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
-    {"name": "Vietnamese Cold Coffee", "price": 109, "image": "https://picsum.photos/200/300"},
-    {"name": "Adrak Chai", "price": 99, "image": "https://picsum.photos/200/301"},
-    {"name": "Chili Cheese Toast", "price": 75, "image": "https://picsum.photos/200/302"},
-  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,44 +75,50 @@ class _TrendingViewState extends State<TrendingView> {
   }
 
   Widget _productSection(context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text("Trending Product", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
-        const SizedBox(height: 12),
+    return BlocBuilder<GetAllTrendingCubit, GetAllTrendingState>(
+      builder: (context, state) {
+        if (state is GetAllTrendingLoadingState) {
+          return Center(child: CircularProgressIndicator());
+        }
+        if (state is GetAllTrendingLoadedState) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text("Trending Product", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+              const SizedBox(height: 12),
 
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: products.length,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-            mainAxisSpacing: 5,
-            crossAxisSpacing: 5,
-            childAspectRatio: .47,
-          ),
-          itemBuilder: (_, i) {
-            final p = products[i];
-            return GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => ProductDetailScreen(
-                      name: "Fresh Banana",
-                      image: "assets/images/banana.png",
-                      price: "₹40",
-                      description:
-                          "Fresh bananas directly sourced from farms. Rich in nutrients and perfect for snacks, smoothies, and desserts.",
-                    ),
-                  ),
-                );
-              },
-              child: CustomProductCard(p: p, index: i),
-            );
-          },
-        ),
-      ],
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: state.model.data?.length ?? 0,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  mainAxisSpacing: 5,
+                  crossAxisSpacing: 5,
+                  childAspectRatio: .47,
+                ),
+                itemBuilder: (_, i) {
+                  final p = state.model.data?[i];
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ProductDetailScreen(
+                         id: p?.id ?? "",
+                          ),
+                        ),
+                      );
+                    },
+                    child: CustomProductCard(data: p ?? Datum(),),
+                  );
+                },
+              ),
+            ],
+          );
+        }
+        return SizedBox();
+      },
     );
   }
 }
