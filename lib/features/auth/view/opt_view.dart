@@ -28,6 +28,9 @@ class _OtpViewState extends State<OtpView> {
   bool _canResend = false;
   Timer? _timer;
   late String _serverOtp;
+  String getEnteredOtp() {
+    return _controllers.map((c) => c.text).join();
+  }
 
   @override
   void initState() {
@@ -199,21 +202,19 @@ class _OtpViewState extends State<OtpView> {
                         const SizedBox(height: 30),
 
                         BlocConsumer<VerifyOtpCubit, VerifyOtpState>(
-                          listener: (context, state) {
+                          listener: (context, state) async {
                             if (state is VerifyOtpErrorState) {
                               AppToast.showError(context, "", state.error);
                               return;
                             }
                             if (state is VerifyOtpLoadedState) {
                               AppToast.showSuccess(context, "", state.model.message ?? "");
-                              LocalStorageUtils.saveUserId(state.model.data?.id ?? "");
+                              await LocalStorageUtils.saveUserId(state.model.data?.id ?? "");
                               userId = state.model.data?.id ?? "";
                               if (state.model.data?.firstTimeUser ?? true) {
                                 Navigator.pushAndRemoveUntil(
                                   context,
-                                  MaterialPageRoute(builder: (context) => EditProfileScreen(
-                                    isFirstTimeUser: true,
-                                  )),
+                                  MaterialPageRoute(builder: (context) => EditProfileScreen(isFirstTimeUser: true)),
                                   (route) => false,
                                 );
                               } else {
@@ -233,10 +234,17 @@ class _OtpViewState extends State<OtpView> {
                                     height: 54,
                                     child: ElevatedButton(
                                       onPressed: () async {
+                                        final enteredOtp = getEnteredOtp();
+
+                                        if (enteredOtp.length != 4) {
+                                          AppToast.showError(context, "", "Please enter valid OTP");
+                                          return;
+                                        }
+
                                         final deviceInfo = await getDeviceInfo();
                                         context.read<VerifyOtpCubit>().verifyOtp(
                                           widget.mobileNumber,
-                                          _serverOtp,
+                                          enteredOtp,
                                           deviceInfo,
                                           firebasetoken ?? "",
                                         );

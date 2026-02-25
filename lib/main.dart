@@ -1,10 +1,11 @@
 import 'dart:developer';
+import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
-import 'package:hive_flutter/adapters.dart';
+import 'package:provider/provider.dart';
 import 'package:zeggo_cus/constants/app_init.dart';
 import 'package:zeggo_cus/constants/app_theme.dart';
 import 'package:zeggo_cus/features/auth/bloc/send_otp/send_otp_cubit.dart';
@@ -29,28 +30,38 @@ import 'package:zeggo_cus/features/profile_section/bloc/update_profile/update_pr
 import 'package:zeggo_cus/features/splash_screen/splash_screen_view.dart';
 import 'package:zeggo_cus/firebase_options.dart';
 import 'package:zeggo_cus/utils/repo.dart';
-import 'package:zeggo_cus/utils/storage/cart_item.dart';
+import 'package:zeggo_cus/utils/service/proveider/cart_provider.dart';
 import 'package:zeggo_cus/utils/storage/storage.dart';
 
 String? firebasetoken;
 String? userId;
 Repository repository = Repository();
 
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (X509Certificate cert, String host, int port) => true;
+  }
+}
+
 void main() async {
   try {
     WidgetsFlutterBinding.ensureInitialized();
+    HttpOverrides.global = MyHttpOverrides();
     await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
     await AppInit.init();
+    repository.init();
     await LocalStorageUtils.init().then((e) {
       userId = LocalStorageUtils.getUserId();
     });
 
-    await Hive.initFlutter();
-    Hive.registerAdapter(CartItemAdapter());
-    await Hive.openBox<CartItem>(
-      'cartBox',
-    ).then((e) => {print("Box Open Sucessfully")}).onError((e, stk) => {print("Error to Open $e $stk")});
+    // await Hive.initFlutter();
+    // Hive.registerAdapter(CartItemAdapter());
+    // await Hive.openBox<CartItem>(
+    //   'cartBox',
+    // ).then((e) => {print("Box Open Sucessfully")}).onError((e, stk) => {print("Error to Open $e $stk")});
   } catch (e, stk) {
     log("-------- $e $stk");
   }
@@ -83,6 +94,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<GetAllProductByCatidAndSubcatidCubit>(create: (context) => GetAllProductByCatidAndSubcatidCubit()),
         BlocProvider<PostWishlistCubit>(create: (context) => PostWishlistCubit()),
         BlocProvider<GetAllWishlistCubit>(create: (context) => GetAllWishlistCubit()),
+        ChangeNotifierProvider(create: (_) => CartProvider()..load()),
       ],
 
       child: GetMaterialApp(

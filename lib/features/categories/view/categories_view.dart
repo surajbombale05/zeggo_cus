@@ -63,7 +63,7 @@ class CategoriesView extends StatelessWidget {
                       children: [
                         _sectionTitle(category.name ?? ""),
 
-                        if (subCats.isNotEmpty) _subCategoryGrid(subCats, context, category.id ?? ""),
+                        if (subCats.isNotEmpty) _subCategoryGrid(subCats, context, category.id ?? "",category.name ?? ""),
 
                         const SizedBox(height: 20),
                       ],
@@ -87,7 +87,7 @@ class CategoriesView extends StatelessWidget {
     );
   }
 
-  Widget _subCategoryGrid(List<Datum> subCats, BuildContext context, String categoryId) {
+  Widget _subCategoryGrid(List<Datum> subCats, BuildContext context, String categoryId,String name) {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -106,7 +106,7 @@ class CategoriesView extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => CategoryProductScreen(catId: categoryId, subCatId: sub.id ?? ""),
+                builder: (_) => CategoryProductScreen(catId: categoryId, subCatId: sub.id ?? "",subCats: subCats,catName: name ,),
               ),
             );
           },

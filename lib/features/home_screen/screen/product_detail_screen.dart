@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:zeggo_cus/constants/app_colors.dart';
 import 'package:zeggo_cus/constants/app_url.dart';
+import 'package:zeggo_cus/features/cart_section/cart_view.dart';
 import 'package:zeggo_cus/features/home_screen/bloc/get_product_by_id/get_product_by_id_cubit.dart';
-import 'package:zeggo_cus/utils/service/cart_service.dart';
+import 'package:zeggo_cus/utils/service/proveider/cart_provider.dart';
 import 'package:zeggo_cus/utils/storage/cart_item.dart';
 import 'package:zeggo_cus/widgets/custom_cached.dart';
 
@@ -241,20 +242,21 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
       bottomNavigationBar: BlocBuilder<GetProductByIdCubit, GetProductByIdState>(
         builder: (context, state) {
-          if(state is GetProductByIdLoadedState) {
+          if (state is GetProductByIdLoadedState) {
+            final data = state.model.data;
+            final productId = data?.id ?? "";
+
             return Container(
               padding: const EdgeInsets.all(14),
               decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
               ),
-              child: ValueListenableBuilder(
-                valueListenable: CartService.box.listenable(),
-                builder: (context, Box<CartItem> box, _) {
-                  final data=state.model.data;
-                  final productId = data?.id ?? "";
-                  final quantity = CartService.getQuantity(productId);
-      
+              child: Consumer<CartProvider>(
+                builder: (context, cart, _) {
+                  final quantity = cart.getQuantity(productId);
+
+                  /// 🔹 NOT IN CART
                   if (quantity == 0) {
                     return SizedBox(
                       height: 48,
@@ -264,7 +266,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         ),
                         onPressed: () {
-                          CartService.addToCart(
+                          cart.add(
                             CartItem(
                               productId: productId,
                               name: data?.name ?? "",
@@ -282,41 +284,68 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       ),
                     );
                   }
-      
+
                   /// 🔹 IN CART → SHOW COUNTER
-                  return Container(
-                    height: 48,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Theme.of(context).primaryColor),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      children: [
-                        IconButton(
-                          icon: Icon(Icons.remove, color: Theme.of(context).primaryColor),
-                          onPressed: () => CartService.decrement(productId),
-                        ),
-      
-                        Expanded(
-                          child: Text(
-                            quantity.toString(),
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  return Row(
+                    children: [
+                      Expanded(
+                        flex: 3,
+                        child: Container(
+                          height: 48,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Theme.of(context).primaryColor),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                icon: Icon(Icons.remove, color: Theme.of(context).primaryColor),
+                                onPressed: () => cart.decrement(productId),
+                              ),
+                              Expanded(
+                                child: Text(
+                                  quantity.toString(),
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.add, color: Theme.of(context).primaryColor),
+                                onPressed: () => cart.increment(productId),
+                              ),
+                            ],
                           ),
                         ),
-      
-                        IconButton(
-                          icon: Icon(Icons.add, color: Theme.of(context).primaryColor),
-                          onPressed: () => CartService.increment(productId),
+                      ),
+                      const SizedBox(width: 12),
+
+                      Expanded(
+                        flex: 2,
+                        child: SizedBox(
+                          height: 48,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Theme.of(context).primaryColor,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            ),
+                            onPressed: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (_) => const CartView()));
+                            },
+                            child: Text(
+                              "View Cart",
+                              style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.white),
+                            ),
+                          ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   );
                 },
               ),
             );
           }
-          return SizedBox();
+
+          return const SizedBox.shrink();
         },
       ),
     );

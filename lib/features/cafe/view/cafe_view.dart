@@ -22,7 +22,7 @@ class _CafeViewState extends State<CafeView> {
         automaticallyImplyLeading: false,
         backgroundColor: AppColors.white,
         elevation: 0,
-        title: const Text("Zepto Cafe"),
+        title: const Text("Zeggo Cafe"),
         centerTitle: true,
       ),
 

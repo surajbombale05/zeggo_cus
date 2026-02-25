@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:zeggo_cus/constants/app_url.dart';
@@ -18,9 +19,11 @@ class VerifyOtpCubit extends Cubit<VerifyOtpState> {
       final resp = await repository.sendRequest.post(
         "${AppString.baseUrl}/api/zeggo/users/verify-otp",
         data: {"phone_no": mobileNumber, "otp": otp, "device_id": deviceId, "device_token": deviceToken},
+        options: Options(validateStatus: (status) => status != null && status < 500),
       );
       repository.sendRequest.interceptors.add(PrettyDioLogger());
       final result = resp.data;
+      log("------ $result");
       if (resp.statusCode == 200) {
         if (result["status"] == true) {
           emit(VerifyOtpLoadedState(VerifyOtpModel.fromJson(result)));
@@ -28,6 +31,8 @@ class VerifyOtpCubit extends Cubit<VerifyOtpState> {
           log("Message:=> Status Code=> ${resp.statusCode} \n &URL=> ${resp.realUri} \n Data ${resp.data}");
           emit(VerifyOtpErrorState(result["message"]));
         }
+      } else {
+        emit(VerifyOtpErrorState(result["message"]));
       }
     } catch (e, stk) {
       log("Message:=> Catch Error  => $e $stk");

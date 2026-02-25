@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:zeggo_cus/constants/app_url.dart';
+import 'package:zeggo_cus/features/categories/view/category_product_screen.dart';
 import 'package:zeggo_cus/features/home_screen/bloc/get_all_banner/get_all_banner_cubit.dart';
 import 'package:zeggo_cus/features/home_screen/bloc/get_all_category/get_all_category_cubit.dart';
 import 'package:zeggo_cus/features/home_screen/bloc/get_all_products/get_all_products_cubit.dart';
@@ -79,27 +80,37 @@ class _HomeViewState extends State<HomeView> {
                 const SizedBox(height: 10),
                 SizedBox(
                   height: 90,
-                  child: ListView.separated(
+                  child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: state.model.data?.length ?? 0,
-                    separatorBuilder: (_, __) => const SizedBox(width: 12),
                     itemBuilder: (_, i) {
                       final item = state.model.data?[i];
-                      return Container(
-                        width: 80,
-                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            CustomCachedCard(imageUrl: "${AppString.baseUrl}/${item?.img}", height: 50),
-                            const SizedBox(height: 6),
-                            Text(
-                              item?.name ?? "",
-                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
-                              overflow: TextOverflow.ellipsis,
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  CategoryProductScreen(catId: item?.id ?? "", catName: item?.name ?? ""),
                             ),
-                          ],
+                          );
+                        },
+                        child: Container(
+                          width: 80,
+                          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              CustomCachedCard(imageUrl: "${AppString.baseUrl}/${item?.img}", height: 50),
+                              const SizedBox(height: 6),
+                              Text(
+                                item?.name ?? "",
+                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     },

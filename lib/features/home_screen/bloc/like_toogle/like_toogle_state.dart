@@ -13,8 +13,10 @@ final class LikeToogleLoadingState extends LikeToogleState {
 }
 
 final class LikeToogleLoadedState extends LikeToogleState {
+  final LikeToggleResponse model;
+  LikeToogleLoadedState(this.model);
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [model];
 }
 
 final class LikeToogleErrorState extends LikeToogleState {

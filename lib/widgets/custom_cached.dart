@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:zeggo_cus/constants/app_colors.dart';
 
 class CustomCachedCard extends StatelessWidget {
   final double? height;
@@ -15,11 +16,11 @@ class CustomCachedCard extends StatelessWidget {
       imageUrl: imageUrl,
       height: height,
       width: width,
+      cacheKey: imageUrl,
       fit: fit ?? BoxFit.cover,
-      placeholder: (context, url) => const Center(child: SizedBox(
-        height: 20,
-        width: 20,
-        child: CircularProgressIndicator())),
+      placeholder: (context, url) => Center(
+        child: SizedBox(height: 10, width: 10, child: CircularProgressIndicator(color: AppColors.kGreyColor)),
+      ),
       errorWidget: (context, url, error) => Center(
         child: Text("No Img Found 😒", style: TextStyle(fontSize: 12), textAlign: TextAlign.center),
       ),

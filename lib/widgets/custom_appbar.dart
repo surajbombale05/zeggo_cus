@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:badges/badges.dart' as badges;
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:zeggo_cus/features/cart_section/cart_view.dart';
 import 'package:zeggo_cus/features/profile_section/bloc/address/get_all_address/get_all_address_cubit.dart';
 import 'package:zeggo_cus/features/profile_section/screen/address/add_update_address.dart';
 import 'package:zeggo_cus/features/profile_section/view/profile_view.dart';
-import 'package:zeggo_cus/utils/service/cart_service.dart';
+import 'package:zeggo_cus/utils/service/proveider/cart_provider.dart';
 import 'package:zeggo_cus/utils/storage/auth_guard.dart';
-import 'package:zeggo_cus/utils/storage/cart_item.dart';
 
 class ZeptoStyleAppBar extends StatelessWidget implements PreferredSizeWidget {
   const ZeptoStyleAppBar({super.key});
@@ -102,41 +101,31 @@ class ZeptoStyleAppBar extends StatelessWidget implements PreferredSizeWidget {
 
         Padding(
           padding: const EdgeInsets.only(right: 12),
-          child: Builder(
-            builder: (context) {
-              if (!Hive.isBoxOpen('cartBox')) {
-                return IconButton(icon: const Icon(Icons.shopping_cart_outlined, size: 30), onPressed: () {});
-              }
+          child: Consumer<CartProvider>(
+            builder: (context, cart, _) {
+              final totalCount = cart.items.length;
 
-              return ValueListenableBuilder(
-                valueListenable: CartService.box.listenable(),
-                builder: (context, Box<CartItem> box, _) {
-                  final totalCount = CartService.getItems().length;
-
-                  final cartIcon = IconButton(
-                    icon: const Icon(Icons.shopping_cart_outlined, color: Colors.black87, size: 30),
-                    onPressed: () {
-                      AuthGuard.checkLogin(
-                        context: context,
-                        onLoggedIn: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => const CartView()));
-                        },
-                      );
+              final cartIcon = IconButton(
+                icon: const Icon(Icons.shopping_cart_outlined, color: Colors.black87, size: 30),
+                onPressed: () {
+                  AuthGuard.checkLogin(
+                    context: context,
+                    onLoggedIn: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const CartView()));
                     },
                   );
-                  if (totalCount == 0) {
-                    return cartIcon;
-                  }
-                  return badges.Badge(
-                    badgeStyle: badges.BadgeStyle(badgeColor: Theme.of(context).primaryColor),
-                    position: badges.BadgePosition.topEnd(top: -4, end: -4),
-                    badgeContent: Text(
-                      totalCount.toString(),
-                      style: const TextStyle(color: Colors.white, fontSize: 12),
-                    ),
-                    child: cartIcon,
-                  );
                 },
+              );
+
+              if (totalCount == 0) {
+                return cartIcon;
+              }
+
+              return badges.Badge(
+                badgeStyle: badges.BadgeStyle(badgeColor: Theme.of(context).primaryColor),
+                position: badges.BadgePosition.topEnd(top: -4, end: -4),
+                badgeContent: Text(totalCount.toString(), style: const TextStyle(color: Colors.white, fontSize: 12)),
+                child: cartIcon,
               );
             },
           ),
