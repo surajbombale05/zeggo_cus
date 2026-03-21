@@ -37,12 +37,12 @@ class Datum {
     String? name;
     String? categoryId;
     String? subcategoryId;
-    dynamic img;
+    String? img;
     String? offerPrice;
     String? actualPrice;
     String? productDetails;
     bool? isTrending;
-    String? percentOff;
+    dynamic percentOff;
     dynamic unit;
     bool? isCafe;
     int? quantity;
@@ -50,6 +50,7 @@ class Datum {
     DateTime? updatedAt;
     Category? category;
     Category? subcategory;
+    bool? liked;
 
     Datum({
         this.id,
@@ -69,6 +70,7 @@ class Datum {
         this.updatedAt,
         this.category,
         this.subcategory,
+        this.liked,
     });
 
     factory Datum.fromJson(Map<String, dynamic> json) => Datum(
@@ -82,13 +84,14 @@ class Datum {
         productDetails: json["product_details"],
         isTrending: json["is_trending"],
         percentOff: json["percent_off"],
-        unit: json["unit"],
+        unit:json["unit"],
         isCafe: json["is_cafe"],
         quantity: json["quantity"],
         createdAt: json["createdAt"] == null ? null : DateTime.parse(json["createdAt"]),
         updatedAt: json["updatedAt"] == null ? null : DateTime.parse(json["updatedAt"]),
         category: json["category"] == null ? null : Category.fromJson(json["category"]),
         subcategory: json["subcategory"] == null ? null : Category.fromJson(json["subcategory"]),
+        liked: json["liked"],
     );
 
     Map<String, dynamic> toJson() => {
@@ -109,13 +112,14 @@ class Datum {
         "updatedAt": updatedAt?.toIso8601String(),
         "category": category?.toJson(),
         "subcategory": subcategory?.toJson(),
+        "liked": liked,
     };
 }
 
 class Category {
     String? id;
     String? name;
-    dynamic img;
+    String? img;
     String? des;
     DateTime? createdAt;
     DateTime? updatedAt;

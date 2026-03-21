@@ -15,10 +15,7 @@ class CartView extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
-        title: const Text(
-          "My Cart",
-          style: TextStyle(fontWeight: FontWeight.w600),
-        ),
+        title: const Text("My Cart", style: TextStyle(fontWeight: FontWeight.w600)),
         backgroundColor: Colors.white,
         elevation: 1,
       ),
@@ -28,12 +25,7 @@ class CartView extends StatelessWidget {
           final items = cart.items;
 
           if (items.isEmpty) {
-            return const Center(
-              child: Text(
-                "Your cart is empty 🛒",
-                style: TextStyle(fontSize: 16),
-              ),
-            );
+            return const Center(child: Text("Your cart is empty 🛒", style: TextStyle(fontSize: 16)));
           }
 
           return Column(
@@ -43,11 +35,11 @@ class CartView extends StatelessWidget {
                   padding: const EdgeInsets.all(12),
                   itemCount: items.length,
                   itemBuilder: (context, index) {
-                    return _cartItemCard(context, items[index]);
+                    return _cartItemCard(context, items[index], items);
                   },
                 ),
               ),
-              _priceSummary(context, cart),
+              _priceSummary(context, cart, items),
             ],
           );
         },
@@ -55,7 +47,7 @@ class CartView extends StatelessWidget {
     );
   }
 
-  Widget _cartItemCard(BuildContext context, CartItem item) {
+  Widget _cartItemCard(BuildContext context, CartItem item, List<CartItem> items) {
     final cart = context.read<CartProvider>();
 
     return Container(
@@ -64,13 +56,7 @@ class CartView extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
-          ),
-        ],
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 12, offset: const Offset(0, 6))],
       ),
       child: Row(
         children: [
@@ -78,14 +64,8 @@ class CartView extends StatelessWidget {
             height: 70,
             width: 70,
             padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.grey.shade100,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: CustomCachedCard(
-              imageUrl: "${AppString.baseUrl}/${item.image}",
-              fit: BoxFit.contain,
-            ),
+            decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
+            child: CustomCachedCard(imageUrl: "${AppString.baseUrl}/${item.image}", fit: BoxFit.contain),
           ),
 
           const SizedBox(width: 12),
@@ -94,20 +74,11 @@ class CartView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  item.name,
-                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-                ),
+                Text(item.name, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
                 const SizedBox(height: 4),
-                Text(
-                  "₹${item.price}",
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
+                Text("₹${item.price}", style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
-                Text(
-                  item.unit,
-                  style: const TextStyle(fontSize: 13),
-                ),
+                Text(item.unit, style: const TextStyle(fontSize: 13)),
               ],
             ),
           ),
@@ -125,10 +96,7 @@ class CartView extends StatelessWidget {
                   icon: const Icon(Icons.remove, size: 18),
                   onPressed: () => cart.decrement(item.productId),
                 ),
-                Text(
-                  item.quantity.toString(),
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
+                Text(item.quantity.toString(), style: const TextStyle(fontWeight: FontWeight.bold)),
                 IconButton(
                   padding: EdgeInsets.zero,
                   icon: const Icon(Icons.add, size: 18),
@@ -142,11 +110,8 @@ class CartView extends StatelessWidget {
     );
   }
 
-  Widget _priceSummary(BuildContext context, CartProvider cart) {
-    final itemTotal = cart.items.fold<double>(
-      0,
-      (sum, e) => sum + (e.price * e.quantity),
-    );
+  Widget _priceSummary(BuildContext context, CartProvider cart, List<CartItem> items) {
+    final itemTotal = cart.items.fold<double>(0, (sum, e) => sum + (e.price * e.quantity));
 
     const double deliveryFee = 0;
     const double discount = 0;
@@ -157,13 +122,7 @@ class CartView extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 20,
-            offset: const Offset(0, -6),
-          ),
-        ],
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 20, offset: const Offset(0, -6))],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -174,11 +133,7 @@ class CartView extends StatelessWidget {
 
           const Divider(height: 24),
 
-          _priceRow(
-            "Grand Total",
-            "₹${grandTotal.toStringAsFixed(0)}",
-            isTotal: true,
-          ),
+          _priceRow("Grand Total", "₹${grandTotal.toStringAsFixed(0)}", isTotal: true),
 
           const SizedBox(height: 14),
 
@@ -188,23 +143,14 @@ class CartView extends StatelessWidget {
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).primaryColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
               ),
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const CheckoutScreen()),
-                );
+                Navigator.push(context, MaterialPageRoute(builder: (_) => CheckoutScreen(items: items)));
               },
               child: const Text(
                 "Proceed to Checkout",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
           ),
@@ -213,12 +159,7 @@ class CartView extends StatelessWidget {
     );
   }
 
-  Widget _priceRow(
-    String title,
-    String value, {
-    bool isTotal = false,
-    bool isDiscount = false,
-  }) {
+  Widget _priceRow(String title, String value, {bool isTotal = false, bool isDiscount = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -226,10 +167,7 @@ class CartView extends StatelessWidget {
         children: [
           Text(
             title,
-            style: TextStyle(
-              fontSize: isTotal ? 16 : 14,
-              fontWeight: isTotal ? FontWeight.bold : FontWeight.w500,
-            ),
+            style: TextStyle(fontSize: isTotal ? 16 : 14, fontWeight: isTotal ? FontWeight.bold : FontWeight.w500),
           ),
           Text(
             value,

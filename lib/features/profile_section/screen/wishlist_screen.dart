@@ -13,6 +13,12 @@ class WishlistScreen extends StatefulWidget {
 
 class _WishlistScreenState extends State<WishlistScreen> {
   @override
+  void initState() {
+    super.initState();
+    context.read<GetAllWishlistCubit>().getAllWishlist();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
@@ -20,23 +26,23 @@ class _WishlistScreenState extends State<WishlistScreen> {
 
       body: BlocBuilder<GetAllWishlistCubit, GetAllWishlistState>(
         builder: (context, state) {
-          if(state is GetAllWishlistErrorState){
-            return Center(child: Text(state.error),);
+          if (state is GetAllWishlistErrorState) {
+            return Center(child: Text(state.error));
           }
-          if(state is GetAllWishlistLoadedState) {
+          if (state is GetAllWishlistLoadedState) {
             return GridView.builder(
-            itemCount: state.model.data?.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              mainAxisSpacing: 5,
-              crossAxisSpacing: 5,
-              childAspectRatio: .49,
-            ),
-            itemBuilder: (_, i) {
-              final p = state.model.data?[i];
-              return CustomProductCard(data: Datum());
-            },
-          );
+              itemCount: state.model.data?.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                mainAxisSpacing: 5,
+                crossAxisSpacing: 5,
+                childAspectRatio: .55,
+              ),
+              itemBuilder: (_, i) {
+                final p = state.model.data?[i].product;
+                return CustomProductCard(data: p ?? Datum());
+              },
+            );
           }
           return SizedBox();
         },

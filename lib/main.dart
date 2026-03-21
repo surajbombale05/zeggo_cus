@@ -18,13 +18,17 @@ import 'package:zeggo_cus/features/home_screen/bloc/get_all_products/get_all_pro
 import 'package:zeggo_cus/features/home_screen/bloc/get_all_trending/get_all_trending_cubit.dart';
 import 'package:zeggo_cus/features/home_screen/bloc/get_product_by_id/get_product_by_id_cubit.dart';
 import 'package:zeggo_cus/features/home_screen/bloc/like_toogle/like_toogle_cubit.dart';
+import 'package:zeggo_cus/features/home_screen/bloc/place_order/place_order_cubit.dart';
 import 'package:zeggo_cus/features/profile_section/bloc/address/delete_address/delete_address_cubit.dart';
 import 'package:zeggo_cus/features/profile_section/bloc/address/get_all_address/get_all_address_cubit.dart';
 import 'package:zeggo_cus/features/profile_section/bloc/address/post_address/post_address_cubit.dart';
 import 'package:zeggo_cus/features/profile_section/bloc/address/update_address/update_address_cubit.dart';
 import 'package:zeggo_cus/features/profile_section/bloc/delete_profile/delete_profile_cubit.dart';
+import 'package:zeggo_cus/features/profile_section/bloc/get_all_orders/get_all_orders_cubit.dart';
 import 'package:zeggo_cus/features/profile_section/bloc/get_all_wishlist/get_all_wishlist_cubit.dart';
+import 'package:zeggo_cus/features/profile_section/bloc/get_order_by_id/get_order_by_id_cubit.dart';
 import 'package:zeggo_cus/features/profile_section/bloc/get_profile/get_profile_cubit.dart';
+import 'package:zeggo_cus/features/profile_section/bloc/get_setting/get_setting_cubit.dart';
 import 'package:zeggo_cus/features/profile_section/bloc/post_wishlist/post_wishlist_cubit.dart';
 import 'package:zeggo_cus/features/profile_section/bloc/update_profile/update_profile_cubit.dart';
 import 'package:zeggo_cus/features/splash_screen/splash_screen_view.dart';
@@ -53,9 +57,8 @@ void main() async {
     await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
     await AppInit.init();
     repository.init();
-    await LocalStorageUtils.init().then((e) {
-      userId = LocalStorageUtils.getUserId();
-    });
+    await LocalStorageUtils.init();
+    userId = await LocalStorageUtils.getUserId();
 
     // await Hive.initFlutter();
     // Hive.registerAdapter(CartItemAdapter());
@@ -94,6 +97,11 @@ class MyApp extends StatelessWidget {
         BlocProvider<GetAllProductByCatidAndSubcatidCubit>(create: (context) => GetAllProductByCatidAndSubcatidCubit()),
         BlocProvider<PostWishlistCubit>(create: (context) => PostWishlistCubit()),
         BlocProvider<GetAllWishlistCubit>(create: (context) => GetAllWishlistCubit()),
+        BlocProvider<GetSettingCubit>(create: (context) => GetSettingCubit()),
+        BlocProvider<PlaceOrderCubit>(create: (context) => PlaceOrderCubit()),
+
+        BlocProvider<GetAllOrdersCubit>(create: (context) => GetAllOrdersCubit()),
+        BlocProvider<GetOrderByIdCubit>(create: (context) => GetOrderByIdCubit()),
         ChangeNotifierProvider(create: (_) => CartProvider()..load()),
       ],
 

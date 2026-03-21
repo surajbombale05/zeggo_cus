@@ -38,9 +38,10 @@ class _SplashViewState extends State<SplashView> with SingleTickerProviderStateM
     await _controller.forward();
     await Future.delayed(Duration(milliseconds: (AppConsts.splashDuration * 1000) - AppConsts.animationDuration));
     if (!mounted) return;
-    final userId = LocalStorageUtils.getUserId();
-    log("--------->>>>>>>> $userId");
-    final nextPage = userId != null && userId.isNotEmpty ? const HomeScreen() : const LoginView();
+    final storedUserId = await LocalStorageUtils.getUserId();
+    log("--------->>>>>>>> $storedUserId");
+
+    final nextPage = storedUserId != null && storedUserId.isNotEmpty ? const HomeScreen() : const LoginView();
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
         pageBuilder: (_, __, ___) => nextPage,
@@ -87,7 +88,6 @@ class _SplashViewState extends State<SplashView> with SingleTickerProviderStateM
               ),
             ),
 
-            // Center Content
             Center(
               child: FadeTransition(
                 opacity: _fadeAnimation,

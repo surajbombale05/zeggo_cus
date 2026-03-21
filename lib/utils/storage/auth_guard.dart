@@ -4,12 +4,13 @@ import 'package:zeggo_cus/main.dart';
 import 'package:zeggo_cus/utils/storage/storage.dart';
 
 class AuthGuard {
-  static bool isLoggedIn() {
+  static Future<bool> isLoggedIn() async {
     if (userId != null && userId!.isNotEmpty) {
       return true;
     }
 
-    final storedId = LocalStorageUtils.getUserId();
+     final storedId = await LocalStorageUtils.getUserId();
+
     if (storedId != null && storedId.isNotEmpty) {
       userId = storedId;
       return true;
@@ -18,8 +19,8 @@ class AuthGuard {
     return false;
   }
 
-  static void checkLogin({required BuildContext context, required VoidCallback onLoggedIn}) {
-    if (isLoggedIn()) {
+  static Future<void> checkLogin({required BuildContext context, required VoidCallback onLoggedIn}) async {
+    if (await isLoggedIn()) {
       onLoggedIn();
     } else {
       Navigator.push(context, MaterialPageRoute(builder: (_) => const LoginView()));

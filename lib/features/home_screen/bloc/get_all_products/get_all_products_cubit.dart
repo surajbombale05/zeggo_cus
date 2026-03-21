@@ -14,7 +14,10 @@ class GetAllProductsCubit extends Cubit<GetAllProductsState> {
   getAllProduct() async {
     try {
       emit(GetAllProductsLoadingState());
-      final resp = await repository.sendRequest.get("${AppString.baseUrl}/api/zeggo/products");
+      final resp = await repository.sendRequest.get(
+        "${AppString.baseUrl}/api/zeggo/products",
+        queryParameters: {if (userId != null && userId!.isNotEmpty) "user_id": userId},
+      );
       repository.sendRequest.interceptors.add(PrettyDioLogger());
       final result = resp.data;
       log("---- getAllProduct $result");

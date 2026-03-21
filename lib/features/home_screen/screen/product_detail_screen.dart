@@ -5,7 +5,9 @@ import 'package:zeggo_cus/constants/app_colors.dart';
 import 'package:zeggo_cus/constants/app_url.dart';
 import 'package:zeggo_cus/features/cart_section/cart_view.dart';
 import 'package:zeggo_cus/features/home_screen/bloc/get_product_by_id/get_product_by_id_cubit.dart';
+import 'package:zeggo_cus/features/home_screen/bloc/like_toogle/like_toogle_cubit.dart';
 import 'package:zeggo_cus/utils/service/proveider/cart_provider.dart';
+import 'package:zeggo_cus/utils/storage/auth_guard.dart';
 import 'package:zeggo_cus/utils/storage/cart_item.dart';
 import 'package:zeggo_cus/widgets/custom_cached.dart';
 
@@ -41,7 +43,23 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         title: const Text("Product Details"),
         backgroundColor: AppColors.white,
         elevation: 1,
-        actions: [IconButton(icon: const Icon(Icons.favorite_border), onPressed: () {})],
+        actions: [
+          // BlocBuilder<GetProductByIdCubit, GetProductByIdState>(
+          //   builder: (context, state) {
+          //     if(state is GetProductByIdLoadedState){
+          //     return IconButton(
+          //       icon: data.liked == true
+          //           ? Icon(Icons.favorite, size: 18, color: Theme.of(context).primaryColor)
+          //           : Icon(Icons.favorite_border, size: 18, color: Theme.of(context).primaryColor),
+          //       onPressed: () {
+          //         context.read<LikeToogleCubit>().like(widget.id);
+          //       },
+          //     );
+          //   }
+          //   return SizedBox();
+          //   }
+          // ),
+        ],
       ),
 
       body: BlocBuilder<GetProductByIdCubit, GetProductByIdState>(
@@ -328,8 +346,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               backgroundColor: Theme.of(context).primaryColor,
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                             ),
-                            onPressed: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (_) => const CartView()));
+                            onPressed: () async {
+                              await AuthGuard.checkLogin(
+                                context: context,
+                                onLoggedIn: () {
+                                  Navigator.push(context, MaterialPageRoute(builder: (_) => const CartView()));
+                                },
+                              );
                             },
                             child: Text(
                               "View Cart",

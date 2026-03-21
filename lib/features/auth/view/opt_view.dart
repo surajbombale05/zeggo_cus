@@ -209,7 +209,9 @@ class _OtpViewState extends State<OtpView> {
                             }
                             if (state is VerifyOtpLoadedState) {
                               AppToast.showSuccess(context, "", state.model.message ?? "");
-                              await LocalStorageUtils.saveUserId(state.model.data?.id ?? "");
+                              await LocalStorageUtils.saveUserId(state.model.data?.id ?? "").then((e) {});
+                              //  await LocalStorageUtils.saveToken(state.model.data ?? "").then((e) {
+                              // });
                               userId = state.model.data?.id ?? "";
                               if (state.model.data?.firstTimeUser ?? true) {
                                 Navigator.pushAndRemoveUntil(

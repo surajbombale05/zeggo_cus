@@ -40,7 +40,7 @@ class _CafeViewState extends State<CafeView> {
                   crossAxisCount: 3,
                   mainAxisSpacing: 5,
                   crossAxisSpacing: 5,
-                  childAspectRatio: .49,
+                  childAspectRatio: .55,
                 ),
                 itemBuilder: (_, index) {
                   final p = state.model.data?[index];

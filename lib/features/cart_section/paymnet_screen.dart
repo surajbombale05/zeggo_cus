@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zeggo_cus/constants/app_colors.dart';
+import 'package:zeggo_cus/constants/app_toast.dart';
+import 'package:zeggo_cus/features/home_screen/bloc/place_order/place_order_cubit.dart';
+import 'package:zeggo_cus/features/home_screen/screen/home_screen.dart';
+import 'package:zeggo_cus/features/home_screen/screen/home_view.dart';
 import 'package:zeggo_cus/features/profile_section/bloc/address/get_all_address/get_all_address_cubit.dart';
 import 'package:zeggo_cus/features/profile_section/bloc/address/get_all_address/get_all_address_model.dart';
 import 'package:zeggo_cus/features/profile_section/screen/address/add_update_address.dart';
+import 'package:zeggo_cus/utils/service/cart_service.dart';
+import 'package:zeggo_cus/utils/service/proveider/cart_provider.dart';
+import 'package:zeggo_cus/utils/storage/cart_item.dart';
 
 class CheckoutScreen extends StatefulWidget {
-  const CheckoutScreen({super.key});
+  final List<CartItem> items;
+  const CheckoutScreen({super.key, required this.items});
 
   @override
   State<CheckoutScreen> createState() => _CheckoutScreenState();
@@ -85,30 +93,56 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
                 const SizedBox(height: 14),
 
-                SizedBox(
-                  width: double.infinity,
-                  height: 48,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).primaryColor,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                    ),
-                    onPressed: () {
-                      if (paymentMethod == "cod") {
-                        ScaffoldMessenger.of(
-                          context,
-                        ).showSnackBar(const SnackBar(content: Text("Order placed with Cash on Delivery")));
-                      } else {
-                        ScaffoldMessenger.of(
-                          context,
-                        ).showSnackBar(const SnackBar(content: Text("Redirecting to online payment...")));
-                      }
-                    },
-                    child: Text(
-                      "Place Order",
-                      style: TextStyle(color: AppColors.white, fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                  ),
+                BlocConsumer<PlaceOrderCubit, PlaceOrderState>(
+                  listener: (context, state) async {
+                    if (state is PlaceOrderErrorState) {
+                      AppToast.showError(context, "", state.error);
+                      return;
+                    }
+                    if (state is PlaceOrderLoadedState) {
+                      AppToast.showSuccess(context, "Sucess", "Order place Sucessfully");
+                      await CartService.clearCart();
+                      context.read<CartProvider>().clear();
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (context) => HomeScreen()),
+                        (route) => false,
+                      );
+                    }
+                  },
+                  builder: (context, state) {
+                    return (state is PlaceOrderLoadingState)
+                        ? Center(child: CircularProgressIndicator())
+                        : SizedBox(
+                            width: double.infinity,
+                            height: 48,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Theme.of(context).primaryColor,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                              ),
+                              onPressed: () {
+                                if (paymentMethod == "cod") {
+                                  context.read<PlaceOrderCubit>().placeOrder(
+                                    addressId: selectedAddress?.id ?? "",
+                                    cartItems: widget.items,
+                                    paymentMethod: "cod",
+                                  );
+                                } else {
+                                  context.read<PlaceOrderCubit>().placeOrder(
+                                    addressId: selectedAddress?.id ?? "",
+                                    cartItems: widget.items,
+                                    paymentMethod: "online",
+                                  );
+                                }
+                              },
+                              child: Text(
+                                "Place Order",
+                                style: TextStyle(color: AppColors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          );
+                  },
                 ),
               ],
             ),

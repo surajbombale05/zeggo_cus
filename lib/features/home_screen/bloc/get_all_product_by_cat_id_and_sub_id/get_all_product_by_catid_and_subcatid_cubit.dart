@@ -17,6 +17,10 @@ class GetAllProductByCatidAndSubcatidCubit extends Cubit<GetAllProductByCatidAnd
       emit(GetAllProductByCatidAndSubcatidLoadingState());
       final resp = await repository.sendRequest.get(
         "${AppString.baseUrl}/api/zeggo/products?category_id=$catId&subcategory_id=$subCatId",
+          queryParameters: {
+        if (userId != null && userId!.isNotEmpty)
+          "user_id": userId,
+      },
       );
       repository.sendRequest.interceptors.add(PrettyDioLogger());
       final result = resp.data;

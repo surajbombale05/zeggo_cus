@@ -4,31 +4,32 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:zeggo_cus/constants/app_url.dart';
-import 'package:zeggo_cus/features/profile_section/bloc/get_all_orders/get_all_orders_model.dart';
+import 'package:zeggo_cus/features/profile_section/bloc/get_setting/get_setting_model.dart';
 import 'package:zeggo_cus/main.dart';
 
-part 'get_all_orders_state.dart';
+part 'get_setting_state.dart';
 
-class GetAllOrdersCubit extends Cubit<GetAllOrdersState> {
-  GetAllOrdersCubit() : super(GetAllOrdersInitial());
+class GetSettingCubit extends Cubit<GetSettingState> {
+  GetSettingCubit() : super(GetSettingInitial());
 
-  getAllOrders() async {
+  getSetting() async {
     try {
-      emit(GetAllOrdersLoadingState());
-      final resp = await repository.sendRequest.get("${AppString.baseUrl}/api/zeggo/orders/user/$userId");
+      emit(GetSettingLoadingState());
+      final resp = await repository.sendRequest.get("${AppString.baseUrl}/api/zeggo/admin-setting");
       repository.sendRequest.interceptors.add(PrettyDioLogger());
       final result = resp.data;
+      log("---- getAllCategory $result");
       if (resp.statusCode == 200) {
         if (result["status"] == true) {
-          emit(GetAllOrdersLaodedState(GetAllOrdersModel.fromJson(result)));
+          emit(GetSettingLoadedState(GetSettingModel.fromJson(result)));
         } else if (result["status"] == false) {
           log("Message:=> Status Code=> ${resp.statusCode} \n &URL=> ${resp.realUri} \n Data ${resp.data}");
-          emit(GetAllOrdersErrorState(result["message"]));
+          emit(GetSettingErrorState(result["message"]));
         }
       }
     } catch (e, stk) {
       log("Message:=> Catch Error  => $e $stk");
-      emit(GetAllOrdersErrorState(e.toString()));
+      emit(GetSettingErrorState(e.toString()));
     }
   }
 }

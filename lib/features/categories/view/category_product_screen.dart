@@ -135,7 +135,7 @@ class _CategoryProductScreenState extends State<CategoryProductScreen> {
                       crossAxisCount: widget.subCats?.isEmpty ?? true ? 3 : 2,
                       mainAxisSpacing: 8,
                       crossAxisSpacing: 8,
-                      childAspectRatio: .49,
+                      childAspectRatio: .55,
                     ),
                     itemBuilder: (_, i) {
                       final p = state.model.data?[i];

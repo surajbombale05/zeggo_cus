@@ -81,8 +81,8 @@ class ZeptoStyleAppBar extends StatelessWidget implements PreferredSizeWidget {
 
       actions: [
         GestureDetector(
-          onTap: () {
-            AuthGuard.checkLogin(
+          onTap: () async {
+           await AuthGuard.checkLogin(
               context: context,
               onLoggedIn: () {
                 Navigator.push(
@@ -107,8 +107,8 @@ class ZeptoStyleAppBar extends StatelessWidget implements PreferredSizeWidget {
 
               final cartIcon = IconButton(
                 icon: const Icon(Icons.shopping_cart_outlined, color: Colors.black87, size: 30),
-                onPressed: () {
-                  AuthGuard.checkLogin(
+                onPressed: () async {
+                await  AuthGuard.checkLogin(
                     context: context,
                     onLoggedIn: () {
                       Navigator.push(context, MaterialPageRoute(builder: (_) => const CartView()));

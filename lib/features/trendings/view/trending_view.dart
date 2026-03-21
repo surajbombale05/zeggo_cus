@@ -95,7 +95,7 @@ class _TrendingViewState extends State<TrendingView> {
                   crossAxisCount: 3,
                   mainAxisSpacing: 5,
                   crossAxisSpacing: 5,
-                  childAspectRatio: .47,
+                  childAspectRatio: .55,
                 ),
                 itemBuilder: (_, i) {
                   final p = state.model.data?[i];

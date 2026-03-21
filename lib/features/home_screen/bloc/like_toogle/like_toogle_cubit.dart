@@ -22,7 +22,7 @@ class LikeToogleCubit extends Cubit<LikeToogleState> {
       repository.sendRequest.interceptors.add(PrettyDioLogger());
       final result = resp.data;
       log("---- LikeToogleCubit $result");
-      if (resp.statusCode == 200) {
+      if (resp.statusCode == 200 || resp.statusCode == 201) {
         if (result["status"] == true) {
           emit(LikeToogleLoadedState(LikeToggleResponse.fromJson(result)));
         } else if (result["status"] == false) {

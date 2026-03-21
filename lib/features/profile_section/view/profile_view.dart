@@ -21,248 +21,188 @@ class ProfileView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xffF6F7FB),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(vertical: 32),
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor,
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await context.read<GetProfileCubit>().getProfile();
+        },
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 32),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor,
 
-                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
-                ),
-                child: BlocBuilder<GetProfileCubit, GetProfileState>(
-                  builder: (context, state) {
-                    if (state is GetProfileLoadedState) {
-                      var data = state.model.data;
-                      return Column(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadiusGeometry.circular(50),
-                            child: CustomCachedCard(
-                              imageUrl: "${AppString.baseUrl}/${data?.profilePicture}",
-                              height: 100,
-                              width: 100,
+                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
+                  ),
+                  child: BlocBuilder<GetProfileCubit, GetProfileState>(
+                    builder: (context, state) {
+                      if (state is GetProfileLoadedState) {
+                        var data = state.model.data;
+                        return Column(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadiusGeometry.circular(50),
+                              child: CustomCachedCard(
+                                imageUrl: "${AppString.baseUrl}/${data?.profilePicture}",
+                                height: 100,
+                                width: 100,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 12),
-                          Text(
-                            "${data?.name}",
-                            style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 4),
-                          Text("${data?.email}", style: TextStyle(color: Colors.white70)),
-                          const SizedBox(height: 12),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.2),
-                              borderRadius: BorderRadius.circular(20),
+                            const SizedBox(height: 12),
+                            Text(
+                              "${data?.name}",
+                              style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
                             ),
-                            child: const Text("🌟 Premium Member", style: TextStyle(color: Colors.white, fontSize: 12)),
-                          ),
-                        ],
-                      );
-                    }
-                    return SizedBox();
-                  },
-                ),
-              ),
-
-              const SizedBox(height: 24),
-
-              // 📊 Quick Stats
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  children: const [
-                    _ProfileStat(title: "Orders", value: "24"),
-                    _ProfileStat(title: "Wishlist", value: "12"),
-                    _ProfileStat(title: "Reviews", value: "8"),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 30),
-
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  children: [
-                    _ProfileTile(
-                      icon: Icons.edit,
-                      title: "Edit Profile",
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => EditProfileScreen(isFirstTimeUser: false)),
-                        );
-                      },
-                    ),
-                    _ProfileTile(
-                      icon: Icons.favorite_border,
-                      title: "Wishlist",
-                      onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => WishlistScreen()));
-                      },
-                    ),
-                    _ProfileTile(
-                      icon: Icons.shopping_bag_outlined,
-                      title: "My Orders",
-                      onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => MyOrders()));
-                      },
-                    ),
-                    _ProfileTile(
-                      icon: Icons.location_on_outlined,
-                      title: "Delivery Address",
-                      onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => AddressScreen()));
-                      },
-                    ),
-                    _ProfileTile(
-                      icon: Icons.account_balance_wallet_outlined,
-                      title: "Wallet",
-                      onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => WalletScreen()));
-                      },
-                    ),
-                    // _ProfileTile(icon: Icons.settings_outlined, title: "Settings", onTap: () {}),
-                    _ProfileTile(
-                      icon: Icons.help_outline,
-                      title: "Help & Support",
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const InfoScreen(
-                              title: "Help & Support",
-                              content:
-                                  "If you need help with orders, payments, delivery, or account issues, please contact our support team.\n\nEmail: support@example.com\nPhone: +91 98765 43210\n\nWe are available 9 AM — 9 PM.",
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                    _ProfileTile(
-                      icon: Icons.receipt_outlined,
-                      title: "Terms & Conditions",
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const InfoScreen(
-                              title: "Terms & Conditions",
-                              content:
-                                  "By using this app you agree to our terms...\n\n1. Orders once placed cannot be edited.\n2. Refunds depend on product eligibility.\n3. Misuse of wallet or offers may lead to suspension.\n\nPlease read carefully before continuing.",
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                    _ProfileTile(
-                      icon: Icons.privacy_tip_outlined,
-                      title: "Privacy Policy",
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const InfoScreen(
-                              title: "Privacy Policy",
-                              content:
-                                  "We respect your privacy.\n\nWe collect data only to improve experience — such as orders, contact info, and preferences. We never sell your data to third parties.\n\nYou can request data deletion anytime.",
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
-              GestureDetector(
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return BlocListener<DeleteProfileCubit, DeleteProfileState>(
-                        listener: (context, state) {
-                          if (state is DeleteProfileErrorState) {
-                            AppToast.showError(context, "", state.error);
-                            return;
-                          }
-                          if (state is DeleteProfileLoadedState) {
-                            AppToast.showSuccess(context, "", "Delete Successfully");
-                            LocalStorageUtils.clear().then(
-                              (e) => {
-                                Navigator.pop(context),
-                                Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => LoginView()),
-                                  (route) => false,
-                                ),
-                              },
-                            );
-                          }
-                        },
-                        child: AlertDialog(
-                          title: const Text("Delete Account"),
-                          content: const Text("Are you sure you want to delete account?"),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Text("Cancel"),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                context.read<DeleteProfileCubit>().deleteProfile();
-                              },
-                              child: const Text("Delete Account"),
-                            ),
+                            const SizedBox(height: 4),
+                            Text("${data?.email}", style: TextStyle(color: Colors.white70)),
+                            const SizedBox(height: 12),
+                            // Container(
+                            //   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                            //   decoration: BoxDecoration(
+                            //     color: Colors.white.withValues(alpha: 0.2),
+                            //     borderRadius: BorderRadius.circular(20),
+                            //   ),
+                            //   child: const Text(
+                            //     "🌟 Premium Member",
+                            //     style: TextStyle(color: Colors.white, fontSize: 12),
+                            //   ),
+                            // ),
                           ],
-                        ),
-                      );
+                        );
+                      }
+                      return SizedBox();
                     },
-                  );
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    decoration: BoxDecoration(color: Colors.red.shade50, borderRadius: BorderRadius.circular(16)),
-                    child: const Center(
-                      child: Text(
-                        "Delete Account",
-                        style: TextStyle(color: Colors.red, fontSize: 16, fontWeight: FontWeight.w600),
-                      ),
-                    ),
                   ),
                 ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: const Text("Logout"),
-                        content: const Text("Are you sure you want to logout?"),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: const Text("Cancel"),
-                          ),
-                          TextButton(
-                            onPressed: () {
+
+                const SizedBox(height: 24),
+
+                // 📊 Quick Stats
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(horizontal: 16),
+                //   child: Row(
+                //     children: const [
+                //       _ProfileStat(title: "Orders", value: "24"),
+                //       _ProfileStat(title: "Wishlist", value: "12"),
+                //       _ProfileStat(title: "Reviews", value: "8"),
+                //     ],
+                //   ),
+                // ),
+                const SizedBox(height: 30),
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    children: [
+                      _ProfileTile(
+                        icon: Icons.edit,
+                        title: "Edit Profile",
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => EditProfileScreen(isFirstTimeUser: false)),
+                          );
+                        },
+                      ),
+                      _ProfileTile(
+                        icon: Icons.favorite_border,
+                        title: "Wishlist",
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => WishlistScreen()));
+                        },
+                      ),
+                      _ProfileTile(
+                        icon: Icons.shopping_bag_outlined,
+                        title: "My Orders",
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => MyOrders()));
+                        },
+                      ),
+                      _ProfileTile(
+                        icon: Icons.location_on_outlined,
+                        title: "Delivery Address",
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => AddressScreen()));
+                        },
+                      ),
+                      _ProfileTile(
+                        icon: Icons.account_balance_wallet_outlined,
+                        title: "Wallet",
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => WalletScreen()));
+                        },
+                      ),
+                      // _ProfileTile(icon: Icons.settings_outlined, title: "Settings", onTap: () {}),
+                      _ProfileTile(
+                        icon: Icons.help_outline,
+                        title: "Help & Support",
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const InfoScreen(
+                                title: "Help & Support",
+                                content:
+                                    "If you need help with orders, payments, delivery, or account issues, please contact our support team.\n\nEmail: support@example.com\nPhone: +91 98765 43210\n\nWe are available 9 AM — 9 PM.",
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      _ProfileTile(
+                        icon: Icons.receipt_outlined,
+                        title: "Terms & Conditions",
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const InfoScreen(
+                                title: "Terms & Conditions",
+                                content:
+                                    "By using this app you agree to our terms...\n\n1. Orders once placed cannot be edited.\n2. Refunds depend on product eligibility.\n3. Misuse of wallet or offers may lead to suspension.\n\nPlease read carefully before continuing.",
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      _ProfileTile(
+                        icon: Icons.privacy_tip_outlined,
+                        title: "Privacy Policy",
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const InfoScreen(
+                                title: "Privacy Policy",
+                                content:
+                                    "We respect your privacy.\n\nWe collect data only to improve experience — such as orders, contact info, and preferences. We never sell your data to third parties.\n\nYou can request data deletion anytime.",
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                GestureDetector(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return BlocListener<DeleteProfileCubit, DeleteProfileState>(
+                          listener: (context, state) {
+                            if (state is DeleteProfileErrorState) {
+                              AppToast.showError(context, "", state.error);
+                              return;
+                            }
+                            if (state is DeleteProfileLoadedState) {
+                              AppToast.showSuccess(context, "", "Delete Successfully");
                               LocalStorageUtils.clear().then(
                                 (e) => {
                                   Navigator.pop(context),
@@ -273,30 +213,97 @@ class ProfileView extends StatelessWidget {
                                   ),
                                 },
                               );
-                            },
-                            child: const Text("Logout"),
+                            }
+                          },
+                          child: AlertDialog(
+                            title: const Text("Delete Account"),
+                            content: const Text("Are you sure you want to delete account?"),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text("Cancel"),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  context.read<DeleteProfileCubit>().deleteProfile();
+                                },
+                                child: const Text("Delete Account"),
+                              ),
+                            ],
                           ),
-                        ],
-                      );
-                    },
-                  );
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    decoration: BoxDecoration(color: Colors.red.shade50, borderRadius: BorderRadius.circular(16)),
-                    child: const Center(
-                      child: Text(
-                        "Logout",
-                        style: TextStyle(color: Colors.red, fontSize: 16, fontWeight: FontWeight.w600),
+                        );
+                      },
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      decoration: BoxDecoration(color: Colors.red.shade50, borderRadius: BorderRadius.circular(16)),
+                      child: const Center(
+                        child: Text(
+                          "Delete Account",
+                          style: TextStyle(color: Colors.red, fontSize: 16, fontWeight: FontWeight.w600),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+                GestureDetector(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: const Text("Logout"),
+                          content: const Text("Are you sure you want to logout?"),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text("Cancel"),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                LocalStorageUtils.clear().then(
+                                  (e) => {
+                                    Navigator.pop(context),
+                                    Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => LoginView()),
+                                      (route) => false,
+                                    ),
+                                  },
+                                );
+                              },
+                              child: const Text("Logout"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      decoration: BoxDecoration(color: Colors.red.shade50, borderRadius: BorderRadius.circular(16)),
+                      child: const Center(
+                        child: Text(
+                          "Logout",
+                          style: TextStyle(color: Colors.red, fontSize: 16, fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

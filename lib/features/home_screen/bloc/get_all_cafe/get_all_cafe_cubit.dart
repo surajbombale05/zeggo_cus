@@ -15,10 +15,13 @@ class GetAllCafeCubit extends Cubit<GetAllCafeState> {
   getAllCafeProduct() async {
     try {
       emit(GetAllCafeLoadingState());
-      final resp = await repository.sendRequest.get("${AppString.baseUrl}/api/zeggo/products?is_cafe=true");
+      final resp = await repository.sendRequest.get(
+        "${AppString.baseUrl}/api/zeggo/products?is_cafe=true",
+        queryParameters: {if (userId != null && userId!.isNotEmpty) "user_id": userId},
+      );
       repository.sendRequest.interceptors.add(PrettyDioLogger());
       final result = resp.data;
-       log("---- getAllCafeProduct $result");
+      log("---- getAllCafeProduct $result");
       if (resp.statusCode == 200) {
         if (result["status"] == true) {
           emit(GetAllCafeLoadedState(GetAllCafeModel.fromJson(result)));

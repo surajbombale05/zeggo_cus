@@ -15,10 +15,13 @@ class GetAllTrendingCubit extends Cubit<GetAllTrendingState> {
   getAllTrendingProduct() async {
     try {
       emit(GetAllTrendingLoadingState());
-      final resp = await repository.sendRequest.get("${AppString.baseUrl}/api/zeggo/products?is_trending=true");
+      final resp = await repository.sendRequest.get(
+        "${AppString.baseUrl}/api/zeggo/products?is_trending=true",
+        queryParameters: {if (userId != null && userId!.isNotEmpty) "user_id": userId},
+      );
       repository.sendRequest.interceptors.add(PrettyDioLogger());
       final result = resp.data;
-        log("---- getAllTrendingProduct $result");
+      log("---- getAllTrendingProduct $result");
       if (resp.statusCode == 200) {
         if (result["status"] == true) {
           emit(GetAllTrendingLoadedState(GetAllTrendingModel.fromJson(result)));

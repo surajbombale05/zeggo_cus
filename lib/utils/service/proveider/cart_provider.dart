@@ -7,13 +7,13 @@ class CartProvider extends ChangeNotifier {
 
   List<CartItem> get items => _items;
 
+  void clear() {
+    _items.clear();
+    notifyListeners();
+  }
+
   int getQuantity(String productId) {
-    return _items
-        .firstWhere(
-          (e) => e.productId == productId,
-          orElse: CartItem.empty,
-        )
-        .quantity;
+    return _items.firstWhere((e) => e.productId == productId, orElse: CartItem.empty).quantity;
   }
 
   Future<void> load() async {

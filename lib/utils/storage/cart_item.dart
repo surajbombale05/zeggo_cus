@@ -15,7 +15,6 @@ class CartItem {
     required this.quantity,
   });
 
-  /// ✅ Empty cart item (SAFE fallback)
   factory CartItem.empty() => CartItem(
         productId: '',
         name: '',
@@ -26,7 +25,7 @@ class CartItem {
       );
 
   Map<String, dynamic> toJson() => {
-        "productId": productId,
+        "product_id": productId,
         "name": name,
         "price": price,
         "image": image,
@@ -35,7 +34,7 @@ class CartItem {
       };
 
   factory CartItem.fromJson(Map<String, dynamic> json) => CartItem(
-        productId: json["productId"] ?? "",
+        productId: json["product_id"] ?? "",
         name: json["name"] ?? "",
         price: (json["price"] as num?)?.toDouble() ?? 0,
         image: json["image"] ?? "",

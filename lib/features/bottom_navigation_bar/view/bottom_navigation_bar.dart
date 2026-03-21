@@ -7,14 +7,9 @@ class CustomBottomNavigationBar extends StatelessWidget {
 
   final BottomNavController controller = Get.put(BottomNavController());
 
-  final List<IconData> icons = [
-    Icons.home_rounded,
-    Icons.category_rounded,
-    Icons.trending_up_rounded,
-    Icons.hotel_class_outlined,
-  ];
+  final List<IconData> icons = [Icons.home_rounded, Icons.category_rounded, Icons.trending_up_rounded, Icons.portrait];
 
-  final List<String> labels = ["Home", "Categories", "Trending", "Cafe"];
+  final List<String> labels = ["Home", "Categories", "Trending", "Profile"];
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +17,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
       return Container(
         decoration: const BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
           boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, -4))],
         ),
         child: BottomNavigationBar(
