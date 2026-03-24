@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:zeggo_cus/features/bottom_navigation_bar/view/bottom_navigation_bar.dart';
-import 'package:zeggo_cus/features/cafe/view/cafe_view.dart';
 import 'package:zeggo_cus/features/categories/view/categories_view.dart';
 import 'package:zeggo_cus/features/bottom_navigation_bar/controller/bottom_nav_controller.dart';
 import 'package:zeggo_cus/features/home_screen/bloc/get_all_banner/get_all_banner_cubit.dart';

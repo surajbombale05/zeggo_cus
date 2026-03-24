@@ -13,8 +13,10 @@ final class PlaceOrderLoadingState extends PlaceOrderState {
 }
 
 final class PlaceOrderLoadedState extends PlaceOrderState {
+  final PlaceOrderModel model;
+  PlaceOrderLoadedState(this.model);
   @override
-  List<Object> get props => [];
+  List<Object> get props => [model];
 }
 
 final class PlaceOrderErrorState extends PlaceOrderState {

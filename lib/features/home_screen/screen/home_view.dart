@@ -10,7 +10,6 @@ import 'package:zeggo_cus/features/home_screen/bloc/get_all_banner/get_all_banne
 import 'package:zeggo_cus/features/home_screen/bloc/get_all_category/get_all_category_cubit.dart';
 import 'package:zeggo_cus/features/home_screen/bloc/get_all_category/get_all_category_model.dart' show Datum;
 import 'package:zeggo_cus/features/home_screen/bloc/get_all_products/get_all_products_cubit.dart';
-import 'package:zeggo_cus/features/home_screen/bloc/get_all_products/get_all_products_model.dart' as cat;
 import 'package:zeggo_cus/features/home_screen/bloc/like_toogle/like_toogle_cubit.dart';
 import 'package:zeggo_cus/features/home_screen/controller/home_controller.dart';
 import 'package:zeggo_cus/widgets/custom_appbar.dart';

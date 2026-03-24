@@ -19,6 +19,8 @@ class PostAddressCubit extends Cubit<PostAddressState> {
     required String city,
     required String zipCode,
     required bool isPrimary,
+    required String lat,
+    required String long,
     required String userId,
   }) async {
     try {
@@ -34,6 +36,8 @@ class PostAddressCubit extends Cubit<PostAddressState> {
           "zip_code": zipCode,
           "is_primary": isPrimary,
           "user_id": userId,
+          "lat": lat,
+          "long": long,
         },
       );
 

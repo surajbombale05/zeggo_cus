@@ -98,37 +98,45 @@ class _MyOrdersState extends State<MyOrders> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            "#Order${order.id?.substring(0, 8) ?? ""}",
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: statusColor(order.orderStatus ?? "").withOpacity(0.12),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
+                          Expanded(
                             child: Text(
-                              order.orderStatus ?? "",
-                              style: TextStyle(
-                                color: statusColor(order.orderStatus ?? ""),
-                                fontWeight: FontWeight.w600,
-                                fontSize: 12,
+                              "#Order${order.id?.substring(0, 8) ?? ""}",
+                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                            ),
+                          ),
+                          Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: statusColor(order.orderStatus ?? "").withOpacity(0.12),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                order.orderStatus ?? "",
+                                style: TextStyle(
+                                  color: statusColor(order.orderStatus ?? ""),
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 12,
+                                ),
                               ),
                             ),
                           ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: statusColor(order.orderStatus ?? "").withOpacity(0.12),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              order.paymentMode ?? "",
-                              style: TextStyle(
-                                color: statusColor(order.orderStatus ?? ""),
-                                fontWeight: FontWeight.w600,
-                                fontSize: 12,
+                          Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: statusColor(order.orderStatus ?? "").withOpacity(0.12),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                order.paymentMode ?? "",
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: statusColor(order.orderStatus ?? ""),
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 12,
+                                ),
                               ),
                             ),
                           ),

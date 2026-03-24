@@ -180,6 +180,9 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
 
                   const SizedBox(height: 12),
 
+                  _sectionTitle("Payment Mode"),
+                  _sectionCard(child: Text(order?.paymentMode == "cash_on_delivery" ? "COD" : "ONLINE")),
+                  const SizedBox(height: 12),
                   // PAYMENT
                   _sectionTitle("Payment Summary"),
                   _sectionCard(

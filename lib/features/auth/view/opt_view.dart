@@ -27,7 +27,6 @@ class _OtpViewState extends State<OtpView> {
   int _seconds = 30;
   bool _canResend = false;
   Timer? _timer;
-  late String _serverOtp;
   String getEnteredOtp() {
     return _controllers.map((c) => c.text).join();
   }
@@ -35,7 +34,6 @@ class _OtpViewState extends State<OtpView> {
   @override
   void initState() {
     super.initState();
-    _serverOtp = widget.otp;
     _startTimer();
   }
 
@@ -103,9 +101,7 @@ class _OtpViewState extends State<OtpView> {
           }
           if (state is SendOtpLoadedState) {
             AppToast.showSuccess(context, "", "Resend Sucessfully");
-            setState(() {
-              _serverOtp = state.model.data?.otp ?? "";
-            });
+            setState(() {});
             _startTimer();
           }
         },

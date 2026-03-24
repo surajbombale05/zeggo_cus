@@ -41,6 +41,8 @@ class Datum {
     String? city;
     String? zipCode;
     bool? isPrimary;
+    dynamic lat;
+    dynamic long;
     String? userId;
     DateTime? createdAt;
     DateTime? updatedAt;
@@ -59,6 +61,8 @@ class Datum {
         this.createdAt,
         this.updatedAt,
         this.user,
+        this.lat,
+        this.long,
     });
 
     factory Datum.fromJson(Map<String, dynamic> json) => Datum(
@@ -74,6 +78,8 @@ class Datum {
         createdAt: json["createdAt"] == null ? null : DateTime.parse(json["createdAt"]),
         updatedAt: json["updatedAt"] == null ? null : DateTime.parse(json["updatedAt"]),
         user: json["user"] == null ? null : User.fromJson(json["user"]),
+        lat: json['lat'],
+        long: json['long']
     );
 
     Map<String, dynamic> toJson() => {
@@ -89,6 +95,8 @@ class Datum {
         "createdAt": createdAt?.toIso8601String(),
         "updatedAt": updatedAt?.toIso8601String(),
         "user": user?.toJson(),
+        "lat":lat,
+        "long":long,
     };
 }
 

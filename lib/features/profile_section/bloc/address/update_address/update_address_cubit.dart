@@ -20,6 +20,8 @@ class UpdateAddressCubit extends Cubit<UpdateAddressState> {
     String? zipCode,
     bool? isPrimary,
     String? userId,
+    String? lat,
+    String? long,
     required String addressId,
   }) async {
     try {
@@ -35,6 +37,8 @@ class UpdateAddressCubit extends Cubit<UpdateAddressState> {
           "zip_code": zipCode,
           "is_primary": isPrimary,
           "user_id": userId,
+          "lat": lat,
+          "long": long,
         },
       );
 

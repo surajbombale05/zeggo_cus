@@ -26,22 +26,28 @@ class _WishlistScreenState extends State<WishlistScreen> {
 
       body: BlocBuilder<GetAllWishlistCubit, GetAllWishlistState>(
         builder: (context, state) {
+          if (state is GetAllWishlistLoadingState) {
+            return Center(child: CircularProgressIndicator());
+          }
           if (state is GetAllWishlistErrorState) {
             return Center(child: Text(state.error));
           }
           if (state is GetAllWishlistLoadedState) {
-            return GridView.builder(
-              itemCount: state.model.data?.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                mainAxisSpacing: 5,
-                crossAxisSpacing: 5,
-                childAspectRatio: .55,
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: GridView.builder(
+                itemCount: state.model.data?.length,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  mainAxisSpacing: 5,
+                  crossAxisSpacing: 5,
+                  childAspectRatio: .55,
+                ),
+                itemBuilder: (_, i) {
+                  final p = state.model.data?[i].product;
+                  return CustomProductCard(data: p ?? Datum());
+                },
               ),
-              itemBuilder: (_, i) {
-                final p = state.model.data?[i].product;
-                return CustomProductCard(data: p ?? Datum());
-              },
             );
           }
           return SizedBox();

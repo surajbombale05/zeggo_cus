@@ -311,6 +311,7 @@ class ProfileView extends StatelessWidget {
   }
 }
 
+// ignore: unused_element
 class _ProfileStat extends StatelessWidget {
   final String title;
   final String value;

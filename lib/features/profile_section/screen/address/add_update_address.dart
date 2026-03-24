@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:zeggo_cus/constants/app_colors.dart';
 import 'package:zeggo_cus/constants/app_toast.dart';
 import 'package:zeggo_cus/features/profile_section/bloc/address/get_all_address/get_all_address_cubit.dart';
@@ -53,6 +54,32 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
   final TextEditingController city = TextEditingController();
   final TextEditingController pin = TextEditingController();
   bool isPrimary = false;
+  double? lat;
+  double? lng;
+  bool isFetchingLocation = false;
+
+  Future<bool> getLatLngFromAddress() async {
+    setState(() => isFetchingLocation = true);
+
+    try {
+      List<Location> locations = await locationFromAddress("${address.text}, ${city.text}, ${pin.text}");
+
+      if (locations.isNotEmpty) {
+        lat = locations.first.latitude;
+        lng = locations.first.longitude;
+
+        print("LAT: $lat, LNG: $lng");
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print("Geocoding Error: $e");
+      return false;
+    } finally {
+      setState(() => isFetchingLocation = false);
+    }
+  }
 
   @override
   void initState() {
@@ -280,8 +307,14 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
                                   backgroundColor: Theme.of(context).primaryColor,
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                 ),
-                                onPressed: () {
+                                onPressed: () async {
                                   if (_formKey.currentState!.validate()) {
+                                    bool success = await getLatLngFromAddress();
+
+                                    if (!success || lat == null || lng == null) {
+                                      AppToast.showError(context, "Invalid address", "Please enter a valid address");
+                                      return;
+                                    }
                                     if (widget.item != null) {
                                       context.read<UpdateAddressCubit>().updateAdrress(
                                         addressId: widget.item?.id ?? "",
@@ -293,6 +326,8 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
                                         userId: userId,
                                         isPrimary: isPrimary,
                                         zipCode: pin.text,
+                                        lat: lat.toString(),
+                                        long: lng.toString(),
                                       );
                                     } else {
                                       context.read<PostAddressCubit>().postAdrress(
@@ -304,6 +339,8 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
                                         userId: userId ?? "",
                                         isPrimary: isPrimary,
                                         zipCode: pin.text,
+                                        lat: lat.toString(),
+                                        long: lng.toString(),
                                       );
                                     }
                                   }

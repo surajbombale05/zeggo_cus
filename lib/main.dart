@@ -10,12 +10,14 @@ import 'package:zeggo_cus/constants/app_init.dart';
 import 'package:zeggo_cus/constants/app_theme.dart';
 import 'package:zeggo_cus/features/auth/bloc/send_otp/send_otp_cubit.dart';
 import 'package:zeggo_cus/features/auth/bloc/verify_otp/verify_otp_cubit.dart';
+import 'package:zeggo_cus/features/home_screen/bloc/create_order/create_order_cubit.dart';
 import 'package:zeggo_cus/features/home_screen/bloc/get_all_banner/get_all_banner_cubit.dart';
 import 'package:zeggo_cus/features/home_screen/bloc/get_all_cafe/get_all_cafe_cubit.dart';
 import 'package:zeggo_cus/features/home_screen/bloc/get_all_category/get_all_category_cubit.dart';
 import 'package:zeggo_cus/features/home_screen/bloc/get_all_product_by_cat_id_and_sub_id/get_all_product_by_catid_and_subcatid_cubit.dart';
 import 'package:zeggo_cus/features/home_screen/bloc/get_all_products/get_all_products_cubit.dart';
 import 'package:zeggo_cus/features/home_screen/bloc/get_all_trending/get_all_trending_cubit.dart';
+import 'package:zeggo_cus/features/home_screen/bloc/get_nearby_supplier/get_nearby_supplier_cubit.dart';
 import 'package:zeggo_cus/features/home_screen/bloc/get_product_by_id/get_product_by_id_cubit.dart';
 import 'package:zeggo_cus/features/home_screen/bloc/like_toogle/like_toogle_cubit.dart';
 import 'package:zeggo_cus/features/home_screen/bloc/place_order/place_order_cubit.dart';
@@ -102,6 +104,8 @@ class MyApp extends StatelessWidget {
 
         BlocProvider<GetAllOrdersCubit>(create: (context) => GetAllOrdersCubit()),
         BlocProvider<GetOrderByIdCubit>(create: (context) => GetOrderByIdCubit()),
+        BlocProvider<CreateOrderCubit>(create: (context) => CreateOrderCubit()),
+        BlocProvider<GetNearbySupplierCubit>(create: (context) => GetNearbySupplierCubit()),
         ChangeNotifierProvider(create: (_) => CartProvider()..load()),
       ],
 
