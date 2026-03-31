@@ -12,7 +12,6 @@ import 'package:zeggo_cus/features/profile_section/bloc/address/get_all_address/
 import 'package:zeggo_cus/features/profile_section/bloc/address/get_all_address/get_all_address_model.dart';
 import 'package:zeggo_cus/features/profile_section/bloc/create_payment_history/create_payment_history_cubit.dart';
 import 'package:zeggo_cus/features/profile_section/screen/address/add_update_address.dart';
-import 'package:zeggo_cus/utils/service/cart_service.dart';
 import 'package:zeggo_cus/utils/service/proveider/cart_provider.dart';
 import 'package:zeggo_cus/utils/storage/cart_item.dart';
 
@@ -162,12 +161,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                 context.read<GetNearbySupplierCubit>().getNearBySupplier(
                                   orderId: state.model.data?.orderId.toString() ?? "",
                                 );
-                                 AppToast.showSuccess(context, "Sucess", "Order place Sucessfully");
-                                 // Only remove items that were in this order
-                                 final purchasedIds = widget.items.map((i) => i.productId).toList();
-                                 context.read<CartProvider>().removeMany(purchasedIds);
+                                AppToast.showSuccess(context, "Sucess", "Order place Sucessfully");
+                                // Only remove items that were in this order
+                                final purchasedIds = widget.items.map((i) => i.productId).toList();
+                                context.read<CartProvider>().removeMany(purchasedIds);
 
-                                 Navigator.pushAndRemoveUntil(
+                                Navigator.pushAndRemoveUntil(
                                   context,
                                   MaterialPageRoute(builder: (context) => HomeScreen()),
                                   (route) => false,
@@ -197,7 +196,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                               paymentMethod: "cash_on_delivery",
                                             );
                                           } else {
-                                            context.read<CreateOrderCubit>().createOrder(amount: "1");
+                                            context.read<CreateOrderCubit>().createOrder(amount: grandTotal.toString());
                                           }
                                         },
                                         child: Text(

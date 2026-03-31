@@ -12,46 +12,48 @@ class CartView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 4,
-      child: Scaffold(
-        backgroundColor: Colors.grey.shade100,
-        appBar: AppBar(
-          title: const Text("My Cart", style: TextStyle(fontWeight: FontWeight.w600)),
-          backgroundColor: Colors.white,
-          elevation: 1,
-          bottom: const TabBar(
-            isScrollable: true,
-            labelColor: Colors.green,
-            unselectedLabelColor: Colors.black,
-            indicatorColor: Colors.green,
-            tabs: [
-              Tab(text: "Grocery"),
-              Tab(text: "Fruit"),
-              Tab(text: "Vegetable"),
-              Tab(text: "Non-Veg"),
-            ],
+    return Consumer<CartProvider>(
+      builder: (context, cart, _) {
+        final allItems = cart.items;
+
+        int getCount(String category) {
+          return allItems.where((item) => item.superCategory.toLowerCase() == category.toLowerCase()).length;
+        }
+
+        return DefaultTabController(
+          length: 4,
+          child: Scaffold(
+            backgroundColor: Colors.grey.shade100,
+            appBar: AppBar(
+              title: const Text("My Cart", style: TextStyle(fontWeight: FontWeight.w600)),
+              backgroundColor: Colors.white,
+              elevation: 1,
+              bottom: TabBar(
+                isScrollable: true,
+                labelColor: Colors.green,
+                unselectedLabelColor: Colors.black,
+                indicatorColor: Colors.green,
+                tabs: [
+                  Tab(text: "Grocery (${getCount('grocery')})"),
+                  Tab(text: "Fruit (${getCount('fruit')})"),
+                  Tab(text: "Vegetable (${getCount('vegetable')})"),
+                  Tab(text: "Non-Veg (${getCount('nonveg')})"),
+                ],
+              ),
+            ),
+            body: allItems.isEmpty
+                ? const Center(child: Text("Your cart is empty 🛒", style: TextStyle(fontSize: 16)))
+                : TabBarView(
+                    children: [
+                      _buildCartCategory(context, cart, allItems, "grocery"),
+                      _buildCartCategory(context, cart, allItems, "fruit"),
+                      _buildCartCategory(context, cart, allItems, "vegetable"),
+                      _buildCartCategory(context, cart, allItems, "nonveg"),
+                    ],
+                  ),
           ),
-        ),
-        body: Consumer<CartProvider>(
-          builder: (context, cart, _) {
-            final allItems = cart.items;
-
-            if (allItems.isEmpty) {
-              return const Center(child: Text("Your cart is empty 🛒", style: TextStyle(fontSize: 16)));
-            }
-
-            return TabBarView(
-              children: [
-                _buildCartCategory(context, cart, allItems, "grocery"),
-                _buildCartCategory(context, cart, allItems, "fruit"),
-                _buildCartCategory(context, cart, allItems, "vegetable"),
-                _buildCartCategory(context, cart, allItems, "nonveg"),
-              ],
-            );
-          },
-        ),
-      ),
+        );
+      },
     );
   }
 

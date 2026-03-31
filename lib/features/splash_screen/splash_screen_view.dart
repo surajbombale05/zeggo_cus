@@ -5,6 +5,7 @@ import 'package:zeggo_cus/constants/app_colors.dart';
 import 'package:zeggo_cus/constants/app_consts.dart';
 import 'package:zeggo_cus/features/auth/view/login_view.dart';
 import 'package:zeggo_cus/features/home_screen/screen/home_screen.dart';
+import 'package:zeggo_cus/main.dart';
 import 'package:zeggo_cus/utils/storage/storage.dart';
 
 class SplashView extends StatefulWidget {
@@ -40,7 +41,7 @@ class _SplashViewState extends State<SplashView> with SingleTickerProviderStateM
     if (!mounted) return;
     final storedUserId = await LocalStorageUtils.getUserId();
     log("--------->>>>>>>> $storedUserId");
-
+    userId = storedUserId;
     final nextPage = storedUserId != null && storedUserId.isNotEmpty ? const HomeScreen() : const LoginView();
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
