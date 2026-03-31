@@ -7,9 +7,15 @@ class CustomBottomNavigationBar extends StatelessWidget {
 
   final BottomNavController controller = Get.put(BottomNavController());
 
-  final List<IconData> icons = [Icons.home_rounded, Icons.category_rounded, Icons.trending_up_rounded, Icons.portrait];
+  final List<IconData> icons = [
+    Icons.home_rounded,
+    Icons.category_rounded,
+    Icons.trending_up_rounded,
+    Icons.shopping_bag_outlined,
+    Icons.portrait,
+  ];
 
-  final List<String> labels = ["Home", "Categories", "Trending", "Profile"];
+  final List<String> labels = ["Home", "Categories", "Trending", "My Orders", "Profile"];
 
   @override
   Widget build(BuildContext context) {

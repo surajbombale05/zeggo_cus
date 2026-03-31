@@ -1,6 +1,10 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:http/http.dart' as http;
+import 'package:zeggo_cus/utils/location/location_service.dart';
 import 'package:zeggo_cus/constants/app_colors.dart';
 import 'package:zeggo_cus/constants/app_toast.dart';
 import 'package:zeggo_cus/features/profile_section/bloc/address/get_all_address/get_all_address_cubit.dart';
@@ -8,6 +12,8 @@ import 'package:zeggo_cus/features/profile_section/bloc/address/get_all_address/
 import 'package:zeggo_cus/features/profile_section/bloc/address/post_address/post_address_cubit.dart';
 import 'package:zeggo_cus/features/profile_section/bloc/address/update_address/update_address_cubit.dart';
 import 'package:zeggo_cus/main.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:zeggo_cus/features/profile_section/screen/address/map_picker_screen.dart';
 import 'package:zeggo_cus/widgets/custom_svg.dart';
 
 enum AddressType { home, work, other }
@@ -58,6 +64,131 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
   double? lng;
   bool isFetchingLocation = false;
 
+  // Track programmatically filled text to prevent clearing lat/lng
+  String _lastFilledAddress = "";
+  String _lastFilledCity = "";
+  String _lastFilledPin = "";
+
+  Future<void> _getCurrentLocation() async {
+    setState(() => isFetchingLocation = true);
+    try {
+      bool hasPermission = await LocationService.ensureLocationEnabled();
+      if (!hasPermission) {
+        AppToast.showError(context, "Permission Denied", "Please enable location services and grant permission.");
+        return;
+      }
+
+      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+
+      lat = position.latitude;
+      lng = position.longitude;
+      await _fillAddressFromLatLng(lat!, lng!);
+
+      AppToast.showSuccess(context, "Location Found", "Captured exact location.");
+    } catch (e) {
+      print("Location Error: $e");
+      AppToast.showError(context, "Error", "Failed to get current location: $e");
+    } finally {
+      setState(() => isFetchingLocation = false);
+    }
+  }
+
+  Future<void> _fillAddressFromLatLng(double lat, double lng) async {
+    try {
+      final url =
+          "https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=AIzaSyCTxftYRjCP8PR_EKJGxLBUrr682DjaWOA";
+
+      final response = await http.get(Uri.parse(url));
+      final data = jsonDecode(response.body);
+
+      if (data['status'] == "OK") {
+        Map<String, dynamic>? result;
+
+        for (var r in data['results']) {
+          List types = r['types'];
+
+          if (!types.contains('plus_code') &&
+              (types.contains('street_address') ||
+                  types.contains('premise') ||
+                  types.contains('route') ||
+                  types.contains('sublocality') ||
+                  types.contains('locality'))) {
+            result = r;
+            break;
+          }
+        }
+
+        result ??= data['results'].first;
+
+        String fullAddress = result?['formatted_address'];
+
+        fullAddress = fullAddress.replaceAll(RegExp(r'^[A-Z0-9]+\+[A-Z0-9]+,\s*'), '');
+
+        String cityName = "";
+        String postalCode = "";
+
+        for (var comp in result?['address_components']) {
+          if (comp['types'].contains('locality')) {
+            cityName = comp['long_name'];
+          }
+          if (comp['types'].contains('postal_code')) {
+            postalCode = comp['long_name'];
+          }
+        }
+
+        setState(() {
+          address.text = fullAddress;
+          city.text = cityName;
+          pin.text = postalCode;
+
+          _lastFilledAddress = fullAddress;
+          _lastFilledCity = cityName;
+          _lastFilledPin = postalCode;
+        });
+      } else {
+        _fallbackLatLng(LatLng(lat, lng));
+      }
+    } catch (e) {
+      _fallbackLatLng(LatLng(lat, lng));
+    }
+  }
+
+  void _fallbackLatLng(LatLng position) {
+    setState(() {});
+  }
+
+  Future<void> _openMapPicker() async {
+    double startLat = lat ?? 20.5937;
+    double startLng = lng ?? 78.9629;
+
+    if (lat == null && address.text.isNotEmpty) {
+      try {
+        List<Location> locs = await locationFromAddress("${address.text}, ${city.text}, ${pin.text}");
+        if (locs.isNotEmpty) {
+          startLat = locs.first.latitude;
+          startLng = locs.first.longitude;
+        }
+      } catch (_) {}
+    }
+
+    final LatLng? picked = await Navigator.push<LatLng>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MapPickerScreen(initialLat: startLat, initialLng: startLng),
+      ),
+    );
+
+    if (picked != null) {
+      setState(() {
+        lat = picked.latitude;
+        lng = picked.longitude;
+      });
+      await _fillAddressFromLatLng(lat!, lng!);
+
+      AppToast.showSuccess(context, "Location Confirmed", "Exact pin location saved.");
+    }
+  }
+
   Future<bool> getLatLngFromAddress() async {
     setState(() => isFetchingLocation = true);
 
@@ -100,9 +231,39 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
         case 'other':
           selectedAdd = AddressType.other;
           break;
-        default:
-          selectedAdd = AddressType.home;
       }
+      if (widget.item != null) {
+        lat = double.tryParse(widget.item?.lat ?? "");
+        lng = double.tryParse(widget.item?.long ?? "");
+        _lastFilledAddress = address.text;
+        _lastFilledCity = city.text;
+        _lastFilledPin = pin.text;
+      }
+
+      address.addListener(() {
+        if (address.text != _lastFilledAddress && mounted) {
+          setState(() {
+            lat = null;
+            lng = null;
+          });
+        }
+      });
+      city.addListener(() {
+        if (city.text != _lastFilledCity && mounted) {
+          setState(() {
+            lat = null;
+            lng = null;
+          });
+        }
+      });
+      pin.addListener(() {
+        if (pin.text != _lastFilledPin && mounted) {
+          setState(() {
+            lat = null;
+            lng = null;
+          });
+        }
+      });
     }
     super.initState();
   }
@@ -253,6 +414,42 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
                 ],
               ),
               SizedBox(height: 10),
+              if (isFetchingLocation)
+                const Center(child: CircularProgressIndicator())
+              else
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextButton.icon(
+                        onPressed: _getCurrentLocation,
+                        icon: Icon(Icons.my_location, color: AppColors.primaryColor),
+                        label: Text("My Location", style: TextStyle(color: AppColors.primaryColor)),
+                      ),
+                    ),
+                    Expanded(
+                      child: TextButton.icon(
+                        onPressed: _openMapPicker,
+                        icon: Icon(Icons.map_outlined, color: AppColors.primaryColor),
+                        label: Text("Pick on Map", style: TextStyle(color: AppColors.primaryColor)),
+                      ),
+                    ),
+                  ],
+                ),
+              if (lat != null && lng != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 6),
+                  child: Row(
+                    children: [
+                      Icon(Icons.check_circle, color: Colors.green, size: 16),
+                      const SizedBox(width: 6),
+                      Text(
+                        "Location set: ${lat!.toStringAsFixed(5)}, ${lng!.toStringAsFixed(5)}",
+                        style: const TextStyle(fontSize: 12, color: Colors.green),
+                      ),
+                    ],
+                  ),
+                ),
+              SizedBox(height: 10),
               _inputField("Full Name", name),
               _inputField("Phone Number", phone, keyboardType: TextInputType.phone),
               _inputField("Full Address", address, maxLines: 3),
@@ -309,11 +506,12 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
                                 ),
                                 onPressed: () async {
                                   if (_formKey.currentState!.validate()) {
-                                    bool success = await getLatLngFromAddress();
-
-                                    if (!success || lat == null || lng == null) {
-                                      AppToast.showError(context, "Invalid address", "Please enter a valid address");
-                                      return;
+                                    if (lat == null || lng == null) {
+                                      bool success = await getLatLngFromAddress();
+                                      if (!success || lat == null || lng == null) {
+                                        AppToast.showError(context, "Invalid address", "Please enter a valid address");
+                                        return;
+                                      }
                                     }
                                     if (widget.item != null) {
                                       context.read<UpdateAddressCubit>().updateAdrress(
@@ -326,8 +524,8 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
                                         userId: userId,
                                         isPrimary: isPrimary,
                                         zipCode: pin.text,
-                                        lat: lat.toString(),
-                                        long: lng.toString(),
+                                        lat: lat?.toString() ?? "",
+                                        long: lng?.toString() ?? "",
                                       );
                                     } else {
                                       context.read<PostAddressCubit>().postAdrress(
@@ -339,8 +537,8 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
                                         userId: userId ?? "",
                                         isPrimary: isPrimary,
                                         zipCode: pin.text,
-                                        lat: lat.toString(),
-                                        long: lng.toString(),
+                                        lat: lat?.toString() ?? "",
+                                        long: lng?.toString() ?? "",
                                       );
                                     }
                                   }

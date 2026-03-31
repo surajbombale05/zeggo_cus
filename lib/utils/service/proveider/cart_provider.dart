@@ -56,4 +56,10 @@ class CartProvider extends ChangeNotifier {
     await CartService.saveItems(_items);
     notifyListeners();
   }
+
+  Future<void> removeMany(List<String> productIds) async {
+    _items.removeWhere((e) => productIds.contains(e.productId));
+    await CartService.saveItems(_items);
+    notifyListeners();
+  }
 }

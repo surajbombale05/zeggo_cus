@@ -120,6 +120,7 @@ class _CustomProductCardState extends State<CustomProductCard> {
                                 image: widget.data.img ?? "",
                                 unit: widget.data.unit ?? "",
                                 quantity: 1,
+                                superCategory: widget.data.superCategory ?? "grocery",
                               ),
                             );
                           },

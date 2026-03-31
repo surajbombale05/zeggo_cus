@@ -241,6 +241,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                   ),
                                   child: Text(address.addType!.toUpperCase(), style: const TextStyle(fontSize: 12)),
                                 ),
+                              const SizedBox(height: 10),
                             ],
                           ),
                   ),

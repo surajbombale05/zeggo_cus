@@ -12,6 +12,7 @@ import 'package:zeggo_cus/features/home_screen/bloc/get_all_trending/get_all_tre
 import 'package:zeggo_cus/features/home_screen/screen/home_view.dart';
 import 'package:zeggo_cus/features/profile_section/bloc/address/get_all_address/get_all_address_cubit.dart';
 import 'package:zeggo_cus/features/profile_section/bloc/get_profile/get_profile_cubit.dart';
+import 'package:zeggo_cus/features/profile_section/screen/order/my_order.dart';
 import 'package:zeggo_cus/features/profile_section/view/profile_view.dart';
 import 'package:zeggo_cus/features/trendings/view/trending_view.dart';
 import 'package:zeggo_cus/utils/location/location_service.dart';
@@ -26,7 +27,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final BottomNavController controller = Get.put(BottomNavController());
 
-  final List<Widget> pages = [HomeView(), CategoriesView(), TrendingView(), ProfileView()];
+  final List<Widget> pages = [HomeView(), CategoriesView(), TrendingView(), MyOrders(),ProfileView()];
 
   @override
   void initState() {

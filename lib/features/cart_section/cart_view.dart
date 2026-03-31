@@ -12,42 +12,82 @@ class CartView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey.shade100,
-      appBar: AppBar(
-        title: const Text("My Cart", style: TextStyle(fontWeight: FontWeight.w600)),
-        backgroundColor: Colors.white,
-        elevation: 1,
-      ),
-
-      body: Consumer<CartProvider>(
-        builder: (context, cart, _) {
-          final items = cart.items;
-
-          if (items.isEmpty) {
-            return const Center(child: Text("Your cart is empty 🛒", style: TextStyle(fontSize: 16)));
-          }
-
-          return Column(
-            children: [
-              Expanded(
-                child: ListView.builder(
-                  padding: const EdgeInsets.all(12),
-                  itemCount: items.length,
-                  itemBuilder: (context, index) {
-                    return _cartItemCard(context, items[index], items);
-                  },
-                ),
-              ),
-              _priceSummary(context, cart, items),
+    return DefaultTabController(
+      length: 4,
+      child: Scaffold(
+        backgroundColor: Colors.grey.shade100,
+        appBar: AppBar(
+          title: const Text("My Cart", style: TextStyle(fontWeight: FontWeight.w600)),
+          backgroundColor: Colors.white,
+          elevation: 1,
+          bottom: const TabBar(
+            isScrollable: true,
+            labelColor: Colors.green,
+            unselectedLabelColor: Colors.black,
+            indicatorColor: Colors.green,
+            tabs: [
+              Tab(text: "Grocery"),
+              Tab(text: "Fruit"),
+              Tab(text: "Vegetable"),
+              Tab(text: "Non-Veg"),
             ],
-          );
-        },
+          ),
+        ),
+        body: Consumer<CartProvider>(
+          builder: (context, cart, _) {
+            final allItems = cart.items;
+
+            if (allItems.isEmpty) {
+              return const Center(child: Text("Your cart is empty 🛒", style: TextStyle(fontSize: 16)));
+            }
+
+            return TabBarView(
+              children: [
+                _buildCartCategory(context, cart, allItems, "grocery"),
+                _buildCartCategory(context, cart, allItems, "fruit"),
+                _buildCartCategory(context, cart, allItems, "vegetable"),
+                _buildCartCategory(context, cart, allItems, "nonveg"),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
 
-  Widget _cartItemCard(BuildContext context, CartItem item, List<CartItem> items) {
+  Widget _buildCartCategory(BuildContext context, CartProvider cart, List<CartItem> allItems, String category) {
+    final filteredItems = allItems.where((item) => item.superCategory.toLowerCase() == category.toLowerCase()).toList();
+
+    if (filteredItems.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.shopping_cart_outlined, size: 64, color: Colors.grey),
+            const SizedBox(height: 16),
+            Text("No items in $category category", style: const TextStyle(fontSize: 16, color: Colors.grey)),
+          ],
+        ),
+      );
+    }
+
+    return Column(
+      children: [
+        Expanded(
+          child: ListView.builder(
+            padding: const EdgeInsets.all(12),
+            itemCount: filteredItems.length,
+            itemBuilder: (context, index) {
+              return _cartItemCard(context, filteredItems[index]);
+            },
+          ),
+        ),
+        _priceSummary(context, filteredItems),
+      ],
+    );
+  }
+
+  Widget _cartItemCard(BuildContext context, CartItem item) {
     final cart = context.read<CartProvider>();
 
     return Container(
@@ -67,9 +107,7 @@ class CartView extends StatelessWidget {
             decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(12)),
             child: CustomCachedCard(imageUrl: "${AppString.baseUrl}/${item.image}", fit: BoxFit.contain),
           ),
-
           const SizedBox(width: 12),
-
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -82,7 +120,6 @@ class CartView extends StatelessWidget {
               ],
             ),
           ),
-
           Container(
             height: 34,
             decoration: BoxDecoration(
@@ -110,8 +147,8 @@ class CartView extends StatelessWidget {
     );
   }
 
-  Widget _priceSummary(BuildContext context, CartProvider cart, List<CartItem> items) {
-    final itemTotal = cart.items.fold<double>(0, (sum, e) => sum + (e.price * e.quantity));
+  Widget _priceSummary(BuildContext context, List<CartItem> items) {
+    final itemTotal = items.fold<double>(0, (sum, e) => sum + (e.price * e.quantity));
 
     const double deliveryFee = 0;
     const double discount = 0;
@@ -127,16 +164,12 @@ class CartView extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _priceRow("Item Total", "₹${itemTotal.toStringAsFixed(0)}"),
+          _priceRow("Item Total (${items.length} items)", "₹${itemTotal.toStringAsFixed(0)}"),
           _priceRow("Delivery Fee", "₹${deliveryFee.toStringAsFixed(0)}"),
           _priceRow("Discount", "-₹${discount.toStringAsFixed(0)}", isDiscount: true),
-
           const Divider(height: 24),
-
           _priceRow("Grand Total", "₹${grandTotal.toStringAsFixed(0)}", isTotal: true),
-
           const SizedBox(height: 14),
-
           SizedBox(
             width: double.infinity,
             height: 48,
@@ -154,6 +187,7 @@ class CartView extends StatelessWidget {
               ),
             ),
           ),
+          const SizedBox(height: 10),
         ],
       ),
     );

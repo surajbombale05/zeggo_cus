@@ -10,6 +10,7 @@ import 'package:zeggo_cus/features/home_screen/bloc/place_order/place_order_cubi
 import 'package:zeggo_cus/features/home_screen/screen/home_screen.dart';
 import 'package:zeggo_cus/features/profile_section/bloc/address/get_all_address/get_all_address_cubit.dart';
 import 'package:zeggo_cus/features/profile_section/bloc/address/get_all_address/get_all_address_model.dart';
+import 'package:zeggo_cus/features/profile_section/bloc/create_payment_history/create_payment_history_cubit.dart';
 import 'package:zeggo_cus/features/profile_section/screen/address/add_update_address.dart';
 import 'package:zeggo_cus/utils/service/cart_service.dart';
 import 'package:zeggo_cus/utils/service/proveider/cart_provider.dart';
@@ -40,7 +41,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
       body: Consumer<CartProvider>(
         builder: (context, cart, _) {
-          final items = cart.items;
+          final items = widget.items;
 
           final itemTotal = items.fold<double>(0, (sum, e) => sum + (e.price * e.quantity));
 
@@ -133,6 +134,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                   AppToast.showError(context, "Payment Failed", data.message ?? "");
                                 },
                                 onSuccess: (data) {
+                                  context.read<CreatePaymentHistoryCubit>().createPaymentHistory(
+                                    orderId: state.model.order?.orderId ?? "",
+                                    paymentOrderId: data.orderId ?? "",
+                                    amount: state.model.order?.amount.toString() ?? "",
+                                  );
                                   context.read<PlaceOrderCubit>().placeOrder(
                                     addressId: selectedAddress?.id ?? "",
                                     cartItems: widget.items,
@@ -156,11 +162,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                 context.read<GetNearbySupplierCubit>().getNearBySupplier(
                                   orderId: state.model.data?.orderId.toString() ?? "",
                                 );
-                                AppToast.showSuccess(context, "Sucess", "Order place Sucessfully");
-                                await CartService.clearCart();
+                                 AppToast.showSuccess(context, "Sucess", "Order place Sucessfully");
+                                 // Only remove items that were in this order
+                                 final purchasedIds = widget.items.map((i) => i.productId).toList();
+                                 context.read<CartProvider>().removeMany(purchasedIds);
 
-                                context.read<CartProvider>().clear();
-                                Navigator.pushAndRemoveUntil(
+                                 Navigator.pushAndRemoveUntil(
                                   context,
                                   MaterialPageRoute(builder: (context) => HomeScreen()),
                                   (route) => false,
@@ -190,7 +197,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                               paymentMethod: "cash_on_delivery",
                                             );
                                           } else {
-                                            context.read<CreateOrderCubit>().createOrder(amount: grandTotal.toString());
+                                            context.read<CreateOrderCubit>().createOrder(amount: "1");
                                           }
                                         },
                                         child: Text(
@@ -208,6 +215,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         },
                       ),
                     ),
+                    const SizedBox(height: 10),
                   ],
                 ),
               ),
@@ -302,45 +310,43 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             }
 
             if (state is GetAllAddressLoadedState) {
-              if (state.model.data!.isEmpty) {
-                return const Center(child: Text("No Address Found"));
-              }
-
               return SafeArea(
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      ListView.builder(
-                        physics: NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        padding: const EdgeInsets.all(14),
-                        itemCount: state.model.data!.length,
-                        itemBuilder: (context, index) {
-                          final item = state.model.data![index];
-
-                          return InkWell(
-                            onTap: () {
-                              setState(() => selectedAddress = item);
-                              Navigator.pop(context);
-                            },
-                            child: Container(
-                              margin: const EdgeInsets.only(bottom: 12),
+                      state.model.data!.isEmpty
+                          ? const Center(child: Text("No Address Found"))
+                          : ListView.builder(
+                              physics: NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
                               padding: const EdgeInsets.all(14),
-                              decoration: _cardDecoration(),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(item.addType ?? "", style: const TextStyle(fontWeight: FontWeight.bold)),
-                                  const SizedBox(height: 6),
-                                  Text("${item.fullAddress ?? ""} ,${item.city}, ${item.phoneNo}"),
-                                  const SizedBox(height: 6),
-                                  Text("Phone: ${item.phoneNo ?? ""}"),
-                                ],
-                              ),
+                              itemCount: state.model.data!.length,
+                              itemBuilder: (context, index) {
+                                final item = state.model.data![index];
+
+                                return InkWell(
+                                  onTap: () {
+                                    setState(() => selectedAddress = item);
+                                    Navigator.pop(context);
+                                  },
+                                  child: Container(
+                                    margin: const EdgeInsets.only(bottom: 12),
+                                    padding: const EdgeInsets.all(14),
+                                    decoration: _cardDecoration(),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(item.addType ?? "", style: const TextStyle(fontWeight: FontWeight.bold)),
+                                        const SizedBox(height: 6),
+                                        Text("${item.fullAddress ?? ""} ,${item.city}, ${item.phoneNo}"),
+                                        const SizedBox(height: 6),
+                                        Text("Phone: ${item.phoneNo ?? ""}"),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
-                          );
-                        },
-                      ),
                       SizedBox(height: 12),
                       Padding(
                         padding: EdgeInsetsGeometry.all(12),

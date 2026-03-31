@@ -48,6 +48,7 @@ class Datum {
     int? quantity;
     DateTime? createdAt;
     DateTime? updatedAt;
+    String? superCategory;
     Category? category;
     Category? subcategory;
     bool? liked;
@@ -63,6 +64,7 @@ class Datum {
         this.productDetails,
         this.isTrending,
         this.percentOff,
+        this.superCategory,
         this.unit,
         this.isCafe,
         this.quantity,
@@ -79,6 +81,7 @@ class Datum {
         categoryId: json["category_id"],
         subcategoryId: json["subcategory_id"],
         img: json["img"],
+        superCategory: json["super_category"],
         offerPrice: json["offer_price"],
         actualPrice: json["actual_price"],
         productDetails: json["product_details"],
@@ -105,6 +108,7 @@ class Datum {
         "product_details": productDetails,
         "is_trending": isTrending,
         "percent_off": percentOff,
+        "super_category": superCategory,
         "unit": unit,
         "is_cafe": isCafe,
         "quantity": quantity,

@@ -5,6 +5,7 @@ class CartItem {
   final String image;
   final String unit;
   int quantity;
+  final String superCategory;
 
   CartItem({
     required this.productId,
@@ -13,6 +14,7 @@ class CartItem {
     required this.image,
     required this.unit,
     required this.quantity,
+    required this.superCategory,
   });
 
   factory CartItem.empty() => CartItem(
@@ -22,6 +24,7 @@ class CartItem {
         image: '',
         unit: '',
         quantity: 0,
+        superCategory: 'grocery',
       );
 
   Map<String, dynamic> toJson() => {
@@ -31,6 +34,7 @@ class CartItem {
         "image": image,
         "unit": unit,
         "quantity": quantity,
+        "super_category": superCategory,
       };
 
   factory CartItem.fromJson(Map<String, dynamic> json) => CartItem(
@@ -40,6 +44,7 @@ class CartItem {
         image: json["image"] ?? "",
         unit: json["unit"] ?? "",
         quantity: json["quantity"] ?? 0,
+        superCategory: json["super_category"] ?? "grocery",
       );
 
   CartItem copyWith({
@@ -49,6 +54,7 @@ class CartItem {
     String? image,
     String? unit,
     int? quantity,
+    String? superCategory,
   }) {
     return CartItem(
       productId: productId ?? this.productId,
@@ -57,6 +63,7 @@ class CartItem {
       image: image ?? this.image,
       unit: unit ?? this.unit,
       quantity: quantity ?? this.quantity,
+      superCategory: superCategory ?? this.superCategory,
     );
   }
 }

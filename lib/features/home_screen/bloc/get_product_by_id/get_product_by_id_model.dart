@@ -48,6 +48,7 @@ class Data {
     int? quantity;
     DateTime? createdAt;
     DateTime? updatedAt;
+    String? superCategory;
     Category? category;
     Category? subcategory;
 
@@ -67,6 +68,7 @@ class Data {
         this.quantity,
         this.createdAt,
         this.updatedAt,
+        this.superCategory,
         this.category,
         this.subcategory,
     });
@@ -87,6 +89,7 @@ class Data {
         quantity: json["quantity"],
         createdAt: json["createdAt"] == null ? null : DateTime.parse(json["createdAt"]),
         updatedAt: json["updatedAt"] == null ? null : DateTime.parse(json["updatedAt"]),
+        superCategory: json["super_category"],
         category: json["category"] == null ? null : Category.fromJson(json["category"]),
         subcategory: json["subcategory"] == null ? null : Category.fromJson(json["subcategory"]),
     );
@@ -107,6 +110,7 @@ class Data {
         "quantity": quantity,
         "createdAt": createdAt?.toIso8601String(),
         "updatedAt": updatedAt?.toIso8601String(),
+        "super_category": superCategory,
         "category": category?.toJson(),
         "subcategory": subcategory?.toJson(),
     };

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
@@ -23,6 +24,18 @@ class PlaceOrderCubit extends Cubit<PlaceOrderState> {
         return;
       }
       final items = prepareItems(cartItems);
+
+      final url = "${AppString.baseUrl}/api/zeggo/orders/create-order";
+
+      final body = {
+        "user_id": userId,
+        "address_id": addressId,
+        "delivery_fee": "0",
+        "items": items,
+        "payment_type": paymentMethod,
+      };
+
+      logCurl(url: url, data: body, method: "POST");
 
       final resp = await repository.sendRequest.post(
         "${AppString.baseUrl}/api/zeggo/orders/create-order",
@@ -60,5 +73,17 @@ class PlaceOrderCubit extends Cubit<PlaceOrderState> {
     return merged.entries.map((e) {
       return {"product_id": e.key, "quantity": e.value};
     }).toList();
+  }
+
+  void logCurl({required String url, required Map<String, dynamic> data, required String method}) {
+    final buffer = StringBuffer();
+
+    buffer.write("curl -X $method '$url' \\\n");
+
+    buffer.write("-H 'Content-Type: application/json' \\\n");
+
+    buffer.write("-d '${jsonEncode(data)}'");
+
+    log("CURL => \n${buffer.toString()}");
   }
 }

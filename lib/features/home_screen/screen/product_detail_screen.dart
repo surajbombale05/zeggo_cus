@@ -141,6 +141,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 decoration: TextDecoration.lineThrough,
                               ),
                             ),
+
+                            SizedBox(width: 10),
+                            Text(
+                              "${data?.unit ?? ""}",
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.primaryDark),
+                            ),
                           ],
                         ),
 
@@ -291,6 +297,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               price: double.parse(data?.offerPrice ?? "0"),
                               quantity: 1,
                               unit: data?.unit ?? "",
+                              superCategory: data?.superCategory ?? "grocery",
                             ),
                           );
                         },

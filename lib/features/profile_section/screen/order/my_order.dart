@@ -106,6 +106,7 @@ class _MyOrdersState extends State<MyOrders> {
                           ),
                           Expanded(
                             child: Container(
+                              alignment: Alignment.center,
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                               decoration: BoxDecoration(
                                 color: statusColor(order.orderStatus ?? "").withOpacity(0.12),
@@ -121,8 +122,10 @@ class _MyOrdersState extends State<MyOrders> {
                               ),
                             ),
                           ),
+                          SizedBox(width: 5),
                           Expanded(
                             child: Container(
+                              alignment: Alignment.center,
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                               decoration: BoxDecoration(
                                 color: statusColor(order.orderStatus ?? "").withOpacity(0.12),

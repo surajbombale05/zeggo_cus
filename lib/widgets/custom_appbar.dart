@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:zeggo_cus/features/cart_section/cart_view.dart';
 import 'package:zeggo_cus/features/profile_section/bloc/address/get_all_address/get_all_address_cubit.dart';
 import 'package:zeggo_cus/features/profile_section/screen/address/add_update_address.dart';
-import 'package:zeggo_cus/features/profile_section/view/profile_view.dart';
 import 'package:zeggo_cus/utils/service/proveider/cart_provider.dart';
 import 'package:zeggo_cus/utils/storage/auth_guard.dart';
 
@@ -80,24 +79,24 @@ class ZeptoStyleAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
 
       actions: [
-        GestureDetector(
-          onTap: () async {
-           await AuthGuard.checkLogin(
-              context: context,
-              onLoggedIn: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return const ProfileView();
-                    },
-                  ),
-                );
-              },
-            );
-          },
-          child: Icon(Icons.account_circle_outlined, color: Colors.black87, size: 35),
-        ),
+        // GestureDetector(
+        //   onTap: () async {
+        //    await AuthGuard.checkLogin(
+        //       context: context,
+        //       onLoggedIn: () {
+        //         Navigator.push(
+        //           context,
+        //           MaterialPageRoute(
+        //             builder: (context) {
+        //               return const ProfileView();
+        //             },
+        //           ),
+        //         );
+        //       },
+        //     );
+        //   },
+        //   child: Icon(Icons.account_circle_outlined, color: Colors.black87, size: 35),
+        // ),
 
         Padding(
           padding: const EdgeInsets.only(right: 12),

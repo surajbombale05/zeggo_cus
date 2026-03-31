@@ -25,6 +25,7 @@ import 'package:zeggo_cus/features/profile_section/bloc/address/delete_address/d
 import 'package:zeggo_cus/features/profile_section/bloc/address/get_all_address/get_all_address_cubit.dart';
 import 'package:zeggo_cus/features/profile_section/bloc/address/post_address/post_address_cubit.dart';
 import 'package:zeggo_cus/features/profile_section/bloc/address/update_address/update_address_cubit.dart';
+import 'package:zeggo_cus/features/profile_section/bloc/create_payment_history/create_payment_history_cubit.dart';
 import 'package:zeggo_cus/features/profile_section/bloc/delete_profile/delete_profile_cubit.dart';
 import 'package:zeggo_cus/features/profile_section/bloc/get_all_orders/get_all_orders_cubit.dart';
 import 'package:zeggo_cus/features/profile_section/bloc/get_all_wishlist/get_all_wishlist_cubit.dart';
@@ -101,11 +102,11 @@ class MyApp extends StatelessWidget {
         BlocProvider<GetAllWishlistCubit>(create: (context) => GetAllWishlistCubit()),
         BlocProvider<GetSettingCubit>(create: (context) => GetSettingCubit()),
         BlocProvider<PlaceOrderCubit>(create: (context) => PlaceOrderCubit()),
-
         BlocProvider<GetAllOrdersCubit>(create: (context) => GetAllOrdersCubit()),
         BlocProvider<GetOrderByIdCubit>(create: (context) => GetOrderByIdCubit()),
         BlocProvider<CreateOrderCubit>(create: (context) => CreateOrderCubit()),
         BlocProvider<GetNearbySupplierCubit>(create: (context) => GetNearbySupplierCubit()),
+        BlocProvider<CreatePaymentHistoryCubit>(create: (context) => CreatePaymentHistoryCubit()),
         ChangeNotifierProvider(create: (_) => CartProvider()..load()),
       ],
 
