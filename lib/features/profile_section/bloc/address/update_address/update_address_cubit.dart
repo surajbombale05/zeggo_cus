@@ -27,6 +27,7 @@ class UpdateAddressCubit extends Cubit<UpdateAddressState> {
   }) async {
     try {
       emit(UpdateAddressLoadingState());
+        log("------> Lat Long $lat  $long");
       final resp = await repository.sendRequest.put(
         "${AppString.baseUrl}/api/zeggo/user-addresses/$addressId",
         data: {

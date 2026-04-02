@@ -56,8 +56,11 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
   AddressType selectedAdd = AddressType.home;
   final TextEditingController name = TextEditingController();
   final TextEditingController phone = TextEditingController();
+  final TextEditingController houseNo = TextEditingController();
   final TextEditingController address = TextEditingController();
+  final TextEditingController landmark = TextEditingController();
   final TextEditingController city = TextEditingController();
+  final TextEditingController state = TextEditingController();
   final TextEditingController pin = TextEditingController();
   bool isPrimary = false;
   double? lat;
@@ -65,8 +68,11 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
   bool isFetchingLocation = false;
 
   // Track programmatically filled text to prevent clearing lat/lng
+  String _lastFilledHouseNo = "";
   String _lastFilledAddress = "";
+  String _lastFilledLandmark = "";
   String _lastFilledCity = "";
+  String _lastFilledState = "";
   String _lastFilledPin = "";
 
   Future<void> _getCurrentLocation() async {
@@ -125,25 +131,47 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
         fullAddress = fullAddress.replaceAll(RegExp(r'^[A-Z0-9]+\+[A-Z0-9]+,\s*'), '');
 
         String cityName = "";
+        String stateName = "";
         String postalCode = "";
+        String route = "";
+        String sublocality = "";
 
         for (var comp in result?['address_components']) {
-          if (comp['types'].contains('locality')) {
+          List types = comp['types'];
+          if (types.contains('locality')) {
             cityName = comp['long_name'];
           }
-          if (comp['types'].contains('postal_code')) {
+          if (types.contains('administrative_area_level_1')) {
+            stateName = comp['long_name'];
+          }
+          if (types.contains('postal_code')) {
             postalCode = comp['long_name'];
+          }
+          if (types.contains('route')) {
+            route = comp['long_name'];
+          }
+          if (types.contains('sublocality')) {
+            sublocality = comp['long_name'];
           }
         }
 
-        setState(() {
-          address.text = fullAddress;
-          city.text = cityName;
-          pin.text = postalCode;
+        // Use more specific address components if fullAddress is just a plus code
+        String finalAddress = fullAddress;
+        if (route.isNotEmpty || sublocality.isNotEmpty) {
+          finalAddress = "${route.isNotEmpty ? "$route, " : ""}$sublocality";
+        }
 
-          _lastFilledAddress = fullAddress;
+        setState(() {
+          // IMPORTANT: Update reference values BEFORE controllers to prevent race condition with listeners
+          _lastFilledAddress = finalAddress;
           _lastFilledCity = cityName;
+          _lastFilledState = stateName;
           _lastFilledPin = postalCode;
+
+          address.text = finalAddress;
+          city.text = cityName;
+          state.text = stateName;
+          pin.text = postalCode;
         });
       } else {
         _fallbackLatLng(LatLng(lat, lng));
@@ -193,7 +221,9 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
     setState(() => isFetchingLocation = true);
 
     try {
-      List<Location> locations = await locationFromAddress("${address.text}, ${city.text}, ${pin.text}");
+      String fullSearchAddress =
+          "${houseNo.text.trim()}, ${address.text.trim()}, ${landmark.text.trim()}, ${city.text.trim()}, ${pin.text.trim()}";
+      List<Location> locations = await locationFromAddress(fullSearchAddress);
 
       if (locations.isNotEmpty) {
         lat = locations.first.latitude;
@@ -235,37 +265,59 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
       if (widget.item != null) {
         lat = double.tryParse(widget.item?.lat ?? "");
         lng = double.tryParse(widget.item?.long ?? "");
+
+        // Try to de-concatenate full address if possible
+        // Expected format: House No, Full Address, Landmark, State
+        // (This is a best-effort approach for existing data)
+        String rawAddress = widget.item?.fullAddress ?? "";
+        List<String> parts = rawAddress.split(", ");
+
+        if (parts.length >= 4) {
+          houseNo.text = parts[0];
+          address.text = parts[1];
+          landmark.text = parts[2];
+          state.text = parts[3];
+        } else {
+          address.text = rawAddress;
+        }
+
+        _lastFilledHouseNo = houseNo.text;
         _lastFilledAddress = address.text;
+        _lastFilledLandmark = landmark.text;
         _lastFilledCity = city.text;
+        _lastFilledState = state.text;
         _lastFilledPin = pin.text;
       }
-
-      address.addListener(() {
-        if (address.text != _lastFilledAddress && mounted) {
-          setState(() {
-            lat = null;
-            lng = null;
-          });
-        }
-      });
-      city.addListener(() {
-        if (city.text != _lastFilledCity && mounted) {
-          setState(() {
-            lat = null;
-            lng = null;
-          });
-        }
-      });
-      pin.addListener(() {
-        if (pin.text != _lastFilledPin && mounted) {
-          setState(() {
-            lat = null;
-            lng = null;
-          });
-        }
-      });
     }
+
+    // Initialize listeners for both Add and Edit modes
+    houseNo.addListener(_onFieldChanged);
+    address.addListener(_onFieldChanged);
+    landmark.addListener(_onFieldChanged);
+    city.addListener(_onFieldChanged);
+    state.addListener(_onFieldChanged);
+    pin.addListener(_onFieldChanged);
+
     super.initState();
+  }
+
+  void _onFieldChanged() {
+    if (!mounted) return;
+
+    bool hasChanged = houseNo.text != _lastFilledHouseNo ||
+        address.text != _lastFilledAddress ||
+        landmark.text != _lastFilledLandmark ||
+        city.text != _lastFilledCity ||
+        state.text != _lastFilledState ||
+        pin.text != _lastFilledPin;
+
+    if (hasChanged && (lat != null || lng != null)) {
+      setState(() {
+        lat = null;
+        lng = null;
+      });
+      print("Location coordinates cleared due to manual edit.");
+    }
   }
 
   @override
@@ -436,25 +488,53 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
                   ],
                 ),
               if (lat != null && lng != null)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 6),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.green.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
+                  ),
                   child: Row(
                     children: [
-                      Icon(Icons.check_circle, color: Colors.green, size: 16),
-                      const SizedBox(width: 6),
-                      Text(
-                        "Location set: ${lat!.toStringAsFixed(5)}, ${lng!.toStringAsFixed(5)}",
-                        style: const TextStyle(fontSize: 12, color: Colors.green),
+                      Icon(Icons.check_circle, color: Colors.green, size: 20),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Location Verified",
+                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.green.shade700),
+                            ),
+                            Text(
+                              "Coordinates: ${lat!.toStringAsFixed(6)}, ${lng!.toStringAsFixed(6)}",
+                              style: TextStyle(fontSize: 12, color: Colors.green.shade600),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
                 ),
               SizedBox(height: 10),
-              _inputField("Full Name", name),
-              _inputField("Phone Number", phone, keyboardType: TextInputType.phone),
-              _inputField("Full Address", address, maxLines: 3),
-              _inputField("City", city),
-              _inputField("Pincode", pin, keyboardType: TextInputType.number),
+              _inputField("Receiver's Name *", name),
+              _inputField("Phone Number *", phone, keyboardType: TextInputType.phone),
+              const Divider(height: 32),
+              const Text("Address Details", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              const SizedBox(height: 16),
+              _inputField("House / Flat / Floor No *", houseNo),
+              _inputField("Apartment / Road / Area *", address, maxLines: 2),
+              _inputField("Landmark (Optional)", landmark),
+              Row(
+                children: [
+                  Expanded(child: _inputField("City *", city)),
+                  const SizedBox(width: 12),
+                  Expanded(child: _inputField("State *", state)),
+                ],
+              ),
+              _inputField("Pincode *", pin, keyboardType: TextInputType.number),
               SizedBox(height: 5),
               Text("Default"),
               SizedBox(height: 15),
@@ -513,30 +593,33 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
                                         return;
                                       }
                                     }
+                                    String finalFullAddress =
+                                        "${houseNo.text.trim()}, ${address.text.trim()}, ${landmark.text.trim()}, ${state.text.trim()}";
+
                                     if (widget.item != null) {
                                       context.read<UpdateAddressCubit>().updateAdrress(
                                         addressId: widget.item?.id ?? "",
                                         addType: selectedAdd.apiValue,
-                                        city: city.text,
-                                        fullAddress: address.text,
-                                        fullName: name.text,
-                                        phoneNo: phone.text,
+                                        city: city.text.trim(),
+                                        fullAddress: finalFullAddress,
+                                        fullName: name.text.trim(),
+                                        phoneNo: phone.text.trim(),
                                         userId: userId,
                                         isPrimary: isPrimary,
-                                        zipCode: pin.text,
+                                        zipCode: pin.text.trim(),
                                         lat: lat?.toString() ?? "",
                                         long: lng?.toString() ?? "",
                                       );
                                     } else {
                                       context.read<PostAddressCubit>().postAdrress(
                                         addType: selectedAdd.apiValue,
-                                        city: city.text,
-                                        fullAddress: address.text,
-                                        fullName: name.text,
-                                        phoneNo: phone.text,
+                                        city: city.text.trim(),
+                                        fullAddress: finalFullAddress,
+                                        fullName: name.text.trim(),
+                                        phoneNo: phone.text.trim(),
                                         userId: userId ?? "",
                                         isPrimary: isPrimary,
-                                        zipCode: pin.text,
+                                        zipCode: pin.text.trim(),
                                         lat: lat?.toString() ?? "",
                                         long: lng?.toString() ?? "",
                                       );
@@ -561,24 +644,49 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
   }
 
   Widget _inputField(String label, TextEditingController controller, {int maxLines = 1, TextInputType? keyboardType}) {
+    bool isOptional = label.toLowerCase().contains("optional");
+
     return Padding(
-      padding: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.only(bottom: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: TextStyle(fontSize: 13)),
-          SizedBox(height: 5),
+          Padding(
+            padding: const EdgeInsets.only(left: 4, bottom: 6),
+            child: Text(label, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: Colors.grey.shade700)),
+          ),
           TextFormField(
             controller: controller,
             maxLines: maxLines,
             keyboardType: keyboardType,
-            validator: (v) => v!.isEmpty ? "Required field" : null,
+            validator: (v) {
+              if (isOptional) return null;
+              return (v == null || v.trim().isEmpty) ? "This field is required" : null;
+            },
             decoration: InputDecoration(
               filled: true,
-              fillColor: AppColors.white,
-              border: InputBorder.none,
-              errorBorder: InputBorder.none,
-              focusedBorder: InputBorder.none,
+              fillColor: Colors.grey.shade50,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.grey.shade300),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.grey.shade300),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: AppColors.primaryColor, width: 1.5),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.red, width: 1),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.red, width: 1.5),
+              ),
             ),
           ),
         ],

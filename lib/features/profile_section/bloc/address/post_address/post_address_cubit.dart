@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
@@ -26,6 +27,7 @@ class PostAddressCubit extends Cubit<PostAddressState> {
   }) async {
     try {
       emit(PostAddressLoadingState());
+      log("------> Lat Long $lat  $long");
       final resp = await repository.sendRequest.post(
         "${AppString.baseUrl}/api/zeggo/user-addresses",
         data: {
@@ -43,6 +45,8 @@ class PostAddressCubit extends Cubit<PostAddressState> {
       );
 
       repository.sendRequest.interceptors.add(PrettyDioLogger());
+
+      logCurlRequest(resp.requestOptions);
       final result = resp.data;
       if (resp.statusCode == 200 || resp.statusCode == 201) {
         if (result["status"] == true) {
@@ -71,6 +75,38 @@ class PostAddressCubit extends Cubit<PostAddressState> {
     } catch (e, stk) {
       log("Message:=> Catch Error  => $e $stk");
       emit(PostAddressErrorState(e.toString()));
+    }
+  }
+
+  void logCurlRequest(RequestOptions options) {
+    try {
+      String curl = "curl -X ${options.method} '${options.uri}'";
+
+      // Headers
+      options.headers.forEach((key, value) {
+        curl += " -H '$key: $value'";
+      });
+
+      // Data (body)
+      if (options.data != null) {
+        if (options.data is FormData) {
+          final formData = options.data as FormData;
+
+          for (var field in formData.fields) {
+            curl += " -F '${field.key}=${field.value}'";
+          }
+
+          for (var file in formData.files) {
+            curl += " -F '${file.key}=@${file.value.filename}'";
+          }
+        } else {
+          curl += " -d '${jsonEncode(options.data)}'";
+        }
+      }
+
+      log("🌍 CURL REQUEST:\n$curl");
+    } catch (e) {
+      log("❌ CURL LOG ERROR: $e");
     }
   }
 }
