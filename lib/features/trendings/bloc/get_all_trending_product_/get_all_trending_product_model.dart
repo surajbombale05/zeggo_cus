@@ -43,7 +43,7 @@ class Datum {
     String? productDetails;
     bool? isTrending;
     String? percentOff;
-    int? quantity;
+    dynamic quantity;
     DateTime? createdAt;
     DateTime? updatedAt;
     Category? category;

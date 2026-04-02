@@ -129,6 +129,16 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
               _pickedLocation = position.target;
             },
             markers: _marker != null ? {_marker!} : {},
+            onTap: (LatLng tappedPosition) {
+              setState(() {
+                _pickedLocation = tappedPosition;
+
+                _marker = _marker!.copyWith(positionParam: tappedPosition);
+              });
+
+              _resolveAddress(tappedPosition);
+            },
+
             onCameraIdle: () {
               setState(() {
                 _marker = _marker!.copyWith(positionParam: _pickedLocation);

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -63,14 +64,16 @@ class _OtpViewState extends State<OtpView> {
   Future<String> getDeviceInfo() async {
     final deviceInfo = DeviceInfoPlugin();
 
-    if (Platform.isAndroid) {
-      final androidInfo = await deviceInfo.androidInfo;
-      return androidInfo.id;
-    }
+    if (!kIsWeb) {
+      if (Platform.isAndroid) {
+        final androidInfo = await deviceInfo.androidInfo;
+        return androidInfo.id;
+      }
 
-    if (Platform.isIOS) {
-      final iosInfo = await deviceInfo.iosInfo;
-      return "${iosInfo.identifierForVendor}";
+      if (Platform.isIOS) {
+        final iosInfo = await deviceInfo.iosInfo;
+        return "${iosInfo.identifierForVendor}";
+      }
     }
 
     return "Unknown Device";

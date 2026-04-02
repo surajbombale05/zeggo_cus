@@ -185,20 +185,86 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
     setState(() {});
   }
 
-  Future<void> _openMapPicker() async {
-    double startLat = lat ?? 20.5937;
-    double startLng = lng ?? 78.9629;
+  // Future<void> _openMapPicker() async {
+  //   double startLat = lat ?? 20.5937;
+  //   double startLng = lng ?? 78.9629;
 
-    if (lat == null && address.text.isNotEmpty) {
-      try {
-        List<Location> locs = await locationFromAddress("${address.text}, ${city.text}, ${pin.text}");
-        if (locs.isNotEmpty) {
-          startLat = locs.first.latitude;
-          startLng = locs.first.longitude;
+  //   if (lat == null && address.text.isNotEmpty) {
+  //     try {
+  //       List<Location> locs = await locationFromAddress("${address.text}, ${city.text}, ${pin.text}");
+  //       if (locs.isNotEmpty) {
+  //         startLat = locs.first.latitude;
+  //         startLng = locs.first.longitude;
+  //       }
+  //     } catch (_) {}
+  //   }
+
+  //   final LatLng? picked = await Navigator.push<LatLng>(
+  //     context,
+  //     MaterialPageRoute(
+  //       builder: (_) => MapPickerScreen(initialLat: startLat, initialLng: startLng),
+  //     ),
+  //   );
+
+  //   if (picked != null) {
+  //     setState(() {
+  //       lat = picked.latitude;
+  //       lng = picked.longitude;
+  //     });
+  //     await _fillAddressFromLatLng(lat!, lng!);
+
+  //     AppToast.showSuccess(context, "Location Confirmed", "Exact pin location saved.");
+  //   }
+  // }
+
+  Future<void> _openMapPicker() async {
+    double startLat;
+    double startLng;
+
+    try {
+      // ✅ 1. If already selected → use it
+      if (lat != null && lng != null) {
+        startLat = lat!;
+        startLng = lng!;
+      }
+      // ✅ 2. If address exists → convert to lat/lng
+      else if (address.text.isNotEmpty) {
+        try {
+          List<Location> locs = await locationFromAddress("${address.text}, ${city.text}, ${pin.text}");
+
+          if (locs.isNotEmpty) {
+            startLat = locs.first.latitude;
+            startLng = locs.first.longitude;
+          } else {
+            throw Exception("No location found");
+          }
+        } catch (_) {
+          // fallback to current location
+          Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+
+          startLat = position.latitude;
+          startLng = position.longitude;
         }
-      } catch (_) {}
+      }
+      // ✅ 3. Else → use current location directly
+      else {
+        bool hasPermission = await LocationService.ensureLocationEnabled();
+        if (!hasPermission) {
+          AppToast.showError(context, "Permission Denied", "Please enable location services");
+          return;
+        }
+
+        Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+
+        startLat = position.latitude;
+        startLng = position.longitude;
+      }
+    } catch (e) {
+      startLat = 19.5689;
+      startLng = 74.2072;
     }
 
+    // 🚀 Open Map Picker
     final LatLng? picked = await Navigator.push<LatLng>(
       context,
       MaterialPageRoute(
@@ -211,6 +277,7 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
         lat = picked.latitude;
         lng = picked.longitude;
       });
+
       await _fillAddressFromLatLng(lat!, lng!);
 
       AppToast.showSuccess(context, "Location Confirmed", "Exact pin location saved.");
@@ -304,7 +371,8 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
   void _onFieldChanged() {
     if (!mounted) return;
 
-    bool hasChanged = houseNo.text != _lastFilledHouseNo ||
+    bool hasChanged =
+        houseNo.text != _lastFilledHouseNo ||
         address.text != _lastFilledAddress ||
         landmark.text != _lastFilledLandmark ||
         city.text != _lastFilledCity ||
@@ -653,7 +721,10 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.only(left: 4, bottom: 6),
-            child: Text(label, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: Colors.grey.shade700)),
+            child: Text(
+              label,
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: Colors.grey.shade700),
+            ),
           ),
           TextFormField(
             controller: controller,

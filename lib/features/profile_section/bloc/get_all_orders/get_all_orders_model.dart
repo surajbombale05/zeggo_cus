@@ -92,7 +92,7 @@ class Item {
     String? id;
     String? orderId;
     String? productId;
-    int? quantity;
+    dynamic quantity;
     String? price;
     DateTime? createdAt;
     DateTime? updatedAt;
@@ -145,7 +145,7 @@ class Product {
     String? percentOff;
     String? unit;
     bool? isCafe;
-    int? quantity;
+    dynamic quantity;
     DateTime? createdAt;
     DateTime? updatedAt;
 

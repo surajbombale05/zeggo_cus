@@ -13,7 +13,7 @@ String getAllWishlistModelToJson(GetAllWishlistModel data) => json.encode(data.t
 class GetAllWishlistModel {
     bool? status;
     String? message;
-    int? totalLikedProducts;
+    dynamic totalLikedProducts;
     List<Datums>? data;
 
     GetAllWishlistModel({

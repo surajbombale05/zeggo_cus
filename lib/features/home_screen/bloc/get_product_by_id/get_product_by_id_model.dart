@@ -45,7 +45,7 @@ class Data {
     String? percentOff;
     dynamic unit;
     bool? isCafe;
-    int? quantity;
+    dynamic quantity;
     DateTime? createdAt;
     DateTime? updatedAt;
     String? superCategory;

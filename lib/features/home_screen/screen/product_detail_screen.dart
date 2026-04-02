@@ -269,107 +269,110 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             final data = state.model.data;
             final productId = data?.id ?? "";
 
-            return Container(
-              padding: const EdgeInsets.all(14),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
-              ),
-              child: Consumer<CartProvider>(
-                builder: (context, cart, _) {
-                  final quantity = cart.getQuantity(productId);
-
-                  /// 🔹 NOT IN CART
-                  if (quantity == 0) {
-                    return SizedBox(
-                      height: 48,
-                      child: OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: Theme.of(context).primaryColor),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        ),
-                        onPressed: () {
-                          cart.add(
-                            CartItem(
-                              productId: productId,
-                              name: data?.name ?? "",
-                              image: data?.img ?? "",
-                              price: double.parse(data?.offerPrice ?? "0"),
-                              quantity: 1,
-                              unit: data?.unit ?? "",
-                              superCategory: data?.superCategory ?? "grocery",
-                            ),
-                          );
-                        },
-                        child: Text(
-                          "Add to Cart",
-                          style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    );
-                  }
-
-                  /// 🔹 IN CART → SHOW COUNTER
-                  return Row(
-                    children: [
-                      Expanded(
-                        flex: 3,
-                        child: Container(
-                          height: 48,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Theme.of(context).primaryColor),
-                            borderRadius: BorderRadius.circular(12),
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 30),
+              child: Container(
+                padding: const EdgeInsets.all(14),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+                ),
+                child: Consumer<CartProvider>(
+                  builder: (context, cart, _) {
+                    final quantity = cart.getQuantity(productId);
+              
+                    /// 🔹 NOT IN CART
+                    if (quantity == 0) {
+                      return SizedBox(
+                        height: 48,
+                        child: OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(color: Theme.of(context).primaryColor),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                           ),
-                          child: Row(
-                            children: [
-                              IconButton(
-                                icon: Icon(Icons.remove, color: Theme.of(context).primaryColor),
-                                onPressed: () => cart.decrement(productId),
+                          onPressed: () {
+                            cart.add(
+                              CartItem(
+                                productId: productId,
+                                name: data?.name ?? "",
+                                image: data?.img ?? "",
+                                price: double.parse(data?.offerPrice ?? "0"),
+                                quantity: 1,
+                                unit: data?.unit ?? "",
+                                superCategory: data?.superCategory ?? "grocery",
                               ),
-                              Expanded(
-                                child: Text(
-                                  quantity.toString(),
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            );
+                          },
+                          child: Text(
+                            "Add to Cart",
+                            style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      );
+                    }
+              
+                    /// 🔹 IN CART → SHOW COUNTER
+                    return Row(
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: Container(
+                            height: 48,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Theme.of(context).primaryColor),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              children: [
+                                IconButton(
+                                  icon: Icon(Icons.remove, color: Theme.of(context).primaryColor),
+                                  onPressed: () => cart.decrement(productId),
                                 ),
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.add, color: Theme.of(context).primaryColor),
-                                onPressed: () => cart.increment(productId),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-
-                      Expanded(
-                        flex: 2,
-                        child: SizedBox(
-                          height: 48,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Theme.of(context).primaryColor,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                            ),
-                            onPressed: () async {
-                              await AuthGuard.checkLogin(
-                                context: context,
-                                onLoggedIn: () {
-                                  Navigator.push(context, MaterialPageRoute(builder: (_) => const CartView()));
-                                },
-                              );
-                            },
-                            child: Text(
-                              "View Cart",
-                              style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.white),
+                                Expanded(
+                                  child: Text(
+                                    quantity.toString(),
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.add, color: Theme.of(context).primaryColor),
+                                  onPressed: () => cart.increment(productId),
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  );
-                },
+                        const SizedBox(width: 12),
+              
+                        Expanded(
+                          flex: 2,
+                          child: SizedBox(
+                            height: 48,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Theme.of(context).primaryColor,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              ),
+                              onPressed: () async {
+                                await AuthGuard.checkLogin(
+                                  context: context,
+                                  onLoggedIn: () {
+                                    Navigator.push(context, MaterialPageRoute(builder: (_) => const CartView()));
+                                  },
+                                );
+                              },
+                              child: Text(
+                                "View Cart",
+                                style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.white),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
               ),
             );
           }

@@ -53,7 +53,7 @@ class CartItem {
     double? price,
     String? image,
     String? unit,
-    int? quantity,
+    dynamic quantity,
     String? superCategory,
   }) {
     return CartItem(

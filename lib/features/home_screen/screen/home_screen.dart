@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:upgrader/upgrader.dart';
 import 'package:get/get.dart';
 import 'package:zeggo_cus/features/bottom_navigation_bar/view/bottom_navigation_bar.dart';
 import 'package:zeggo_cus/features/categories/view/categories_view.dart';
@@ -47,14 +48,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return UpgradeAlert(
+      child: Scaffold(
       backgroundColor: Colors.grey.shade100,
       // appBar: ZeptoStyleAppBar(),
       body: Obx(() {
         return IndexedStack(index: controller.currentIndex.value, children: pages);
       }),
-
       bottomNavigationBar: CustomBottomNavigationBar(),
-    );
+    ),);
   }
 }

@@ -29,7 +29,7 @@ class CreateOrderModel {
 }
 
 class Order {
-    int? id;
+    dynamic id;
     String? orderId;
     dynamic amount;
     String? currency;
