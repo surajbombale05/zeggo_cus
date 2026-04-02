@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:zeggo_cus/constants/app_url.dart';
 import 'package:zeggo_cus/features/home_screen/bloc/create_order/create_order_model.dart';
@@ -16,7 +17,7 @@ class CreateOrderCubit extends Cubit<CreateOrderState> {
 
       final resp = await repository.sendRequest.post(
         "${AppString.baseUrl}/api/zeggo/razorpay/create",
-        data: { "amount": amount},
+        data: {"amount": amount},
       );
       final result = resp.data;
       log("---- CreateOrderCubit $result");
@@ -28,6 +29,22 @@ class CreateOrderCubit extends Cubit<CreateOrderState> {
           emit(CreateOrderErrorState(result["message"]));
         }
       }
+    } on DioException catch (e) {
+      String errorMessage = "Something went wrong";
+
+      if (e.response != null) {
+        final data = e.response?.data;
+
+        if (data is Map && data['message'] != null) {
+          errorMessage = data['message'];
+        } else {
+          errorMessage = "Server error: ${e.response?.statusCode}";
+        }
+      } else {
+        errorMessage = "No Internet Connection";
+      }
+
+      emit(CreateOrderErrorState(errorMessage));
     } catch (e, stk) {
       log("Message:=> Catch Error  => $e $stk");
       emit(CreateOrderErrorState(e.toString()));

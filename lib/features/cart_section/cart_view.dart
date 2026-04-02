@@ -14,78 +14,69 @@ class CartView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<CartProvider>(
       builder: (context, cart, _) {
-        final allItems = cart.items;
+        final allItems = List<CartItem>.from(cart.items);
+        // Sort by category priority to ensure consistent grouping
+        final categoryPriority = {'grocery': 1, 'fruit': 2, 'vegetable': 3, 'nonveg': 4};
+        allItems.sort((a, b) {
+          int priorityA = categoryPriority[a.superCategory.toLowerCase()] ?? 100;
+          int priorityB = categoryPriority[b.superCategory.toLowerCase()] ?? 100;
+          return priorityA.compareTo(priorityB);
+        });
 
-        int getCount(String category) {
-          return allItems.where((item) => item.superCategory.toLowerCase() == category.toLowerCase()).length;
-        }
-
-        return DefaultTabController(
-          length: 4,
-          child: Scaffold(
-            backgroundColor: Colors.grey.shade100,
-            appBar: AppBar(
-              title: const Text("My Cart", style: TextStyle(fontWeight: FontWeight.w600)),
-              backgroundColor: Colors.white,
-              elevation: 1,
-              bottom: TabBar(
-                isScrollable: true,
-                labelColor: Colors.green,
-                unselectedLabelColor: Colors.black,
-                indicatorColor: Colors.green,
-                tabs: [
-                  Tab(text: "Grocery (${getCount('grocery')})"),
-                  Tab(text: "Fruit (${getCount('fruit')})"),
-                  Tab(text: "Vegetable (${getCount('vegetable')})"),
-                  Tab(text: "Non-Veg (${getCount('nonveg')})"),
-                ],
-              ),
-            ),
-            body: allItems.isEmpty
-                ? const Center(child: Text("Your cart is empty 🛒", style: TextStyle(fontSize: 16)))
-                : TabBarView(
-                    children: [
-                      _buildCartCategory(context, cart, allItems, "grocery"),
-                      _buildCartCategory(context, cart, allItems, "fruit"),
-                      _buildCartCategory(context, cart, allItems, "vegetable"),
-                      _buildCartCategory(context, cart, allItems, "nonveg"),
-                    ],
-                  ),
+        return Scaffold(
+          backgroundColor: Colors.grey.shade100,
+          appBar: AppBar(
+            title: const Text("My Cart", style: TextStyle(fontWeight: FontWeight.w600)),
+            backgroundColor: Colors.white,
+            elevation: 1,
           ),
+          body: allItems.isEmpty
+              ? const Center(child: Text("Your cart is empty 🛒", style: TextStyle(fontSize: 16)))
+              : Column(
+                  children: [
+                    Expanded(
+                      child: ListView.builder(
+                        padding: const EdgeInsets.all(12),
+                        itemCount: allItems.length,
+                        itemBuilder: (context, index) {
+                          final item = allItems[index];
+
+                          // Visually separate categories with a header if it's the first item of that category
+                          final String currentCategory = item.superCategory;
+                          bool showHeader = false;
+                          if (index == 0) {
+                            showHeader = true;
+                          } else if (allItems[index - 1].superCategory != currentCategory) {
+                            showHeader = true;
+                          }
+
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (showHeader)
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                                  child: Text(
+                                    currentCategory.toUpperCase(),
+                                    style: TextStyle(
+                                      color: Colors.grey.shade600,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13,
+                                      letterSpacing: 1.1,
+                                    ),
+                                  ),
+                                ),
+                              _cartItemCard(context, item),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                    _priceSummary(context, allItems),
+                  ],
+                ),
         );
       },
-    );
-  }
-
-  Widget _buildCartCategory(BuildContext context, CartProvider cart, List<CartItem> allItems, String category) {
-    final filteredItems = allItems.where((item) => item.superCategory.toLowerCase() == category.toLowerCase()).toList();
-
-    if (filteredItems.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.shopping_cart_outlined, size: 64, color: Colors.grey),
-            const SizedBox(height: 16),
-            Text("No items in $category category", style: const TextStyle(fontSize: 16, color: Colors.grey)),
-          ],
-        ),
-      );
-    }
-
-    return Column(
-      children: [
-        Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.all(12),
-            itemCount: filteredItems.length,
-            itemBuilder: (context, index) {
-              return _cartItemCard(context, filteredItems[index]);
-            },
-          ),
-        ),
-        _priceSummary(context, filteredItems),
-      ],
     );
   }
 

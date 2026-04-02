@@ -132,17 +132,44 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                   print("ERROR DATA: ${data.error}");
                                   AppToast.showError(context, "Payment Failed", data.message ?? "");
                                 },
-                                onSuccess: (data) {
+                                onSuccess: (data) async {
                                   context.read<CreatePaymentHistoryCubit>().createPaymentHistory(
                                     orderId: state.model.order?.orderId ?? "",
                                     paymentOrderId: data.orderId ?? "",
                                     amount: state.model.order?.amount.toString() ?? "",
                                   );
-                                  context.read<PlaceOrderCubit>().placeOrder(
-                                    addressId: selectedAddress?.id ?? "",
-                                    cartItems: widget.items,
-                                    paymentMethod: "online",
-                                  );
+
+                                  // Split and place orders for each category
+                                  final groupedItems = _groupItemsByCategory(widget.items);
+                                  bool allSuccess = true;
+                                  
+                                  for (var category in groupedItems.keys) {
+                                    final items = groupedItems[category]!;
+                                    final result = await context.read<PlaceOrderCubit>().placeOrder(
+                                      addressId: selectedAddress?.id ?? "",
+                                      cartItems: items,
+                                      paymentMethod: "online",
+                                    );
+                                    if (result != null) {
+                                      // Trigger supplier assignment for each order
+                                      context.read<GetNearbySupplierCubit>().getNearBySupplier(
+                                        orderId: result.data?.orderId.toString() ?? "",
+                                      );
+                                    } else {
+                                      allSuccess = false;
+                                    }
+                                  }
+
+                                  if (allSuccess && mounted) {
+                                    AppToast.showSuccess(context, "Success", "All orders placed successfully");
+                                    final allIds = widget.items.map((i) => i.productId).toList();
+                                    context.read<CartProvider>().removeMany(allIds);
+                                    Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => HomeScreen()),
+                                      (route) => false,
+                                    );
+                                  }
                                 },
                               ),
                             ),
@@ -157,21 +184,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                 AppToast.showError(context, "", state.error);
                                 return;
                               }
-                              if (state is PlaceOrderLoadedState) {
-                                context.read<GetNearbySupplierCubit>().getNearBySupplier(
-                                  orderId: state.model.data?.orderId.toString() ?? "",
-                                );
-                                AppToast.showSuccess(context, "Sucess", "Order place Sucessfully");
-                                // Only remove items that were in this order
-                                final purchasedIds = widget.items.map((i) => i.productId).toList();
-                                context.read<CartProvider>().removeMany(purchasedIds);
-
-                                Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => HomeScreen()),
-                                  (route) => false,
-                                );
-                              }
+                              // We handle success navigation manually in the button/callback now
+                              // to ensure all categories are processed.
                             },
                             builder: (context, state) {
                               return (state is PlaceOrderLoadingState || orderState is CreateOrderLoadingState)
@@ -184,21 +198,45 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                           backgroundColor: Theme.of(context).primaryColor,
                                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                                         ),
-                                        onPressed: () {
-                                          if (selectedAddress == null) {
-                                            AppToast.showError(context, "Select Address", "");
-                                            return;
-                                          }
-                                          if (paymentMethod == "cod") {
-                                            context.read<PlaceOrderCubit>().placeOrder(
-                                              addressId: selectedAddress?.id ?? "",
-                                              cartItems: widget.items,
-                                              paymentMethod: "cash_on_delivery",
-                                            );
-                                          } else {
-                                            context.read<CreateOrderCubit>().createOrder(amount: grandTotal.toString());
-                                          }
-                                        },
+                                          onPressed: () async {
+                                            if (selectedAddress == null) {
+                                              AppToast.showError(context, "Select Address", "");
+                                              return;
+                                            }
+                                            if (paymentMethod == "cod") {
+                                              final groupedItems = _groupItemsByCategory(widget.items);
+                                              bool allSuccess = true;
+
+                                              for (var category in groupedItems.keys) {
+                                                final items = groupedItems[category]!;
+                                                final result = await context.read<PlaceOrderCubit>().placeOrder(
+                                                      addressId: selectedAddress?.id ?? "",
+                                                      cartItems: items,
+                                                      paymentMethod: "cash_on_delivery",
+                                                    );
+                                                if (result != null) {
+                                                  context.read<GetNearbySupplierCubit>().getNearBySupplier(
+                                                    orderId: result.data?.orderId.toString() ?? "",
+                                                  );
+                                                } else {
+                                                  allSuccess = false;
+                                                }
+                                              }
+
+                                              if (allSuccess && context.mounted) {
+                                                AppToast.showSuccess(context, "Success", "All orders placed successfully");
+                                                final allIds = widget.items.map((i) => i.productId).toList();
+                                                context.read<CartProvider>().removeMany(allIds);
+                                                Navigator.pushAndRemoveUntil(
+                                                  context,
+                                                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                                                  (route) => false,
+                                                );
+                                              }
+                                            } else {
+                                              context.read<CreateOrderCubit>().createOrder(amount: grandTotal.toString());
+                                            }
+                                          },
                                         child: Text(
                                           "Place Order",
                                           style: TextStyle(
@@ -381,5 +419,17 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         );
       },
     );
+  }
+
+  Map<String, List<CartItem>> _groupItemsByCategory(List<CartItem> items) {
+    final Map<String, List<CartItem>> grouped = {};
+    for (var item in items) {
+      final category = item.superCategory.toLowerCase();
+      if (!grouped.containsKey(category)) {
+        grouped[category] = [];
+      }
+      grouped[category]!.add(item);
+    }
+    return grouped;
   }
 }

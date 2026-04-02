@@ -57,6 +57,22 @@ class UpdateProfileCubit extends Cubit<UpdateProfileState> {
           emit(UpdateProfileErrorState(result["message"]));
         }
       }
+    } on DioException catch (e) {
+      String errorMessage = "Something went wrong";
+
+      if (e.response != null) {
+        final data = e.response?.data;
+
+        if (data is Map && data['message'] != null) {
+          errorMessage = data['message'];
+        } else {
+          errorMessage = "Server error: ${e.response?.statusCode}";
+        }
+      } else {
+        errorMessage = "No Internet Connection";
+      }
+
+      emit(UpdateProfileErrorState(errorMessage));
     } catch (e, stk) {
       log("Message:=> Catch Error  => $e $stk");
       emit(UpdateProfileErrorState(e.toString()));
