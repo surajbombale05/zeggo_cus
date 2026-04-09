@@ -49,7 +49,7 @@ class UpdateProfileCubit extends Cubit<UpdateProfileState> {
       );
       repository.sendRequest.interceptors.add(PrettyDioLogger());
       final result = resp.data;
-      if (resp.statusCode == 200) {
+      if (resp.statusCode == 200 || resp.statusCode == 201) {
         if (result["status"] == true) {
           emit(UpdateProfileLoadedState());
         } else if (result["status"] == false) {

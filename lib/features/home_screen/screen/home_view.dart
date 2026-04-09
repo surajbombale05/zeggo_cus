@@ -100,8 +100,6 @@ class _HomeViewState extends State<HomeView> {
                   _sectionTitle(category.name ?? ""),
 
                   if (subCats.isNotEmpty) _subCategoryGrid(subCats, context, category.id ?? "", category.name ?? ""),
-
-                  const SizedBox(height: 20),
                 ],
               );
             },
@@ -115,7 +113,7 @@ class _HomeViewState extends State<HomeView> {
 
   Widget _sectionTitle(String title) {
     return Padding(
-      padding: const EdgeInsets.only(top: 12, bottom: 6),
+      padding: const EdgeInsets.only(top: 2, bottom: 6),
       child: Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
     );
   }
@@ -123,6 +121,7 @@ class _HomeViewState extends State<HomeView> {
   Widget _subCategoryGrid(List<Datum> subCats, BuildContext context, String categoryId, String name) {
     return GridView.builder(
       shrinkWrap: true,
+      padding: EdgeInsets.zero,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: subCats.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

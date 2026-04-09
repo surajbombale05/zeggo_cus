@@ -40,7 +40,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       return;
     }
     if (widget.isFirstTimeUser && image == null) {
-      AppToast.showSuccess(context, "", "Upload Profile Image");
+      AppToast.showError(context, "", "Upload Profile Image");
       return;
     }
     context.read<UpdateProfileCubit>().updateProfile(
@@ -70,7 +70,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       body: BlocConsumer<UpdateProfileCubit, UpdateProfileState>(
         listener: (context, state) {
           if (state is UpdateProfileErrorState) {
-            AppToast.showError(context, "Error", "Update Successfully");
+            AppToast.showError(context, "Error", state.error);
           }
 
           if (state is UpdateProfileLoadedState) {

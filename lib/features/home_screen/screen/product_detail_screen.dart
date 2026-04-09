@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
@@ -72,11 +73,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    height: 250,
-                    width: double.infinity,
-                    color: Colors.white,
-                    child: CustomCachedCard(imageUrl: "${AppString.baseUrl}/${data?.img}"),
+                  CarImageSlider(
+                    img: "${AppString.baseUrl}/${data?.img}",
+                    img2: "${AppString.baseUrl}/${data?.img}",
+                    img3:  "${AppString.baseUrl}/${data?.img}",
+                    img4:  "${AppString.baseUrl}/${data?.img}",
                   ),
 
                   const SizedBox(height: 10),
@@ -280,7 +281,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 child: Consumer<CartProvider>(
                   builder: (context, cart, _) {
                     final quantity = cart.getQuantity(productId);
-              
+
                     /// 🔹 NOT IN CART
                     if (quantity == 0) {
                       return SizedBox(
@@ -310,7 +311,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         ),
                       );
                     }
-              
+
                     /// 🔹 IN CART → SHOW COUNTER
                     return Row(
                       children: [
@@ -344,7 +345,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           ),
                         ),
                         const SizedBox(width: 12),
-              
+
                         Expanded(
                           flex: 2,
                           child: SizedBox(
@@ -380,6 +381,53 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           return const SizedBox.shrink();
         },
       ),
+    );
+  }
+}
+
+class CarImageSlider extends StatelessWidget {
+  final String? img;
+  final String? img2;
+  final String? img3;
+  final String? img4;
+
+  const CarImageSlider({super.key, this.img, this.img2, this.img3, this.img4});
+
+  @override
+  Widget build(BuildContext context) {
+    final List<String> images = [
+      img,
+      img2,
+      img3,
+      img4,
+    ].where((e) => e != null && e.trim().isNotEmpty).map((e) => e!).toList();
+
+    if (images.isEmpty) {
+      return const SizedBox();
+    }
+
+    return CarouselSlider(
+      options: CarouselOptions(
+        height: 200,
+        autoPlay: images.length > 1,
+        enlargeCenterPage: true,
+        viewportFraction: 1.0,
+        autoPlayInterval: const Duration(seconds: 3),
+        autoPlayAnimationDuration: const Duration(milliseconds: 800),
+      ),
+      items: images.map((imageUrl) {
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Image.network(
+            imageUrl,
+            width: double.infinity,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return const SizedBox();
+            },
+          ),
+        );
+      }).toList(),
     );
   }
 }

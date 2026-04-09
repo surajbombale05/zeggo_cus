@@ -29,8 +29,6 @@ class CategoriesView extends StatelessWidget {
           actions: const [
             Icon(Icons.search, color: AppColors.primaryDark),
             SizedBox(width: 10),
-            Icon(Icons.favorite_border, color: AppColors.primaryDark),
-            SizedBox(width: 12),
           ],
         ),
 
@@ -63,9 +61,8 @@ class CategoriesView extends StatelessWidget {
                       children: [
                         _sectionTitle(category.name ?? ""),
 
-                        if (subCats.isNotEmpty) _subCategoryGrid(subCats, context, category.id ?? "",category.name ?? ""),
-
-                        const SizedBox(height: 20),
+                        if (subCats.isNotEmpty)
+                          _subCategoryGrid(subCats, context, category.id ?? "", category.name ?? ""),
                       ],
                     );
                   },
@@ -82,12 +79,12 @@ class CategoriesView extends StatelessWidget {
 
   Widget _sectionTitle(String title) {
     return Padding(
-      padding: const EdgeInsets.only(top: 12, bottom: 6),
+      padding: const EdgeInsets.only(top: 2, bottom: 6),
       child: Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
     );
   }
 
-  Widget _subCategoryGrid(List<Datum> subCats, BuildContext context, String categoryId,String name) {
+  Widget _subCategoryGrid(List<Datum> subCats, BuildContext context, String categoryId, String name) {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -106,7 +103,8 @@ class CategoriesView extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => CategoryProductScreen(catId: categoryId, subCatId: sub.id ?? "",subCats: subCats,catName: name ,),
+                builder: (_) =>
+                    CategoryProductScreen(catId: categoryId, subCatId: sub.id ?? "", subCats: subCats, catName: name),
               ),
             );
           },

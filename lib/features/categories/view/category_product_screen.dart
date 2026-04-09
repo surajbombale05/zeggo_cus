@@ -129,7 +129,7 @@ class _CategoryProductScreenState extends State<CategoryProductScreen> {
                   }
 
                   return GridView.builder(
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.fromLTRB(8, 8, 8, 20),
                     itemCount: state.model.data?.length ?? 0,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: widget.subCats?.isEmpty ?? true ? 3 : 2,

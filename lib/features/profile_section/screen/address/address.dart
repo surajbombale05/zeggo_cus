@@ -118,7 +118,7 @@ class _AddressScreenState extends State<AddressScreen> {
       ),
 
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.symmetric(horizontal:14,vertical: 20),
         child: SizedBox(
           height: 48,
           child: ElevatedButton(

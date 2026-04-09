@@ -589,7 +589,7 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
               SizedBox(height: 10),
               _inputField("Receiver's Name *", name),
               _inputField("Phone Number *", phone, keyboardType: TextInputType.phone),
-              const Divider(height: 32),
+             // const Divider(height: 12),
               const Text("Address Details", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
               const SizedBox(height: 16),
               _inputField("House / Flat / Floor No *", houseNo),
@@ -704,6 +704,7 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
                   );
                 },
               ),
+              SizedBox(height: 20,),
             ],
           ),
         ),

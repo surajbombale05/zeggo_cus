@@ -78,7 +78,7 @@ class ProfileView extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: 24),
+                const SizedBox(height: 12),
 
                 // 📊 Quick Stats
                 // Padding(
@@ -91,7 +91,7 @@ class ProfileView extends StatelessWidget {
                 //     ],
                 //   ),
                 // ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 10),
 
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -188,8 +188,6 @@ class ProfileView extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: 20),
-
                 GestureDetector(
                   onTap: () {
                     showDialog(
@@ -238,7 +236,7 @@ class ProfileView extends StatelessWidget {
                     );
                   },
                   child: Padding(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Container(
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(vertical: 14),
@@ -252,6 +250,7 @@ class ProfileView extends StatelessWidget {
                     ),
                   ),
                 ),
+                SizedBox(height: 10),
                 GestureDetector(
                   onTap: () {
                     showDialog(
@@ -288,7 +287,7 @@ class ProfileView extends StatelessWidget {
                     );
                   },
                   child: Padding(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Container(
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(vertical: 14),
@@ -302,6 +301,7 @@ class ProfileView extends StatelessWidget {
                     ),
                   ),
                 ),
+                SizedBox(height: 30),
               ],
             ),
           ),

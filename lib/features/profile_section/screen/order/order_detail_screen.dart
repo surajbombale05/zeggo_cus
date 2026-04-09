@@ -245,6 +245,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                             ],
                           ),
                   ),
+                  const SizedBox(height: 20),
                 ],
               ),
             );
