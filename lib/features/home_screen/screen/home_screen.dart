@@ -33,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      LocationService.ensureLocationEnabled();
+      LocationService.ensureLocationEnabled(context);
       context.read<GetAllProductsCubit>().getAllProduct();
       context.read<GetAllCategoryCubit>().getAllCategory();
       context.read<GetAllTrendingCubit>().getAllTrendingProduct();

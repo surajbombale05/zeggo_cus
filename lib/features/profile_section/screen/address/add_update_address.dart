@@ -78,7 +78,7 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
   Future<void> _getCurrentLocation() async {
     setState(() => isFetchingLocation = true);
     try {
-      bool hasPermission = await LocationService.ensureLocationEnabled();
+      bool hasPermission = await LocationService.ensureLocationEnabled(context);
       if (!hasPermission) {
         AppToast.showError(context, "Permission Denied", "Please enable location services and grant permission.");
         return;
@@ -248,7 +248,7 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
       }
       // ✅ 3. Else → use current location directly
       else {
-        bool hasPermission = await LocationService.ensureLocationEnabled();
+        bool hasPermission = await LocationService.ensureLocationEnabled(context);
         if (!hasPermission) {
           AppToast.showError(context, "Permission Denied", "Please enable location services");
           return;
