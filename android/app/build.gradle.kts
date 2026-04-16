@@ -33,7 +33,7 @@ android {
         versionName = flutter.versionName
     }
     val keystoreProperties = Properties().apply {
-        val file = rootProject.file("C://keystore//maruti//key.properties")
+        val file = rootProject.file("/Users/macbookpro/Downloads/keystore/maruti/key.properties")
         if (file.exists()) {
             load(file.inputStream())
         }
@@ -43,7 +43,9 @@ android {
         create("release") {
             keyAlias = keystoreProperties["keyAlias"] as String?
             keyPassword = keystoreProperties["keyPassword"] as String?
-            storeFile = keystoreProperties["storeFile"]?.let { rootProject.file(it) }
+             storeFile = keystoreProperties["storeFile"]?.let { 
+                rootProject.file("/Users/macbookpro/Downloads/keystore/maruti/$it")
+            }
             storePassword = keystoreProperties["storePassword"] as String?
         }
     }

@@ -2,7 +2,7 @@ name: zeggo_cus
 description: "A new Flutter project."
 publish_to: 'none'
 
-version: 1.0.18+19  
+version: 1.0.19+20  
 
 environment:
   sdk: ^3.9.2
@@ -57,6 +57,7 @@ dependencies:
   provider: ^6.1.5+1
   http: ^1.6.0
   upgrader: ^12.5.0
+  flutter_launcher_icons: ^0.14.4
 
 dev_dependencies:
   hive_generator:
@@ -64,6 +65,11 @@ dev_dependencies:
   analyzer:
   flutter_test:
     sdk: flutter
+    
+flutter_launcher_icons:
+  android: false
+  ios: true
+  image_path: "assets/images/blacklogo_with_name.png"
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -71,6 +77,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

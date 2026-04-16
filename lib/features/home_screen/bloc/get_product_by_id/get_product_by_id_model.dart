@@ -37,6 +37,7 @@ class Data {
   String? actualPrice;
   String? productDetails;
   bool? isTrending;
+  bool? isAvailable;
   String? percentOff;
   dynamic unit;
   bool? isCafe;
@@ -59,6 +60,7 @@ class Data {
     this.offerPrice,
     this.actualPrice,
     this.productDetails,
+    this.isAvailable,
     this.isTrending,
     this.percentOff,
     this.unit,
@@ -82,6 +84,7 @@ class Data {
     img4: json["img4"],
     offerPrice: json["offer_price"],
     actualPrice: json["actual_price"],
+    isAvailable: json['is_available'],
     productDetails: json["product_details"],
     isTrending: json["is_trending"],
     percentOff: json["percent_off"],
@@ -109,6 +112,7 @@ class Data {
     "unit": unit,
     "is_cafe": isCafe,
     "quantity": quantity,
+    "is_available":isAvailable,
     "createdAt": createdAt?.toIso8601String(),
     "updatedAt": updatedAt?.toIso8601String(),
     "super_category": superCategory,

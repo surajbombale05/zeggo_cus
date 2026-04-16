@@ -48,16 +48,21 @@ class MyHttpOverrides extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext? context) {
     return super.createHttpClient(context)
-      ..badCertificateCallback = (X509Certificate cert, String host, int port) => true;
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
   }
 }
+
+//pod setup pod install
 
 void main() async {
   try {
     WidgetsFlutterBinding.ensureInitialized();
     HttpOverrides.global = MyHttpOverrides();
     await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
     await AppInit.init();
     repository.init();
     await LocalStorageUtils.init();
@@ -81,32 +86,66 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<GetAllCategoryCubit>(create: (context) => GetAllCategoryCubit()),
-        BlocProvider<GetAllProductsCubit>(create: (context) => GetAllProductsCubit()),
-        BlocProvider<GetAllBannerCubit>(create: (context) => GetAllBannerCubit()),
-        BlocProvider<GetProductByIdCubit>(create: (context) => GetProductByIdCubit()),
+        BlocProvider<GetAllCategoryCubit>(
+          create: (context) => GetAllCategoryCubit(),
+        ),
+        BlocProvider<GetAllProductsCubit>(
+          create: (context) => GetAllProductsCubit(),
+        ),
+        BlocProvider<GetAllBannerCubit>(
+          create: (context) => GetAllBannerCubit(),
+        ),
+        BlocProvider<GetProductByIdCubit>(
+          create: (context) => GetProductByIdCubit(),
+        ),
         BlocProvider<SendOtpCubit>(create: (context) => SendOtpCubit()),
         BlocProvider<VerifyOtpCubit>(create: (context) => VerifyOtpCubit()),
         BlocProvider<GetProfileCubit>(create: (context) => GetProfileCubit()),
-        BlocProvider<UpdateProfileCubit>(create: (context) => UpdateProfileCubit()),
-        BlocProvider<DeleteProfileCubit>(create: (context) => DeleteProfileCubit()),
-        BlocProvider<GetAllAddressCubit>(create: (context) => GetAllAddressCubit()),
+        BlocProvider<UpdateProfileCubit>(
+          create: (context) => UpdateProfileCubit(),
+        ),
+        BlocProvider<DeleteProfileCubit>(
+          create: (context) => DeleteProfileCubit(),
+        ),
+        BlocProvider<GetAllAddressCubit>(
+          create: (context) => GetAllAddressCubit(),
+        ),
         BlocProvider<PostAddressCubit>(create: (context) => PostAddressCubit()),
-        BlocProvider<DeleteAddressCubit>(create: (context) => DeleteAddressCubit()),
-        BlocProvider<UpdateAddressCubit>(create: (context) => UpdateAddressCubit()),
+        BlocProvider<DeleteAddressCubit>(
+          create: (context) => DeleteAddressCubit(),
+        ),
+        BlocProvider<UpdateAddressCubit>(
+          create: (context) => UpdateAddressCubit(),
+        ),
         BlocProvider<LikeToogleCubit>(create: (context) => LikeToogleCubit()),
-        BlocProvider<GetAllTrendingCubit>(create: (context) => GetAllTrendingCubit()),
+        BlocProvider<GetAllTrendingCubit>(
+          create: (context) => GetAllTrendingCubit(),
+        ),
         BlocProvider<GetAllCafeCubit>(create: (context) => GetAllCafeCubit()),
-        BlocProvider<GetAllProductByCatidAndSubcatidCubit>(create: (context) => GetAllProductByCatidAndSubcatidCubit()),
-        BlocProvider<PostWishlistCubit>(create: (context) => PostWishlistCubit()),
-        BlocProvider<GetAllWishlistCubit>(create: (context) => GetAllWishlistCubit()),
+        BlocProvider<GetAllProductByCatidAndSubcatidCubit>(
+          create: (context) => GetAllProductByCatidAndSubcatidCubit(),
+        ),
+        BlocProvider<PostWishlistCubit>(
+          create: (context) => PostWishlistCubit(),
+        ),
+        BlocProvider<GetAllWishlistCubit>(
+          create: (context) => GetAllWishlistCubit(),
+        ),
         BlocProvider<GetSettingCubit>(create: (context) => GetSettingCubit()),
         BlocProvider<PlaceOrderCubit>(create: (context) => PlaceOrderCubit()),
-        BlocProvider<GetAllOrdersCubit>(create: (context) => GetAllOrdersCubit()),
-        BlocProvider<GetOrderByIdCubit>(create: (context) => GetOrderByIdCubit()),
+        BlocProvider<GetAllOrdersCubit>(
+          create: (context) => GetAllOrdersCubit(),
+        ),
+        BlocProvider<GetOrderByIdCubit>(
+          create: (context) => GetOrderByIdCubit(),
+        ),
         BlocProvider<CreateOrderCubit>(create: (context) => CreateOrderCubit()),
-        BlocProvider<GetNearbySupplierCubit>(create: (context) => GetNearbySupplierCubit()),
-        BlocProvider<CreatePaymentHistoryCubit>(create: (context) => CreatePaymentHistoryCubit()),
+        BlocProvider<GetNearbySupplierCubit>(
+          create: (context) => GetNearbySupplierCubit(),
+        ),
+        BlocProvider<CreatePaymentHistoryCubit>(
+          create: (context) => CreatePaymentHistoryCubit(),
+        ),
         ChangeNotifierProvider(create: (_) => CartProvider()..load()),
       ],
 
