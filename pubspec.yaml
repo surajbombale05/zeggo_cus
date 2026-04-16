@@ -2,7 +2,7 @@ name: zeggo_cus
 description: "A new Flutter project."
 publish_to: 'none'
 
-version: 1.0.16+17  
+version: 1.0.18+19  
 
 environment:
   sdk: ^3.9.2
