@@ -10,7 +10,6 @@ import 'package:zeggo_cus/features/home_screen/bloc/get_product_by_id/get_produc
 import 'package:zeggo_cus/utils/service/proveider/cart_provider.dart';
 import 'package:zeggo_cus/utils/storage/auth_guard.dart';
 import 'package:zeggo_cus/utils/storage/cart_item.dart';
-import 'package:zeggo_cus/widgets/custom_cached.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final String id;
