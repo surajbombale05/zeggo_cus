@@ -8,10 +8,12 @@ import 'package:zeggo_cus/constants/app_url.dart';
 import 'package:zeggo_cus/features/categories/view/category_product_screen.dart';
 import 'package:zeggo_cus/features/home_screen/bloc/get_all_banner/get_all_banner_cubit.dart';
 import 'package:zeggo_cus/features/home_screen/bloc/get_all_category/get_all_category_cubit.dart';
-import 'package:zeggo_cus/features/home_screen/bloc/get_all_category/get_all_category_model.dart' show Datum;
+import 'package:zeggo_cus/features/home_screen/bloc/get_all_category/get_all_category_model.dart'
+    show Datum;
 import 'package:zeggo_cus/features/home_screen/bloc/get_all_products/get_all_products_cubit.dart';
 import 'package:zeggo_cus/features/home_screen/bloc/like_toogle/like_toogle_cubit.dart';
 import 'package:zeggo_cus/features/home_screen/controller/home_controller.dart';
+import 'package:zeggo_cus/features/home_screen/screen/search_screen.dart';
 import 'package:zeggo_cus/widgets/custom_appbar.dart';
 import 'package:zeggo_cus/widgets/custom_cached.dart';
 import 'package:zeggo_cus/widgets/custom_product_card.dart';
@@ -55,13 +57,26 @@ class _HomeViewState extends State<HomeView> {
   Widget _searchBar() {
     return Padding(
       padding: const EdgeInsets.all(12),
-      child: TextField(
-        decoration: InputDecoration(
-          hintText: "Search here",
-          prefixIcon: const Icon(Icons.search),
-          filled: true,
-          fillColor: Colors.white,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const SearchScreen()),
+          );
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            children: const [
+              Icon(Icons.search, color: Colors.grey),
+              SizedBox(width: 10),
+              Text("Search products...", style: TextStyle(color: Colors.grey)),
+            ],
+          ),
         ),
       ),
     );
@@ -99,7 +114,13 @@ class _HomeViewState extends State<HomeView> {
                 children: [
                   _sectionTitle(category.name ?? ""),
 
-                  if (subCats.isNotEmpty) _subCategoryGrid(subCats, context, category.id ?? "", category.name ?? ""),
+                  if (subCats.isNotEmpty)
+                    _subCategoryGrid(
+                      subCats,
+                      context,
+                      category.id ?? "",
+                      category.name ?? "",
+                    ),
                 ],
               );
             },
@@ -114,11 +135,19 @@ class _HomeViewState extends State<HomeView> {
   Widget _sectionTitle(String title) {
     return Padding(
       padding: const EdgeInsets.only(top: 2, bottom: 6),
-      child: Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+      child: Text(
+        title,
+        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+      ),
     );
   }
 
-  Widget _subCategoryGrid(List<Datum> subCats, BuildContext context, String categoryId, String name) {
+  Widget _subCategoryGrid(
+    List<Datum> subCats,
+    BuildContext context,
+    String categoryId,
+    String name,
+  ) {
     return GridView.builder(
       shrinkWrap: true,
       padding: EdgeInsets.zero,
@@ -138,8 +167,12 @@ class _HomeViewState extends State<HomeView> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) =>
-                    CategoryProductScreen(catId: categoryId, subCatId: sub.id ?? "", subCats: subCats, catName: name),
+                builder: (_) => CategoryProductScreen(
+                  catId: categoryId,
+                  subCatId: sub.id ?? "",
+                  subCats: subCats,
+                  catName: name,
+                ),
               ),
             );
           },
@@ -148,9 +181,15 @@ class _HomeViewState extends State<HomeView> {
               Container(
                 height: 80,
                 width: 80,
-                decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: BorderRadius.circular(10)),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 clipBehavior: Clip.antiAlias,
-                child: CustomCachedCard(imageUrl: "${AppString.baseUrl}/${sub.img ?? ""}", fit: BoxFit.cover),
+                child: CustomCachedCard(
+                  imageUrl: "${AppString.baseUrl}/${sub.img ?? ""}",
+                  fit: BoxFit.cover,
+                ),
               ),
               const SizedBox(height: 6),
               Text(
@@ -158,7 +197,10 @@ class _HomeViewState extends State<HomeView> {
                 textAlign: TextAlign.center,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ],
           ),
@@ -176,7 +218,10 @@ class _HomeViewState extends State<HomeView> {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text("Categories", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                const Text(
+                  "Categories",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(height: 10),
                 SizedBox(
                   height: 90,
@@ -192,23 +237,34 @@ class _HomeViewState extends State<HomeView> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    CategoryProductScreen(catId: item?.id ?? "", catName: item?.name ?? ""),
+                                builder: (context) => CategoryProductScreen(
+                                  catId: item?.id ?? "",
+                                  catName: item?.name ?? "",
+                                ),
                               ),
                             );
                           },
                           child: Container(
                             width: 80,
-                            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                CustomCachedCard(imageUrl: "${AppString.baseUrl}/${item?.img}", height: 50),
+                                CustomCachedCard(
+                                  imageUrl: "${AppString.baseUrl}/${item?.img}",
+                                  height: 50,
+                                ),
                                 const SizedBox(height: 6),
                                 Text(
                                   item?.name ?? "",
-                                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w400,
+                                  ),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ],
@@ -241,12 +297,17 @@ class _HomeViewState extends State<HomeView> {
             final products = state.model.data ?? [];
 
             final bool hasMoreThanNine = products.length > 9;
-            final displayedProducts = _showAllProducts ? products : products.take(9).toList();
+            final displayedProducts = _showAllProducts
+                ? products
+                : products.take(9).toList();
 
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text("Recommended Items", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+                const Text(
+                  "Recommended Items",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                ),
                 const SizedBox(height: 12),
 
                 BlocListener<LikeToogleCubit, LikeToogleState>(
@@ -263,12 +324,13 @@ class _HomeViewState extends State<HomeView> {
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: displayedProducts.length,
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      mainAxisSpacing: 5,
-                      crossAxisSpacing: 5,
-                      childAspectRatio: .55,
-                    ),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          mainAxisSpacing: 5,
+                          crossAxisSpacing: 5,
+                          childAspectRatio: .55,
+                        ),
                     itemBuilder: (_, i) {
                       final p = displayedProducts[i];
                       return CustomProductCard(data: p);
@@ -287,7 +349,11 @@ class _HomeViewState extends State<HomeView> {
                       },
                       child: Text(
                         _showAllProducts ? "View Less" : "View More",
-                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.primaryColor),
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.primaryColor,
+                        ),
                       ),
                     ),
                   ),
@@ -347,7 +413,8 @@ class _OfferCarouselState extends State<_OfferCarousel> {
   Widget build(BuildContext context) {
     return BlocBuilder<GetAllBannerCubit, GetAllBannerState>(
       builder: (context, state) {
-        if (state is GetAllBannerLoadedState && (state.model.data?.isNotEmpty ?? false)) {
+        if (state is GetAllBannerLoadedState &&
+            (state.model.data?.isNotEmpty ?? false)) {
           final banners = state.model.data!;
 
           return Column(
@@ -362,19 +429,31 @@ class _OfferCarouselState extends State<_OfferCarousel> {
                     child: Stack(
                       fit: StackFit.expand,
                       children: [
-                        CustomCachedCard(imageUrl: "${AppString.baseUrl}/${data.img ?? ""}", fit: BoxFit.fill),
+                        CustomCachedCard(
+                          imageUrl: "${AppString.baseUrl}/${data.img ?? ""}",
+                          fit: BoxFit.fill,
+                        ),
                         Positioned(
                           bottom: 0,
                           left: 0,
                           right: 0,
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                            decoration: BoxDecoration(color: Colors.black.withOpacity(0.6)),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 10,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.6),
+                            ),
                             child: Text(
                               data.name ?? "",
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         ),
