@@ -2,7 +2,7 @@ name: zeggo_cus
 description: "A new Flutter project."
 publish_to: 'none'
 
-version: 1.0.19+20  
+version: 1.0.20+21  
 
 environment:
   sdk: ^3.9.2
@@ -58,6 +58,7 @@ dependencies:
   http: ^1.6.0
   upgrader: ^12.5.0
   flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.7
 
 dev_dependencies:
   hive_generator:
@@ -65,18 +66,32 @@ dev_dependencies:
   analyzer:
   flutter_test:
     sdk: flutter
+
+
+  flutter_lints: ^5.0.0
     
 flutter_launcher_icons:
   android: false
   ios: true
   image_path: "assets/images/blacklogo_with_name.png"
 
+
+flutter_native_splash:
+  color: "#000000"
+  image: assets/images/blacklogo_with_name.png
+
+  android: false
+  ios: true
+
+  android_gravity: center
+  ios_content_mode: center
+
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^5.0.0
+  
 
 
 # For information on the generic Dart part of this file, see the
