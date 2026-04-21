@@ -61,8 +61,10 @@ void main() async {
     HttpOverrides.global = MyHttpOverrides();
     await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
+          options: DefaultFirebaseOptions.currentPlatform,
+        )
+        .then((e) => {log("Firebase Connect Successfully....")})
+        .catchError((e) => {log("Firebase Connect Error.... $e")});
     await AppInit.init();
     repository.init();
     await LocalStorageUtils.init();
