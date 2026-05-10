@@ -13,9 +13,30 @@ import 'package:zeggo_cus/features/profile_section/view/edit_profile.dart';
 import 'package:zeggo_cus/utils/storage/storage.dart';
 import 'package:zeggo_cus/widgets/custom_cached.dart';
 import 'package:zeggo_cus/widgets/info_screen.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
-class ProfileView extends StatelessWidget {
+class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
+
+  @override
+  State<ProfileView> createState() => _ProfileViewState();
+}
+
+class _ProfileViewState extends State<ProfileView> {
+  String version = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _getVersion();
+  }
+
+  _getVersion() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    setState(() {
+      version = packageInfo.version;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +56,10 @@ class ProfileView extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Theme.of(context).primaryColor,
 
-                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(30),
+                      bottomRight: Radius.circular(30),
+                    ),
                   ),
                   child: BlocBuilder<GetProfileCubit, GetProfileState>(
                     builder: (context, state) {
@@ -46,7 +70,8 @@ class ProfileView extends StatelessWidget {
                             ClipRRect(
                               borderRadius: BorderRadiusGeometry.circular(50),
                               child: CustomCachedCard(
-                                imageUrl: "${AppString.baseUrl}/${data?.profilePicture}",
+                                imageUrl:
+                                    "${AppString.baseUrl}/${data?.profilePicture}",
                                 height: 100,
                                 width: 100,
                               ),
@@ -54,10 +79,17 @@ class ProfileView extends StatelessWidget {
                             const SizedBox(height: 12),
                             Text(
                               "${data?.name}",
-                              style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             const SizedBox(height: 4),
-                            Text("${data?.email}", style: TextStyle(color: Colors.white70)),
+                            Text(
+                              "${data?.email}",
+                              style: TextStyle(color: Colors.white70),
+                            ),
                             const SizedBox(height: 12),
                             // Container(
                             //   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
@@ -103,7 +135,10 @@ class ProfileView extends StatelessWidget {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => EditProfileScreen(isFirstTimeUser: false)),
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  EditProfileScreen(isFirstTimeUser: false),
+                            ),
                           );
                         },
                       ),
@@ -111,28 +146,46 @@ class ProfileView extends StatelessWidget {
                         icon: Icons.favorite_border,
                         title: "Wishlist",
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => WishlistScreen()));
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => WishlistScreen(),
+                            ),
+                          );
                         },
                       ),
                       _ProfileTile(
                         icon: Icons.shopping_bag_outlined,
                         title: "My Orders",
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => MyOrders()));
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => MyOrders()),
+                          );
                         },
                       ),
                       _ProfileTile(
                         icon: Icons.location_on_outlined,
                         title: "Delivery Address",
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => AddressScreen()));
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AddressScreen(),
+                            ),
+                          );
                         },
                       ),
                       _ProfileTile(
                         icon: Icons.account_balance_wallet_outlined,
                         title: "Wallet",
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => WalletScreen()));
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => WalletScreen(),
+                            ),
+                          );
                         },
                       ),
                       // _ProfileTile(icon: Icons.settings_outlined, title: "Settings", onTap: () {}),
@@ -193,20 +246,29 @@ class ProfileView extends StatelessWidget {
                     showDialog(
                       context: context,
                       builder: (context) {
-                        return BlocListener<DeleteProfileCubit, DeleteProfileState>(
+                        return BlocListener<
+                          DeleteProfileCubit,
+                          DeleteProfileState
+                        >(
                           listener: (context, state) {
                             if (state is DeleteProfileErrorState) {
                               AppToast.showError(context, "", state.error);
                               return;
                             }
                             if (state is DeleteProfileLoadedState) {
-                              AppToast.showSuccess(context, "", "Delete Successfully");
+                              AppToast.showSuccess(
+                                context,
+                                "",
+                                "Delete Successfully",
+                              );
                               LocalStorageUtils.clear().then(
                                 (e) => {
                                   Navigator.pop(context),
                                   Navigator.pushAndRemoveUntil(
                                     context,
-                                    MaterialPageRoute(builder: (context) => LoginView()),
+                                    MaterialPageRoute(
+                                      builder: (context) => LoginView(),
+                                    ),
                                     (route) => false,
                                   ),
                                 },
@@ -215,7 +277,9 @@ class ProfileView extends StatelessWidget {
                           },
                           child: AlertDialog(
                             title: const Text("Delete Account"),
-                            content: const Text("Are you sure you want to delete account?"),
+                            content: const Text(
+                              "Are you sure you want to delete account?",
+                            ),
                             actions: [
                               TextButton(
                                 onPressed: () {
@@ -225,7 +289,9 @@ class ProfileView extends StatelessWidget {
                               ),
                               TextButton(
                                 onPressed: () {
-                                  context.read<DeleteProfileCubit>().deleteProfile();
+                                  context
+                                      .read<DeleteProfileCubit>()
+                                      .deleteProfile();
                                 },
                                 child: const Text("Delete Account"),
                               ),
@@ -240,11 +306,18 @@ class ProfileView extends StatelessWidget {
                     child: Container(
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(vertical: 14),
-                      decoration: BoxDecoration(color: Colors.red.shade50, borderRadius: BorderRadius.circular(16)),
+                      decoration: BoxDecoration(
+                        color: Colors.red.shade50,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
                       child: const Center(
                         child: Text(
                           "Delete Account",
-                          style: TextStyle(color: Colors.red, fontSize: 16, fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ),
@@ -258,7 +331,9 @@ class ProfileView extends StatelessWidget {
                       builder: (context) {
                         return AlertDialog(
                           title: const Text("Logout"),
-                          content: const Text("Are you sure you want to logout?"),
+                          content: const Text(
+                            "Are you sure you want to logout?",
+                          ),
                           actions: [
                             TextButton(
                               onPressed: () {
@@ -273,7 +348,9 @@ class ProfileView extends StatelessWidget {
                                     Navigator.pop(context),
                                     Navigator.pushAndRemoveUntil(
                                       context,
-                                      MaterialPageRoute(builder: (context) => LoginView()),
+                                      MaterialPageRoute(
+                                        builder: (context) => LoginView(),
+                                      ),
                                       (route) => false,
                                     ),
                                   },
@@ -291,13 +368,30 @@ class ProfileView extends StatelessWidget {
                     child: Container(
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(vertical: 14),
-                      decoration: BoxDecoration(color: Colors.red.shade50, borderRadius: BorderRadius.circular(16)),
+                      decoration: BoxDecoration(
+                        color: Colors.red.shade50,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
                       child: const Center(
                         child: Text(
                           "Logout",
-                          style: TextStyle(color: Colors.red, fontSize: 16, fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Center(
+                    child: Text(
+                      "App Version $version",
+                      style: TextStyle(color: Colors.grey, fontSize: 12),
                     ),
                   ),
                 ),
@@ -328,17 +422,28 @@ class _ProfileStat extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(18),
           boxShadow: [
-            BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 6)),
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 6),
+            ),
           ],
         ),
         child: Column(
           children: [
             Text(
               value,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).primaryColor,
+              ),
             ),
             const SizedBox(height: 6),
-            Text(title, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+            Text(
+              title,
+              style: const TextStyle(fontSize: 12, color: Colors.grey),
+            ),
           ],
         ),
       ),
@@ -352,7 +457,11 @@ class _ProfileTile extends StatelessWidget {
   final void Function()? onTap;
   final String title;
 
-  const _ProfileTile({required this.icon, required this.title, required this.onTap});
+  const _ProfileTile({
+    required this.icon,
+    required this.title,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -365,7 +474,11 @@ class _ProfileTile extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(18),
           boxShadow: [
-            BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 6)),
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 6),
+            ),
           ],
         ),
         child: Row(
@@ -373,7 +486,13 @@ class _ProfileTile extends StatelessWidget {
             Icon(icon, color: Theme.of(context).primaryColor),
             const SizedBox(width: 14),
             Expanded(
-              child: Text(title, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
+              child: Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ),
             const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
           ],
