@@ -39,6 +39,7 @@ import 'package:zeggo_cus/firebase_options.dart';
 import 'package:zeggo_cus/utils/repo.dart';
 import 'package:zeggo_cus/utils/service/proveider/cart_provider.dart';
 import 'package:zeggo_cus/utils/storage/storage.dart';
+import 'package:zeggo_cus/utils/shorebird_updater.dart';
 
 String? firebasetoken;
 String? userId;
@@ -75,6 +76,8 @@ void main() async {
     // await Hive.openBox<CartItem>(
     //   'cartBox',
     // ).then((e) => {print("Box Open Sucessfully")}).onError((e, stk) => {print("Error to Open $e $stk")});
+    
+    ShorebirdHelper.checkForUpdate();
   } catch (e, stk) {
     log("-------- $e $stk");
   }
@@ -153,7 +156,7 @@ class MyApp extends StatelessWidget {
 
       child: GetMaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Zeggo',
+        title: 'Zeggo Fresh',
         theme: AppTheme().theme,
         home: SplashView(),
       ),

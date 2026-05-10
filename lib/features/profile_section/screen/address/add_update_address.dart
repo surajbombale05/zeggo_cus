@@ -78,22 +78,36 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
   Future<void> _getCurrentLocation() async {
     setState(() => isFetchingLocation = true);
     try {
-      bool hasPermission = await LocationService.ensureLocationEnabled(context);
+      bool hasPermission = await LocationService.requestLocationPermission(context);
       if (!hasPermission) {
-        AppToast.showError(context, "Permission Denied", "Please enable location services and grant permission.");
+        AppToast.showError(
+          context,
+          "Permission Denied",
+          "Please enable location services to use current location feature.",
+        );
         return;
       }
 
-      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      Position position = await Geolocator.getCurrentPosition(
+        locationSettings: LocationSettings(accuracy: LocationAccuracy.high),
+      );
 
       lat = position.latitude;
       lng = position.longitude;
       await _fillAddressFromLatLng(lat!, lng!);
 
-      AppToast.showSuccess(context, "Location Found", "Captured exact location.");
+      AppToast.showSuccess(
+        context,
+        "Location Found",
+        "Captured exact location.",
+      );
     } catch (e) {
       print("Location Error: $e");
-      AppToast.showError(context, "Error", "Failed to get current location: $e");
+      AppToast.showError(
+        context,
+        "Error",
+        "Failed to get current location: $e",
+      );
     } finally {
       setState(() => isFetchingLocation = false);
     }
@@ -128,7 +142,10 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
 
         String fullAddress = result?['formatted_address'];
 
-        fullAddress = fullAddress.replaceAll(RegExp(r'^[A-Z0-9]+\+[A-Z0-9]+,\s*'), '');
+        fullAddress = fullAddress.replaceAll(
+          RegExp(r'^[A-Z0-9]+\+[A-Z0-9]+,\s*'),
+          '',
+        );
 
         String cityName = "";
         String stateName = "";
@@ -230,7 +247,9 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
       // ✅ 2. If address exists → convert to lat/lng
       else if (address.text.isNotEmpty) {
         try {
-          List<Location> locs = await locationFromAddress("${address.text}, ${city.text}, ${pin.text}");
+          List<Location> locs = await locationFromAddress(
+            "${address.text}, ${city.text}, ${pin.text}",
+          );
 
           if (locs.isNotEmpty) {
             startLat = locs.first.latitude;
@@ -240,24 +259,17 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
           }
         } catch (_) {
           // fallback to current location
-          Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+          Position position = await Geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.high,
+          );
 
           startLat = position.latitude;
           startLng = position.longitude;
         }
       }
-      // ✅ 3. Else → use current location directly
       else {
-        bool hasPermission = await LocationService.ensureLocationEnabled(context);
-        if (!hasPermission) {
-          AppToast.showError(context, "Permission Denied", "Please enable location services");
-          return;
-        }
-
-        Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-
-        startLat = position.latitude;
-        startLng = position.longitude;
+        startLat = 20.5937;
+        startLng = 78.9629;
       }
     } catch (e) {
       startLat = 19.5689;
@@ -268,7 +280,8 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
     final LatLng? picked = await Navigator.push<LatLng>(
       context,
       MaterialPageRoute(
-        builder: (_) => MapPickerScreen(initialLat: startLat, initialLng: startLng),
+        builder: (_) =>
+            MapPickerScreen(initialLat: startLat, initialLng: startLng),
       ),
     );
 
@@ -280,7 +293,11 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
 
       await _fillAddressFromLatLng(lat!, lng!);
 
-      AppToast.showSuccess(context, "Location Confirmed", "Exact pin location saved.");
+      AppToast.showSuccess(
+        context,
+        "Location Confirmed",
+        "Exact pin location saved.",
+      );
     }
   }
 
@@ -416,7 +433,9 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
                       child: Container(
                         decoration: BoxDecoration(
                           color: selectedAdd == AddressType.home
-                              ? Theme.of(context).primaryColor.withValues(alpha: 0.15)
+                              ? Theme.of(
+                                  context,
+                                ).primaryColor.withValues(alpha: 0.15)
                               : AppColors.kGreyColor.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
@@ -433,7 +452,8 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
                               imageUrl: "assets/svg/home.svg",
                               color: selectedAdd == AddressType.home
                                   ? AppColors.primaryColor
-                                  : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                                  : Theme.of(context).colorScheme.onSurface
+                                        .withValues(alpha: 0.5),
                             ),
                             SizedBox(height: 10),
                             Text(
@@ -441,7 +461,8 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
                               style: TextStyle(
                                 color: selectedAdd == AddressType.home
                                     ? AppColors.primaryColor
-                                    : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.9),
+                                    : Theme.of(context).colorScheme.onSurface
+                                          .withValues(alpha: 0.9),
                                 fontSize: 14,
                               ),
                             ),
@@ -464,7 +485,9 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
                               : AppColors.kGreyColor.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
-                            color: selectedAdd == AddressType.work ? AppColors.primaryColor : AppColors.kGreyColor,
+                            color: selectedAdd == AddressType.work
+                                ? AppColors.primaryColor
+                                : AppColors.kGreyColor,
                             width: 2,
                           ),
                         ),
@@ -475,7 +498,8 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
                               imageUrl: "assets/svg/work.svg",
                               color: selectedAdd == AddressType.work
                                   ? AppColors.primaryColor
-                                  : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                                  : Theme.of(context).colorScheme.onSurface
+                                        .withValues(alpha: 0.5),
                             ),
                             SizedBox(height: 5),
                             Text(
@@ -483,7 +507,8 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
                               style: TextStyle(
                                 color: selectedAdd == AddressType.work
                                     ? AppColors.primaryColor
-                                    : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.9),
+                                    : Theme.of(context).colorScheme.onSurface
+                                          .withValues(alpha: 0.9),
                               ),
                             ),
                           ],
@@ -504,7 +529,9 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
                               : AppColors.kGreyColor.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
-                            color: selectedAdd == AddressType.other ? AppColors.primaryColor : AppColors.kGreyColor,
+                            color: selectedAdd == AddressType.other
+                                ? AppColors.primaryColor
+                                : AppColors.kGreyColor,
                             width: 2,
                           ),
                         ),
@@ -515,7 +542,8 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
                               imageUrl: "assets/svg/location.svg",
                               color: selectedAdd == AddressType.other
                                   ? AppColors.primaryColor
-                                  : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                                  : Theme.of(context).colorScheme.onSurface
+                                        .withValues(alpha: 0.5),
                             ),
                             SizedBox(height: 5),
                             Text(
@@ -523,7 +551,8 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
                               style: TextStyle(
                                 color: selectedAdd == AddressType.other
                                     ? AppColors.primaryColor
-                                    : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.9),
+                                    : Theme.of(context).colorScheme.onSurface
+                                          .withValues(alpha: 0.9),
                               ),
                             ),
                           ],
@@ -542,15 +571,27 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
                     Expanded(
                       child: TextButton.icon(
                         onPressed: _getCurrentLocation,
-                        icon: Icon(Icons.my_location, color: AppColors.primaryColor),
-                        label: Text("My Location", style: TextStyle(color: AppColors.primaryColor)),
+                        icon: Icon(
+                          Icons.my_location,
+                          color: AppColors.primaryColor,
+                        ),
+                        label: Text(
+                          "Use Current Location",
+                          style: TextStyle(color: AppColors.primaryColor),
+                        ),
                       ),
                     ),
                     Expanded(
                       child: TextButton.icon(
                         onPressed: _openMapPicker,
-                        icon: Icon(Icons.map_outlined, color: AppColors.primaryColor),
-                        label: Text("Pick on Map", style: TextStyle(color: AppColors.primaryColor)),
+                        icon: Icon(
+                          Icons.map_outlined,
+                          color: AppColors.primaryColor,
+                        ),
+                        label: Text(
+                          "Pick on Map",
+                          style: TextStyle(color: AppColors.primaryColor),
+                        ),
                       ),
                     ),
                   ],
@@ -562,7 +603,9 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
                   decoration: BoxDecoration(
                     color: Colors.green.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
+                    border: Border.all(
+                      color: Colors.green.withValues(alpha: 0.3),
+                    ),
                   ),
                   child: Row(
                     children: [
@@ -574,11 +617,18 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
                           children: [
                             Text(
                               "Location Verified",
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.green.shade700),
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.green.shade700,
+                              ),
                             ),
                             Text(
                               "Coordinates: ${lat!.toStringAsFixed(6)}, ${lng!.toStringAsFixed(6)}",
-                              style: TextStyle(fontSize: 12, color: Colors.green.shade600),
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.green.shade600,
+                              ),
                             ),
                           ],
                         ),
@@ -588,9 +638,16 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
                 ),
               SizedBox(height: 10),
               _inputField("Receiver's Name *", name),
-              _inputField("Phone Number *", phone, keyboardType: TextInputType.phone),
-             // const Divider(height: 12),
-              const Text("Address Details", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              _inputField(
+                "Phone Number *",
+                phone,
+                keyboardType: TextInputType.phone,
+              ),
+              // const Divider(height: 12),
+              const Text(
+                "Address Details",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
               const SizedBox(height: 16),
               _inputField("House / Flat / Floor No *", houseNo),
               _inputField("Apartment / Road / Area *", address, maxLines: 2),
@@ -642,22 +699,34 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
                       }
                     },
                     builder: (context, updateState) {
-                      return ((updateState is UpdateAddressLoadingState) || (addState is PostAddressLoadingState))
+                      return ((updateState is UpdateAddressLoadingState) ||
+                              (addState is PostAddressLoadingState))
                           ? Center(child: CircularProgressIndicator())
                           : SizedBox(
                               width: double.infinity,
                               height: 48,
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Theme.of(context).primaryColor,
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                  backgroundColor: Theme.of(
+                                    context,
+                                  ).primaryColor,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
                                 ),
                                 onPressed: () async {
                                   if (_formKey.currentState!.validate()) {
                                     if (lat == null || lng == null) {
-                                      bool success = await getLatLngFromAddress();
-                                      if (!success || lat == null || lng == null) {
-                                        AppToast.showError(context, "Invalid address", "Please enter a valid address");
+                                      bool success =
+                                          await getLatLngFromAddress();
+                                      if (!success ||
+                                          lat == null ||
+                                          lng == null) {
+                                        AppToast.showError(
+                                          context,
+                                          "Invalid address",
+                                          "Please enter a valid address",
+                                        );
                                         return;
                                       }
                                     }
@@ -665,38 +734,47 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
                                         "${houseNo.text.trim()}, ${address.text.trim()}, ${landmark.text.trim()}, ${state.text.trim()}";
 
                                     if (widget.item != null) {
-                                      context.read<UpdateAddressCubit>().updateAdrress(
-                                        addressId: widget.item?.id ?? "",
-                                        addType: selectedAdd.apiValue,
-                                        city: city.text.trim(),
-                                        fullAddress: finalFullAddress,
-                                        fullName: name.text.trim(),
-                                        phoneNo: phone.text.trim(),
-                                        userId: userId,
-                                        isPrimary: isPrimary,
-                                        zipCode: pin.text.trim(),
-                                        lat: lat?.toString() ?? "",
-                                        long: lng?.toString() ?? "",
-                                      );
+                                      context
+                                          .read<UpdateAddressCubit>()
+                                          .updateAdrress(
+                                            addressId: widget.item?.id ?? "",
+                                            addType: selectedAdd.apiValue,
+                                            city: city.text.trim(),
+                                            fullAddress: finalFullAddress,
+                                            fullName: name.text.trim(),
+                                            phoneNo: phone.text.trim(),
+                                            userId: userId,
+                                            isPrimary: isPrimary,
+                                            zipCode: pin.text.trim(),
+                                            lat: lat?.toString() ?? "",
+                                            long: lng?.toString() ?? "",
+                                          );
                                     } else {
-                                      context.read<PostAddressCubit>().postAdrress(
-                                        addType: selectedAdd.apiValue,
-                                        city: city.text.trim(),
-                                        fullAddress: finalFullAddress,
-                                        fullName: name.text.trim(),
-                                        phoneNo: phone.text.trim(),
-                                        userId: userId ?? "",
-                                        isPrimary: isPrimary,
-                                        zipCode: pin.text.trim(),
-                                        lat: lat?.toString() ?? "",
-                                        long: lng?.toString() ?? "",
-                                      );
+                                      context
+                                          .read<PostAddressCubit>()
+                                          .postAdrress(
+                                            addType: selectedAdd.apiValue,
+                                            city: city.text.trim(),
+                                            fullAddress: finalFullAddress,
+                                            fullName: name.text.trim(),
+                                            phoneNo: phone.text.trim(),
+                                            userId: userId ?? "",
+                                            isPrimary: isPrimary,
+                                            zipCode: pin.text.trim(),
+                                            lat: lat?.toString() ?? "",
+                                            long: lng?.toString() ?? "",
+                                          );
                                     }
                                   }
                                 },
                                 child: Text(
-                                  widget.item != null ? "Update Address" : "Save Address",
-                                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                  widget.item != null
+                                      ? "Update Address"
+                                      : "Save Address",
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             );
@@ -704,7 +782,7 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
                   );
                 },
               ),
-              SizedBox(height: 20,),
+              SizedBox(height: 20),
             ],
           ),
         ),
@@ -712,7 +790,12 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
     );
   }
 
-  Widget _inputField(String label, TextEditingController controller, {int maxLines = 1, TextInputType? keyboardType}) {
+  Widget _inputField(
+    String label,
+    TextEditingController controller, {
+    int maxLines = 1,
+    TextInputType? keyboardType,
+  }) {
     bool isOptional = label.toLowerCase().contains("optional");
 
     return Padding(
@@ -724,7 +807,11 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
             padding: const EdgeInsets.only(left: 4, bottom: 6),
             child: Text(
               label,
-              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: Colors.grey.shade700),
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey.shade700,
+              ),
             ),
           ),
           TextFormField(
@@ -733,12 +820,17 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
             keyboardType: keyboardType,
             validator: (v) {
               if (isOptional) return null;
-              return (v == null || v.trim().isEmpty) ? "This field is required" : null;
+              return (v == null || v.trim().isEmpty)
+                  ? "This field is required"
+                  : null;
             },
             decoration: InputDecoration(
               filled: true,
               fillColor: Colors.grey.shade50,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
+              ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(color: Colors.grey.shade300),
@@ -749,7 +841,10 @@ class _AddUpdateAddressScreenState extends State<AddUpdateAddressScreen> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: AppColors.primaryColor, width: 1.5),
+                borderSide: BorderSide(
+                  color: AppColors.primaryColor,
+                  width: 1.5,
+                ),
               ),
               errorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),

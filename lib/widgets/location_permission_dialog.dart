@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:zeggo_cus/constants/app_colors.dart';
 
 class LocationPermissionDialog extends StatelessWidget {
-  final VoidCallback onEnablePressed;
+  final VoidCallback onContinuePressed;
   final VoidCallback onManualPressed;
 
   const LocationPermissionDialog({
     super.key,
-    required this.onEnablePressed,
+    required this.onContinuePressed,
     required this.onManualPressed,
   });
 
@@ -20,75 +20,52 @@ class LocationPermissionDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Custom Location Off Icon (Red with Slash)
+            // Icon
             Container(
               height: 100,
               width: 100,
               decoration: BoxDecoration(
-                color: Colors.red.withOpacity(0.05),
+                color: Colors.orange.withOpacity(0.08),
                 shape: BoxShape.circle,
               ),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                   Icon(
-                    Icons.location_on_outlined,
-                    size: 60,
-                    color: Colors.grey.shade400,
-                  ),
-                  Transform.rotate(
-                    angle: -0.8,
-                    child: Container(
-                      width: 70,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: Colors.red.shade400,
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                  ),
-                   Positioned(
-                    bottom: 25,
-                    right: 25,
-                    child: Icon(
-                      Icons.close,
-                      size: 20,
-                      color: Colors.red.shade400,
-                    ),
-                  )
-                ],
+              child: const Icon(
+                Icons.location_on_outlined,
+                size: 60,
+                color: Colors.orange,
               ),
             ),
+
             const SizedBox(height: 24),
-            
+
             const Text(
-              "Location permission not enabled",
+              "Location Access Needed",
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 18,
-                fontWeight: FontWeight.w800,
-                color: Colors.black87,
+                fontWeight: FontWeight.w700,
               ),
             ),
+
             const SizedBox(height: 12),
-            
-            Text(
-              "Please enable location permission for a better delivery experience",
+
+            const Text(
+              "We use your location to automatically detect your current address and show nearby delivery options.",
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14,
-                color: Colors.grey.shade600,
                 height: 1.4,
+                color: Colors.grey,
               ),
             ),
-            const SizedBox(height: 32),
-            
-            // Enable Button
+
+            const SizedBox(height: 28),
+
+            // ✅ SAFE BUTTON TEXT
             SizedBox(
               width: double.infinity,
               height: 50,
               child: ElevatedButton(
-                onPressed: onEnablePressed,
+                onPressed: onContinuePressed,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryColor,
                   shape: RoundedRectangleBorder(
@@ -97,34 +74,29 @@ class LocationPermissionDialog extends StatelessWidget {
                   elevation: 0,
                 ),
                 child: const Text(
-                  "Enable device location",
+                  "Continue",
                   style: TextStyle(
-                    color: Colors.white,
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
+                    color: Colors.white,
                   ),
                 ),
               ),
             ),
+
             const SizedBox(height: 12),
-            
-            // Manual Button
+
+            // Manual option (VERY IMPORTANT for Apple)
             SizedBox(
               width: double.infinity,
               height: 50,
               child: TextButton(
                 onPressed: onManualPressed,
-                style: TextButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: Text(
-                  "Select location manually",
+                child: const Text(
+                  "Enter address manually",
                   style: TextStyle(
-                    color: Colors.grey.shade600,
                     fontSize: 15,
-                    fontWeight: FontWeight.w500,
+                    color: Colors.grey,
                   ),
                 ),
               ),
