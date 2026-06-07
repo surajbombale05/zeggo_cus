@@ -32,6 +32,19 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <!-- Deep Linking -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                
+                <!-- zeggo://refer?code=XYZ -->
+                <data android:scheme="zeggo" android:host="refer" />
+                
+                <!-- https://zeggo.fresh/refer?code=XYZ -->
+                <data android:scheme="https" android:host="zeggo.fresh" />
+            </intent-filter>
         </activity>
         <meta-data
             android:name="flutterEmbedding"

@@ -41,19 +41,13 @@ class AppMessaging {
 
   static Future<void> backgroundHandler(RemoteMessage message) async {
     await Firebase.initializeApp();
-    debugPrint("Remote Message:${message.data}");
-    AppMessaging.init();
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      log("Message token");
-      RemoteNotification? notification = message.notification;
-      AndroidNotification? android = message.notification?.android;
-      if (notification != null && android != null) {
-        FirebaseMessaging.instance.requestPermission(alert: true, badge: true, sound: true);
-        AppMessaging.createNotification(message.notification!.title.toString(), message.notification!.body.toString());
-        FirebaseMessaging.instance.getToken().then((token) {
-          log("Device Token: $token");
-        });
-      }
-    });
+    debugPrint("Background Remote Message:${message.data}");
+    if (message.notification != null) {
+      AppMessaging.init();
+      AppMessaging.createNotification(
+        message.notification!.title ?? "New Notification",
+        message.notification!.body ?? "",
+      );
+    }
   }
 }

@@ -1,52 +1,72 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:zeggo_cus/widgets/location_permission_dialog.dart';
+import 'package:app_settings/app_settings.dart'; 
 
 class LocationService {
-  static Future<bool> ensureLocationEnabled(BuildContext context) async {
+  static Future<bool> requestLocationPermission(BuildContext context) async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-
     if (!serviceEnabled) {
-      bool? result = await _showPermissionDialog(context);
-      if (result == true) {
-        await Geolocator.openLocationSettings();
-      }
+      await _showServiceDisabledDialog(context);
       return false;
     }
-
     LocationPermission permission = await Geolocator.checkPermission();
-
     if (permission == LocationPermission.denied) {
-      bool? result = await _showPermissionDialog(context);
-      if (result == true) {
-        permission = await Geolocator.requestPermission();
-      } else {
-        return false;
-      }
+      permission = await Geolocator.requestPermission();
     }
-
     if (permission == LocationPermission.deniedForever) {
-      bool? result = await _showPermissionDialog(context);
-      if (result == true) {
-        await Geolocator.openAppSettings();
-      }
+      await _showOpenSettingsDialog(context);
       return false;
     }
-
-    return permission == LocationPermission.always || permission == LocationPermission.whileInUse;
+    return permission == LocationPermission.always ||
+        permission == LocationPermission.whileInUse;
   }
 
-  static Future<bool?> _showPermissionDialog(BuildContext context) async {
-    return await showDialog<bool>(
+  static Future<void> _showServiceDisabledDialog(BuildContext context) async {
+    await showDialog(
       context: context,
-      barrierDismissible: false,
-      builder: (context) => LocationPermissionDialog(
-        onEnablePressed: () {
-          Navigator.pop(context, true);
-        },
-        onManualPressed: () {
-          Navigator.pop(context, false);
-        },
+      builder: (_) => AlertDialog(
+        title: const Text("Location Disabled"),
+        content: const Text(
+          "Please enable location services to use current location feature."
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              AppSettings.openAppSettings(); 
+            },
+            child: const Text("Open Settings"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  static Future<void> _showOpenSettingsDialog(BuildContext context) async {
+    await showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("Permission Required"),
+        content: const Text(
+          "Location permission is permanently denied. Please enable it from settings to use this feature."
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              AppSettings.openAppSettings(); 
+            },
+            child: const Text("Open Settings"),
+          ),
+        ],
       ),
     );
   }

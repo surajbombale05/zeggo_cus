@@ -21,7 +21,7 @@ class CustomProductCard extends StatefulWidget {
 
 class _CustomProductCardState extends State<CustomProductCard> {
   late bool isLiked;
-
+  
   @override
   void initState() {
     super.initState();
@@ -32,14 +32,23 @@ class _CustomProductCardState extends State<CustomProductCard> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (_) => ProductDetailScreen(id: widget.data.id ?? "")));
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ProductDetailScreen(id: widget.data.id ?? ""),
+          ),
+        );
       },
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
-            BoxShadow(color: AppColors.primaryDark.withOpacity(.06), blurRadius: 10, offset: const Offset(0, 5)),
+            BoxShadow(
+              color: AppColors.primaryDark.withOpacity(.06),
+              blurRadius: 10,
+              offset: const Offset(0, 5),
+            ),
           ],
         ),
         child: Column(
@@ -48,7 +57,9 @@ class _CustomProductCardState extends State<CustomProductCard> {
             Stack(
               children: [
                 ClipRRect(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(16),
+                  ),
                   child: SizedBox(
                     height: 120,
                     width: double.infinity,
@@ -70,7 +81,9 @@ class _CustomProductCardState extends State<CustomProductCard> {
                           setState(() {
                             isLiked = !isLiked;
                           });
-                          context.read<LikeToogleCubit>().like(widget.data.id ?? "");
+                          context.read<LikeToogleCubit>().like(
+                            widget.data.id ?? "",
+                          );
                         },
                       );
                     },
@@ -80,11 +93,24 @@ class _CustomProductCardState extends State<CustomProductCard> {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         shape: BoxShape.circle,
-                        boxShadow: [BoxShadow(color: AppColors.primaryDark.withValues(alpha: .08), blurRadius: 6)],
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.primaryDark.withValues(alpha: .08),
+                            blurRadius: 6,
+                          ),
+                        ],
                       ),
                       child: isLiked
-                          ? Icon(Icons.favorite, size: 18, color: Theme.of(context).primaryColor)
-                          : Icon(Icons.favorite_border, size: 18, color: Theme.of(context).primaryColor),
+                          ? Icon(
+                              Icons.favorite,
+                              size: 18,
+                              color: Theme.of(context).primaryColor,
+                            )
+                          : Icon(
+                              Icons.favorite_border,
+                              size: 18,
+                              color: Theme.of(context).primaryColor,
+                            ),
                     ),
                   ),
                 ),
@@ -94,10 +120,17 @@ class _CustomProductCardState extends State<CustomProductCard> {
                   left: 4,
                   child: Container(
                     padding: EdgeInsets.all(5),
-                    decoration: BoxDecoration(color: AppColors.white, borderRadius: BorderRadius.circular(12)),
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     child: Text(
                       "${widget.data.percentOff ?? ""} OFF",
-                      style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 13),
+                      style: TextStyle(
+                        color: Colors.green,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
+                      ),
                     ),
                   ),
                 ),
@@ -105,69 +138,104 @@ class _CustomProductCardState extends State<CustomProductCard> {
                 Positioned(
                   right: 5,
                   bottom: 5,
-                  child: Consumer<CartProvider>(
-                    builder: (context, cart, _) {
-                      final quantity = cart.getQuantity(widget.data.id ?? "");
+                  child: widget.data.isAvailable == false
+                      ? Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Text(
+                            "SOLD OUT",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        )
+                      : Consumer<CartProvider>(
+                          builder: (context, cart, _) {
+                            final quantity = cart.getQuantity(
+                              widget.data.id ?? "",
+                            );
 
-                      if (quantity == 0) {
-                        return GestureDetector(
-                          onTap: () {
-                            cart.add(
-                              CartItem(
-                                productId: widget.data.id ?? "",
-                                name: widget.data.name ?? "",
-                                price: double.parse(widget.data.offerPrice ?? "0"),
-                                image: widget.data.img ?? "",
-                                unit: widget.data.unit ?? "",
-                                quantity: 1,
-                                superCategory: widget.data.superCategory ?? "grocery",
+                            if (quantity == 0) {
+                              return GestureDetector(
+                                onTap: () {
+                                  cart.add(
+                                    CartItem(
+                                      productId: widget.data.id ?? "",
+                                      name: widget.data.name ?? "",
+                                      price: double.parse(
+                                        widget.data.offerPrice ?? "0",
+                                      ),
+                                      image: widget.data.img ?? "",
+                                      unit: widget.data.unit ?? "",
+                                      quantity: 1,
+                                      superCategory:
+                                          widget.data.superCategory ??
+                                          "grocery",
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.white,
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: Theme.of(context).primaryColor,
+                                      width: 3,
+                                    ),
+                                  ),
+                                  child: Icon(
+                                    Icons.add,
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                ),
+                              );
+                            }
+
+                            return Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.white,
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    padding: EdgeInsets.zero,
+                                    onPressed: () =>
+                                        cart.decrement(widget.data.id ?? ""),
+                                    icon: const Icon(Icons.remove, size: 16),
+                                  ),
+                                  Text(
+                                    quantity.toString(),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    padding: EdgeInsets.zero,
+                                    onPressed: () =>
+                                        cart.increment(widget.data.id ?? ""),
+                                    icon: const Icon(Icons.add, size: 16),
+                                  ),
+                                ],
                               ),
                             );
                           },
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: AppColors.white,
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: Theme.of(context).primaryColor, width: 3),
-                            ),
-                            child: Icon(Icons.add, color: Theme.of(context).primaryColor),
-                          ),
-                        );
-                      }
-
-                      return Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Theme.of(context).primaryColor),
-                          borderRadius: BorderRadius.circular(10),
-                          color: Colors.white,
                         ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              padding: EdgeInsets.zero,
-                              onPressed: () => cart.decrement(widget.data.id ?? ""),
-                              icon: const Icon(Icons.remove, size: 16),
-                            ),
-                            Text(
-                              quantity.toString(),
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                                color: Theme.of(context).primaryColor,
-                              ),
-                            ),
-                            IconButton(
-                              padding: EdgeInsets.zero,
-                              onPressed: () => cart.increment(widget.data.id ?? ""),
-                              icon: const Icon(Icons.add, size: 16),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
                 ),
               ],
             ),
@@ -180,7 +248,10 @@ class _CustomProductCardState extends State<CustomProductCard> {
                     children: [
                       Text(
                         "₹${widget.data.offerPrice ?? ""}",
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
                       ),
                       SizedBox(width: 10),
                       Text(
@@ -197,14 +268,20 @@ class _CustomProductCardState extends State<CustomProductCard> {
                     widget.data.name ?? "",
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     widget.data.unit ?? "",
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),

@@ -14,10 +14,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for ios - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return ios;
       case TargetPlatform.macOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for macos - '
@@ -47,4 +44,14 @@ class DefaultFirebaseOptions {
     projectId: 'zeggo-d136d',
     storageBucket: 'zeggo-d136d.firebasestorage.app',
   );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyDxUkTt_0vbDfWd5krfyeWFxIZ9NqMi_2A',
+    appId: '1:769803019270:ios:584cc3366dbc539e9a4f87',
+    messagingSenderId: '769803019270',
+    projectId: 'zeggo-d136d',
+    storageBucket: 'zeggo-d136d.firebasestorage.app',
+    iosBundleId: 'com.mt.zeggoCus',
+  );
+
 }

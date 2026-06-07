@@ -43,6 +43,7 @@ class Datum {
     String? productDetails;
     bool? isTrending;
     dynamic percentOff;
+    bool? isAvailable;
     dynamic unit;
     bool? isCafe;
     dynamic quantity;
@@ -66,6 +67,7 @@ class Datum {
         this.percentOff,
         this.superCategory,
         this.unit,
+        this.isAvailable,
         this.isCafe,
         this.quantity,
         this.createdAt,
@@ -81,6 +83,7 @@ class Datum {
         categoryId: json["category_id"],
         subcategoryId: json["subcategory_id"],
         img: json["img"],
+        isAvailable: json['is_available'],
         superCategory: json["super_category"],
         offerPrice: json["offer_price"],
         actualPrice: json["actual_price"],
@@ -111,6 +114,7 @@ class Datum {
         "super_category": superCategory,
         "unit": unit,
         "is_cafe": isCafe,
+        "is_available":isAvailable,
         "quantity": quantity,
         "createdAt": createdAt?.toIso8601String(),
         "updatedAt": updatedAt?.toIso8601String(),
