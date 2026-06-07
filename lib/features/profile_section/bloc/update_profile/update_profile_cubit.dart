@@ -15,13 +15,21 @@ part 'update_profile_state.dart';
 class UpdateProfileCubit extends Cubit<UpdateProfileState> {
   UpdateProfileCubit() : super(UpdateProfileInitial());
 
-  updateProfile({String? mobileNumber, String? name, String? email, File? profilePicture, bool? firstTimeUser}) async {
+  updateProfile({
+    String? mobileNumber,
+    String? name,
+    String? email,
+    File? profilePicture,
+    bool? firstTimeUser,
+    x,
+  }) async {
     try {
       emit(UpdateProfileLoadingState());
       FormData formData = FormData.fromMap({
         "phone_no": mobileNumber,
         "name": name,
         "email": email,
+        // "referral_code": referralCode,
         "first_time_user": firstTimeUser == true ? "1" : "0",
       });
 
@@ -53,7 +61,9 @@ class UpdateProfileCubit extends Cubit<UpdateProfileState> {
         if (result["status"] == true) {
           emit(UpdateProfileLoadedState());
         } else if (result["status"] == false) {
-          log("Message:=> Status Code=> ${resp.statusCode} \n &URL=> ${resp.realUri} \n Data ${resp.data}");
+          log(
+            "Message:=> Status Code=> ${resp.statusCode} \n &URL=> ${resp.realUri} \n Data ${resp.data}",
+          );
           emit(UpdateProfileErrorState(result["message"]));
         }
       }

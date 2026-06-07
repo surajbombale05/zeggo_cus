@@ -40,6 +40,7 @@ import 'package:zeggo_cus/utils/repo.dart';
 import 'package:zeggo_cus/utils/service/proveider/cart_provider.dart';
 import 'package:zeggo_cus/utils/storage/storage.dart';
 import 'package:zeggo_cus/utils/shorebird_updater.dart';
+import 'package:zeggo_cus/utils/deep_link_service.dart';
 
 String? firebasetoken;
 String? userId;
@@ -78,6 +79,7 @@ void main() async {
     // ).then((e) => {print("Box Open Sucessfully")}).onError((e, stk) => {print("Error to Open $e $stk")});
     
     ShorebirdHelper.checkForUpdate();
+    DeepLinkService().init();
   } catch (e, stk) {
     log("-------- $e $stk");
   }

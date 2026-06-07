@@ -35,4 +35,20 @@ class LocalStorageUtils {
     _instance ??= await SharedPreferences.getInstance();
     await _instance?.clear();
   }
+
+  static Future<void> saveReferralCode(String code) async {
+    _instance ??= await SharedPreferences.getInstance();
+    await _instance?.setString('referral_code', code);
+    log('Referral code saved: $code');
+  }
+
+  static Future<String?> getReferralCode() async {
+    _instance ??= await SharedPreferences.getInstance();
+    return _instance?.getString('referral_code');
+  }
+
+  static Future<void> clearReferralCode() async {
+    _instance ??= await SharedPreferences.getInstance();
+    await _instance?.remove('referral_code');
+  }
 }

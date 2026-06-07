@@ -8,6 +8,7 @@ import 'package:zeggo_cus/constants/app_toast.dart';
 import 'package:zeggo_cus/features/home_screen/screen/home_screen.dart';
 import 'package:zeggo_cus/features/profile_section/bloc/get_profile/get_profile_cubit.dart';
 import 'package:zeggo_cus/features/profile_section/bloc/update_profile/update_profile_cubit.dart';
+import 'package:zeggo_cus/utils/storage/storage.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final bool isFirstTimeUser;
@@ -21,6 +22,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _mobileController = TextEditingController();
+  final _referralController = TextEditingController();
   File? _profileImage;
 
   final ImagePicker _picker = ImagePicker();
@@ -55,7 +57,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     context.read<GetProfileCubit>().getProfile();
+    _loadReferralCode();
     super.initState();
+  }
+
+  void _loadReferralCode() async {
+    final code = await LocalStorageUtils.getReferralCode();
+    if (code != null) {
+      setState(() {
+        _referralController.text = code;
+      });
+    }
   }
 
   @override
@@ -74,7 +86,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           }
 
           if (state is UpdateProfileLoadedState) {
-            AppToast.showSuccess(context, "Success", "Profile updated successfully");
+            AppToast.showSuccess(
+              context,
+              "Success",
+              "Profile updated successfully",
+            );
             context.read<GetProfileCubit>().getProfile();
             if (widget.isFirstTimeUser) {
               Navigator.pushAndRemoveUntil(
@@ -112,13 +128,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         CircleAvatar(
                           radius: 55,
                           backgroundColor: Colors.grey.shade300,
-                          backgroundImage: _profileImage != null ? FileImage(_profileImage!) : null,
-                          child: _profileImage == null ? const Icon(Icons.person, size: 55) : null,
+                          backgroundImage: _profileImage != null
+                              ? FileImage(_profileImage!)
+                              : null,
+                          child: _profileImage == null
+                              ? const Icon(Icons.person, size: 55)
+                              : null,
                         ),
                         Container(
                           padding: const EdgeInsets.all(6),
-                          decoration: const BoxDecoration(color: Colors.blue, shape: BoxShape.circle),
-                          child: const Icon(Icons.edit, color: Colors.white, size: 18),
+                          decoration: const BoxDecoration(
+                            color: Colors.blue,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.edit,
+                            color: Colors.white,
+                            size: 18,
+                          ),
                         ),
                       ],
                     ),
@@ -126,20 +153,40 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   const SizedBox(height: 30),
                   TextField(
                     controller: _nameController,
-                    decoration: const InputDecoration(labelText: "Name", border: OutlineInputBorder()),
+                    decoration: const InputDecoration(
+                      labelText: "Name",
+                      border: OutlineInputBorder(),
+                    ),
                   ),
                   const SizedBox(height: 16),
                   TextField(
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(labelText: "Email", border: OutlineInputBorder()),
+                    decoration: const InputDecoration(
+                      labelText: "Email",
+                      border: OutlineInputBorder(),
+                    ),
                   ),
                   const SizedBox(height: 16),
                   TextField(
                     controller: _mobileController,
                     keyboardType: TextInputType.phone,
-                    inputFormatters: [LengthLimitingTextInputFormatter(10), FilteringTextInputFormatter.digitsOnly],
-                    decoration: const InputDecoration(labelText: "Phone", border: OutlineInputBorder()),
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(10),
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
+                    decoration: const InputDecoration(
+                      labelText: "Phone",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _referralController,
+                    decoration: const InputDecoration(
+                      labelText: "Referral Code (Optional)",
+                      border: OutlineInputBorder(),
+                    ),
                   ),
                   const SizedBox(height: 30),
                   state is UpdateProfileLoadingState
@@ -149,10 +196,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           height: 50,
                           child: ElevatedButton(
                             onPressed: _submit,
-                            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryColor),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primaryColor,
+                            ),
                             child: const Text(
                               "Save Changes",
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.white),
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.white,
+                              ),
                             ),
                           ),
                         ),
