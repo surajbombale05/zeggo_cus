@@ -63,6 +63,64 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
     }
   }
 
+  Widget deliveryOtpBox(String otp) {
+    final digits = otp.padRight(4).split('');
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.green.shade200),
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4))],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.lock_clock, color: Colors.green.shade700),
+              const SizedBox(width: 8),
+              const Text("Delivery OTP", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+            ],
+          ),
+
+          const SizedBox(height: 6),
+
+          const Text("Share this OTP with delivery partner", style: TextStyle(color: Colors.grey, fontSize: 13)),
+
+          const SizedBox(height: 18),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: digits.map((digit) {
+              return Container(
+                width: 58,
+                height: 62,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: Colors.green.shade50,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: Colors.green.shade300, width: 1.3),
+                ),
+                child: Text(
+                  digit,
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green.shade800,
+                    letterSpacing: 1,
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -127,13 +185,15 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
 
                   const SizedBox(height: 12),
 
-                  // STATUS TIMELINE
+                  _sectionTitle("Delivery Verification"),
+
+                  deliveryOtpBox(order?.verificationOtp?.toString() ?? "0000"),
+      const SizedBox(height: 12),
                   _sectionTitle("Order Status"),
                   _sectionCard(child: _timeline(order?.orderStatus ?? "")),
 
                   const SizedBox(height: 12),
 
-                  // ITEMS
                   _sectionTitle("Items"),
                   _sectionCard(
                     child: Column(

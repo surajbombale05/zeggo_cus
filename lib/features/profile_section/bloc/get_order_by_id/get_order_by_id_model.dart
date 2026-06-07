@@ -30,6 +30,7 @@ class Data {
   String? orderStatus;
   String? totalAmount;
   String? deliveryFee;
+    String? verificationOtp;
   String? userId;
   String? paymentMode;
   String? addressId;
@@ -46,6 +47,7 @@ class Data {
     this.totalAmount,
     this.deliveryFee,
     this.userId,
+      this.verificationOtp,
     this.addressId,
     this.createdAt,
     this.paymentMode,
@@ -62,6 +64,7 @@ class Data {
     totalAmount: json["total_amount"],
     deliveryFee: json["delivery_fee"],
     userId: json["user_id"],
+      verificationOtp: json["verification_otp"],
     addressId: json["address_id"],
     paymentMode: json["payment_method"],
     createdAt: json["createdAt"] == null ? null : DateTime.parse(json["createdAt"]),
@@ -77,6 +80,7 @@ class Data {
     "order_status": orderStatus,
     "total_amount": totalAmount,
     "delivery_fee": deliveryFee,
+    "verification_otp": verificationOtp,
     "user_id": userId,
     "address_id": addressId,
     "payment_method": paymentMode,
